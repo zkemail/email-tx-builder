@@ -1,18 +1,42 @@
+use std::{collections::HashMap, time::Duration};
+
 use crate::*;
-use abis::email_account_recovery::EmailAuthMsg;
-use ethers::middleware::Middleware;
+use abi::{Abi, Token, Tokenize};
+use abis::{EmailAuthMsg, EmailProof, UserOverridableDKIMRegistry};
+use anyhow::anyhow;
+use config::ChainConfig;
 use ethers::prelude::*;
 use ethers::signers::Signer;
-use relayer_utils::converters::u64_to_u8_array_32;
-use relayer_utils::TemplateValue;
+use ethers::utils::hex;
+use model::{update_request, RequestModel, RequestStatus};
+use rand::Rng;
+use relayer_utils::{bytes_to_hex, h160_to_hex};
+use slog::error;
+use statics::SHARED_MUTEX;
+use tokio::time::sleep;
 
+// Number of confirmations required for a transaction to be considered confirmed
 const CONFIRMATIONS: usize = 1;
 
+// Type alias for a SignerMiddleware that combines a provider and a local wallet
 type SignerM = SignerMiddleware<Provider<Http>, LocalWallet>;
+
+// Custom struct to hold a vector of tokens
+struct CustomTokenVec {
+    tokens: Vec<Token>,
+}
+
+// Implement the Tokenize trait for CustomTokenVec to convert it into a vector of tokens
+impl Tokenize for CustomTokenVec {
+    fn into_tokens(self) -> Vec<Token> {
+        self.tokens
+    }
+}
 
 /// Represents a client for interacting with the blockchain.
 #[derive(Debug, Clone)]
 pub struct ChainClient {
+    // The client is an Arc (atomic reference counted) pointer to a SignerMiddleware
     pub client: Arc<SignerM>,
 }
 
@@ -22,14 +46,17 @@ impl ChainClient {
     /// # Returns
     ///
     /// A `Result` containing the new `ChainClient` if successful, or an error if not.
-    pub async fn setup() -> Result<Self> {
-        let wallet: LocalWallet = PRIVATE_KEY.get().unwrap().parse()?;
-        let provider = Provider::<Http>::try_from(CHAIN_RPC_PROVIDER.get().unwrap())?;
+    pub async fn setup(chain: String, chains: HashMap<String, ChainConfig>) -> Result<Self> {
+        let chain_config = chains
+            .get(&chain)
+            .ok_or_else(|| anyhow!("Chain configuration not found"))?;
+        let wallet: LocalWallet = chain_config.private_key.parse()?;
+        let provider = Provider::<Http>::try_from(chain_config.rpc_url.clone())?;
 
         // Create a new SignerMiddleware with the provider and wallet
         let client = Arc::new(SignerMiddleware::new(
             provider,
-            wallet.with_chain_id(*CHAIN_ID.get().unwrap()),
+            wallet.with_chain_id(chain_config.chain_id),
         ));
 
         Ok(Self { client })
@@ -59,6 +86,7 @@ impl ChainClient {
         let mut mutex = SHARED_MUTEX.lock().await;
         *mutex += 1;
 
+        // Call the contract method
         let main_authorizer = dkim.main_authorizer().call().await?;
         let call =
             dkim.set_dkim_public_key_hash(domain_name, public_key_hash, main_authorizer, signature);
@@ -66,7 +94,6 @@ impl ChainClient {
 
         // Wait for the transaction to be confirmed
         let receipt = tx
-            .log()
             .confirmations(CONFIRMATIONS)
             .await?
             .ok_or(anyhow!("No receipt"))?;
@@ -103,519 +130,270 @@ impl ChainClient {
         Ok(is_set)
     }
 
-    /// Gets the DKIM from a controller.
-    ///
-    /// # Arguments
-    ///
-    /// * `controller_eth_addr` - The controller Ethereum address as a string.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing the ECDSA Owned DKIM Registry if successful, or an error if not.
-    pub async fn get_dkim_from_controller(
+    pub async fn call(
         &self,
-        controller_eth_addr: &str,
-    ) -> Result<UserOverridableDKIMRegistry<SignerM>, anyhow::Error> {
-        let controller_eth_addr: H160 = controller_eth_addr.parse()?;
+        request: RequestModel,
+        email_auth_msg: EmailAuthMsg,
+        relayer_state: RelayerState,
+    ) -> Result<TxHash> {
+        update_request(
+            &relayer_state.db,
+            request.id,
+            RequestStatus::PerformingOnChainTransaction,
+        )
+        .await?;
 
-        // Create a new EmailAccountRecovery contract instance
-        let contract = EmailAccountRecovery::new(controller_eth_addr, self.client.clone());
+        let abi = Abi {
+            functions: vec![request.email_tx_auth.function_abi.clone()]
+                .into_iter()
+                .map(|f| (f.name.clone(), vec![f]))
+                .collect(),
+            events: Default::default(),
+            constructor: None,
+            receive: false,
+            fallback: false,
+            errors: Default::default(),
+        };
 
-        // Call the dkim method to get the DKIM registry address
-        let dkim = contract.dkim().call().await?;
-        Ok(UserOverridableDKIMRegistry::new(dkim, self.client.clone()))
-    }
+        let contract = Contract::new(
+            request.email_tx_auth.contract_address,
+            abi,
+            self.client.clone(),
+        );
 
-    /// Gets the DKIM from an email auth address.
-    ///
-    /// # Arguments
-    ///
-    /// * `email_auth_addr` - The email auth address as a string.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing the ECDSA Owned DKIM Registry if successful, or an error if not.
-    pub async fn get_dkim_from_email_auth(
-        &self,
-        email_auth_addr: &str,
-    ) -> Result<UserOverridableDKIMRegistry<SignerM>, anyhow::Error> {
-        let email_auth_address: H160 = email_auth_addr.parse()?;
+        let function = request.email_tx_auth.function_abi;
+        let remaining_args = request.email_tx_auth.remaining_args;
 
-        // Create a new EmailAuth contract instance
-        let contract = EmailAuth::new(email_auth_address, self.client.clone());
+        // Initialize your tokens vector
+        let mut tokens = Vec::new();
 
-        // Call the dkim_registry_addr method to get the DKIM registry address
-        let dkim = contract.dkim_registry_addr().call().await?;
+        // Add the first token (assuming email_auth_msg.to_tokens() returns Vec<Token>)
+        tokens.push(Token::Tuple(email_auth_msg.to_tokens()));
 
-        Ok(UserOverridableDKIMRegistry::new(dkim, self.client.clone()))
-    }
+        // Convert remaining_args to tokens and add them to the tokens vector
+        for arg in remaining_args {
+            let token = Token::from(arg);
+            tokens.push(token);
+        }
 
-    /// Gets the email auth address from a wallet.
-    ///
-    /// # Arguments
-    ///
-    /// * `controller_eth_addr` - The controller Ethereum address as a string.
-    /// * `wallet_addr` - The wallet address as a string.
-    /// * `account_salt` - The account salt as a string.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing the email auth address as H160 if successful, or an error if not.
-    pub async fn get_email_auth_addr_from_wallet(
-        &self,
-        controller_eth_addr: &str,
-        wallet_addr: &str,
-        account_salt: &str,
-    ) -> Result<H160, anyhow::Error> {
-        // Parse the controller and wallet Ethereum addresses
-        let controller_eth_addr: H160 = controller_eth_addr.parse()?;
-        let wallet_address: H160 = wallet_addr.parse()?;
+        let custom_tokens = CustomTokenVec { tokens };
 
-        // Create a new EmailAccountRecovery contract instance
-        let contract = EmailAccountRecovery::new(controller_eth_addr, self.client.clone());
+        // Now you can use the tokens vector to call the contract function
+        let call = contract.method::<_, ()>(&function.name, custom_tokens)?;
+        let tx = call.clone().tx;
+        let from = h160_to_hex(&self.client.address());
+        let to = h160_to_hex(
+            tx.to()
+                .expect("to not found")
+                .as_address()
+                .expect("to not found"),
+        );
+        let data = bytes_to_hex(&tx.data().expect("data not found").to_vec());
 
-        // Decode the account salt
-        let account_salt_bytes = hex::decode(account_salt.trim_start_matches("0x"))
-            .map_err(|e| anyhow!("Failed to decode account_salt: {}", e))?;
+        // Call Alchemy to check for asset changes (Make a POST request to Alchemy)
+        let alchemy_url = format!(
+            "https://{}.g.alchemy.com/v2/{}",
+            relayer_state.config.chains[request.email_tx_auth.chain.as_str()].alchemy_name,
+            relayer_state.config.alchemy_api_key
+        );
 
-        // Compute the email auth address
-        let email_auth_addr = contract
-            .compute_email_auth_address(
-                wallet_address,
-                account_salt_bytes
-                    .try_into()
-                    .map_err(|_| anyhow!("account_salt must be 32 bytes"))?,
-            )
+        // Prepare the JSON body for the POST request using extracted transaction details
+        let json_body = serde_json::json!({
+            "id": 1,
+            "jsonrpc": "2.0",
+            "method": "alchemy_simulateAssetChanges",
+            "params": [
+                {
+                    "from": from,
+                    "to": to,
+                    "value": "0x0",
+                    "data": data,
+                }
+            ]
+        });
+
+        info!(LOG, "Alchemy request: {:?}", json_body);
+
+        // Send the POST request
+        let response = simulate_with_retry(
+            &relayer_state.http_client,
+            &alchemy_url,
+            &json_body,
+            5,
+            1000,
+        )
+        .await?;
+
+        // Handle the response
+        if response.status().is_success() {
+            let response_text = response.text().await?;
+            info!(LOG, "Alchemy response: {:?}", response_text);
+
+            // Parse the response to check if changes is empty
+            let response_json: serde_json::Value = serde_json::from_str(&response_text)?;
+            if let Some(changes) = response_json["result"]["changes"].as_array() {
+                if !changes.is_empty() {
+                    error!(LOG, "Unexpected changes in Alchemy response: {:?}", changes);
+                    return Err(anyhow!("Unexpected changes in Alchemy response"));
+                }
+            }
+        } else {
+            let error_text = response.text().await?;
+            error!(LOG, "Alchemy request failed: {:?}", error_text);
+        }
+
+        let receipt = call
+            .send()
+            .await?
+            .interval(Duration::from_secs(1))
+            .retries(5)
+            .confirmations(CONFIRMATIONS)
             .await?;
-        Ok(email_auth_addr)
-    }
 
-    /// Checks if a wallet is deployed.
-    ///
-    /// # Arguments
-    ///
-    /// * `wallet_addr_str` - The wallet address as a string.
+        info!(
+            LOG,
+            "tx hash: {:?}",
+            receipt.clone().expect("tx not found").transaction_hash
+        );
+
+        Ok(receipt.expect("tx not found").transaction_hash)
+    }
+}
+
+impl EmailAuthMsg {
+    /// Converts the `EmailAuthMsg` into a vector of tokens.
     ///
     /// # Returns
     ///
-    /// A `Result` containing a boolean indicating if the wallet is deployed.
-    pub async fn is_wallet_deployed(&self, wallet_addr_str: &str) -> Result<bool, ChainError> {
-        // Parse the wallet address
-        let wallet_addr: H160 = wallet_addr_str.parse().map_err(ChainError::HexError)?;
+    /// A `Vec<Token>` representing the `EmailAuthMsg` as tokens, which includes:
+    /// - `Token::Uint` for the `template_id`.
+    /// - `Token::Array` of `Token::Bytes` for each `command_param`.
+    /// - `Token::Uint` for the `skipped_command_prefix`.
+    /// - `Token::Tuple` for the `proof` converted to tokens.
+    pub fn to_tokens(&self) -> Vec<Token> {
+        vec![
+            Token::Uint(self.template_id),
+            Token::Array(
+                self.command_params
+                    .iter()
+                    .map(|param| Token::Bytes(param.clone().to_vec()))
+                    .collect(),
+            ),
+            Token::Uint(self.skipped_command_prefix),
+            Token::Tuple(self.proof.to_tokens()),
+        ]
+    }
+}
 
-        // Get the bytecode at the wallet address
-        match self.client.get_code(wallet_addr, None).await {
-            Ok(code) => Ok(!code.is_empty()),
-            Err(e) => {
-                // Log the error or handle it as needed
-                Err(ChainError::signer_middleware_error(
-                    "Failed to check if wallet is deployed",
-                    e,
-                ))
+impl EmailProof {
+    /// Converts the `EmailProof` into a vector of tokens.
+    ///
+    /// # Returns
+    ///
+    /// A `Vec<Token>` representing the `EmailProof` as tokens, which includes:
+    /// - `Token::String` for the `domain_name`.
+    /// - `Token::FixedBytes` for the `public_key_hash`.
+    /// - `Token::Uint` for the `timestamp`.
+    /// - `Token::String` for the `masked_command`.
+    /// - `Token::FixedBytes` for the `email_nullifier`.
+    /// - `Token::FixedBytes` for the `account_salt`.
+    /// - `Token::Bool` for the `is_code_exist`.
+    /// - `Token::Bytes` for the `proof`.
+    pub fn to_tokens(&self) -> Vec<Token> {
+        vec![
+            Token::String(self.domain_name.clone()),
+            Token::FixedBytes(self.public_key_hash.to_vec()),
+            Token::Uint(self.timestamp),
+            Token::String(self.masked_command.clone()),
+            Token::FixedBytes(self.email_nullifier.to_vec()),
+            Token::FixedBytes(self.account_salt.to_vec()),
+            Token::Bool(self.is_code_exist),
+            Token::Bytes(self.proof.clone().to_vec()),
+        ]
+    }
+}
+
+/// Attempts to send a POST request to a given URL with a JSON body, retrying on failure.
+///
+/// This function will retry the request up to `max_attempts` times, with an exponential backoff
+/// and jitter between attempts.
+///
+/// # Arguments
+///
+/// * `http_client` - A reference to the `reqwest::Client` used to send the request.
+/// * `url` - The URL to which the POST request is sent.
+/// * `json_body` - The JSON body to include in the POST request.
+/// * `max_attempts` - The maximum number of retry attempts.
+/// * `max_backoff` - The maximum backoff time in milliseconds.
+///
+/// # Returns
+///
+/// A `Result` containing the `reqwest::Response` if successful, or an error if all attempts fail.
+async fn simulate_with_retry(
+    http_client: &reqwest::Client,
+    url: &str,
+    json_body: &serde_json::Value,
+    max_attempts: usize,
+    max_backoff: u64,
+) -> Result<reqwest::Response> {
+    let mut attempts = 0;
+
+    loop {
+        attempts += 1;
+        // Send the POST request with the specified headers and JSON body
+        let response = http_client
+            .post(url)
+            .header("accept", "application/json")
+            .header("content-type", "application/json")
+            .json(json_body)
+            .send()
+            .await;
+
+        match response {
+            // If the response is successful, return it
+            Ok(resp) if resp.status().is_success() => return Ok(resp),
+            // If the response is not successful and attempts are remaining, retry
+            Ok(_) | Err(_) if attempts < max_attempts => {
+                // Calculate exponential backoff with jitter using spawn_blocking
+                let backoff = tokio::task::spawn_blocking(move || {
+                    let mut rng = rand::thread_rng();
+                    2u64.pow(attempts as u32) + rng.gen_range(0..1000)
+                })
+                .await?
+                .min(max_backoff);
+
+                error!(
+                    LOG,
+                    "Request failed, retrying in {} ms... (attempt {}/{})",
+                    backoff,
+                    attempts,
+                    max_attempts
+                );
+                // Wait for the calculated backoff duration before retrying
+                sleep(Duration::from_millis(backoff)).await;
+                continue;
+            }
+            // If all attempts fail, log the error and return an error
+            Ok(resp) => {
+                // Log the final failed attempt
+                let error_text = resp
+                    .text()
+                    .await
+                    .unwrap_or_else(|_| "Unknown error".to_string());
+                error!(LOG, "Alchemy request failed: {:?}", error_text);
+                return Err(anyhow!(
+                    "Alchemy request failed after {} attempts",
+                    max_attempts
+                ));
+            }
+            Err(err) => {
+                // Log the final failed attempt
+                error!(LOG, "Alchemy request failed: {:?}", err);
+                return Err(anyhow!(
+                    "Alchemy request failed after {} attempts",
+                    max_attempts
+                ));
             }
         }
-    }
-
-    /// Gets the acceptance command templates.
-    ///
-    /// # Arguments
-    ///
-    /// * `controller_eth_addr` - The controller Ethereum address as a string.
-    /// * `template_idx` - The template index.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing a vector of acceptance command templates.
-    pub async fn get_acceptance_command_templates(
-        &self,
-        controller_eth_addr: &str,
-        template_idx: u64,
-    ) -> Result<Vec<String>, ChainError> {
-        // Parse the controller Ethereum address
-        let controller_eth_addr: H160 =
-            controller_eth_addr.parse().map_err(ChainError::HexError)?;
-
-        // Create a new EmailAccountRecovery contract instance
-        let contract = EmailAccountRecovery::new(controller_eth_addr, self.client.clone());
-
-        // Get the acceptance command templates
-        let templates = contract
-            .acceptance_command_templates()
-            .call()
-            .await
-            .map_err(|e| {
-                ChainError::contract_error("Failed to get acceptance subject templates", e)
-            })?;
-        Ok(templates[template_idx as usize].clone())
-    }
-
-    /// Gets the recovery command templates.
-    ///
-    /// # Arguments
-    ///
-    /// * `controller_eth_addr` - The controller Ethereum address as a string.
-    /// * `template_idx` - The template index.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing a vector of recovery command templates.
-    pub async fn get_recovery_command_templates(
-        &self,
-        controller_eth_addr: &str,
-        template_idx: u64,
-    ) -> Result<Vec<String>, ChainError> {
-        // Parse the controller Ethereum address
-        let controller_eth_addr: H160 =
-            controller_eth_addr.parse().map_err(ChainError::HexError)?;
-
-        // Create a new EmailAccountRecovery contract instance
-        let contract = EmailAccountRecovery::new(controller_eth_addr, self.client.clone());
-
-        // Get the recovery command templates
-        let templates = contract
-            .recovery_command_templates()
-            .call()
-            .await
-            .map_err(|e| {
-                ChainError::contract_error("Failed to get recovery command templates", e)
-            })?;
-        Ok(templates[template_idx as usize].clone())
-    }
-
-    /// Completes the recovery process.
-    ///
-    /// # Arguments
-    ///
-    /// * `controller_eth_addr` - The controller Ethereum address as a string.
-    /// * `account_eth_addr` - The account Ethereum address as a string.
-    /// * `complete_calldata` - The complete calldata as a string.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing a boolean indicating if the recovery was successful.
-    pub async fn complete_recovery(
-        &self,
-        controller_eth_addr: &str,
-        account_eth_addr: &str,
-        complete_calldata: &str,
-    ) -> Result<bool, ChainError> {
-        // Parse the controller and account Ethereum addresses
-        let controller_eth_addr: H160 =
-            controller_eth_addr.parse().map_err(ChainError::HexError)?;
-
-        // Create a new EmailAccountRecovery contract instance
-        let contract = EmailAccountRecovery::new(controller_eth_addr, self.client.clone());
-
-        // Decode the complete calldata
-        let decoded_calldata =
-            hex::decode(complete_calldata.trim_start_matches("0x")).expect("Decoding failed");
-
-        let account_eth_addr = account_eth_addr
-            .parse::<H160>()
-            .map_err(ChainError::HexError)?;
-
-        // Call the complete_recovery method
-        let call = contract.complete_recovery(account_eth_addr, Bytes::from(decoded_calldata));
-
-        let tx = call
-            .send()
-            .await
-            .map_err(|e| ChainError::contract_error("Failed to call complete_recovery", e))?;
-
-        // Wait for the transaction to be confirmed
-        let receipt = tx
-            .log()
-            .confirmations(CONFIRMATIONS)
-            .await
-            .map_err(|e| {
-                ChainError::provider_error(
-                    "Failed to get receipt after calling complete_recovery",
-                    e,
-                )
-            })?
-            .ok_or(anyhow!("No receipt"))?;
-
-        // Check if the transaction was successful
-        Ok(receipt
-            .status
-            .map(|status| status == U64::from(1))
-            .unwrap_or(false))
-    }
-
-    /// Handles the acceptance process.
-    ///
-    /// # Arguments
-    ///
-    /// * `controller_eth_addr` - The controller Ethereum address as a string.
-    /// * `email_auth_msg` - The email authentication message.
-    /// * `template_idx` - The template index.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing a boolean indicating if the acceptance was successful.
-    pub async fn handle_acceptance(
-        &self,
-        controller_eth_addr: &str,
-        email_auth_msg: EmailAuthMsg,
-        template_idx: u64,
-    ) -> std::result::Result<bool, ChainError> {
-        // Parse the controller Ethereum address
-        let controller_eth_addr: H160 = controller_eth_addr.parse()?;
-
-        // Create a new EmailAccountRecovery contract instance
-        let contract = EmailAccountRecovery::new(controller_eth_addr, self.client.clone());
-
-        // Call the handle_acceptance method
-        let call = contract.handle_acceptance(email_auth_msg, template_idx.into());
-        let tx = call
-            .send()
-            .await
-            .map_err(|e| ChainError::contract_error("Failed to call handle_acceptance", e))?;
-
-        // Wait for the transaction to be confirmed
-        let receipt = tx
-            .log()
-            .confirmations(CONFIRMATIONS)
-            .await
-            .map_err(|e| {
-                ChainError::provider_error(
-                    "Failed to get receipt after calling handle_acceptance",
-                    e,
-                )
-            })?
-            .ok_or(anyhow!("No receipt"))?;
-
-        // Check if the transaction was successful
-        Ok(receipt
-            .status
-            .map(|status| status == U64::from(1))
-            .unwrap_or(false))
-    }
-
-    /// Handles the recovery process.
-    ///
-    /// # Arguments
-    ///
-    /// * `controller_eth_addr` - The controller Ethereum address as a string.
-    /// * `email_auth_msg` - The email authentication message.
-    /// * `template_idx` - The template index.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing a boolean indicating if the recovery was successful.
-    pub async fn handle_recovery(
-        &self,
-        controller_eth_addr: &str,
-        email_auth_msg: EmailAuthMsg,
-        template_idx: u64,
-    ) -> std::result::Result<bool, ChainError> {
-        // Parse the controller Ethereum address
-        let controller_eth_addr: H160 = controller_eth_addr.parse()?;
-
-        // Create a new EmailAccountRecovery contract instance
-        let contract = EmailAccountRecovery::new(controller_eth_addr, self.client.clone());
-
-        // Call the handle_recovery method
-        let call = contract.handle_recovery(email_auth_msg, template_idx.into());
-        let tx = call
-            .send()
-            .await
-            .map_err(|e| ChainError::contract_error("Failed to call handle_recovery", e))?;
-
-        // Wait for the transaction to be confirmed
-        let receipt = tx
-            .log()
-            .confirmations(CONFIRMATIONS)
-            .await
-            .map_err(|e| {
-                ChainError::provider_error("Failed to get receipt after calling handle_recovery", e)
-            })?
-            .ok_or(anyhow!("No receipt"))?;
-
-        // Check if the transaction was successful
-        Ok(receipt
-            .status
-            .map(|status| status == U64::from(1))
-            .unwrap_or(false))
-    }
-
-    /// Gets the bytecode of a wallet.
-    ///
-    /// # Arguments
-    ///
-    /// * `wallet_addr` - The wallet address as a string.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing the bytecode as Bytes.
-    pub async fn get_bytecode(&self, wallet_addr: &str) -> std::result::Result<Bytes, ChainError> {
-        // Parse the wallet address
-        let wallet_address: H160 = wallet_addr.parse().map_err(ChainError::HexError)?;
-
-        // Get the bytecode at the wallet address
-        let client_code = self
-            .client
-            .get_code(wallet_address, None)
-            .await
-            .map_err(|e| ChainError::signer_middleware_error("Failed to get bytecode", e))?;
-        Ok(client_code)
-    }
-
-    /// Gets the storage at a specific slot for a wallet.
-    ///
-    /// # Arguments
-    ///
-    /// * `wallet_addr` - The wallet address as a string.
-    /// * `slot` - The storage slot.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing the storage value as H256.
-    pub async fn get_storage_at(
-        &self,
-        wallet_addr: &str,
-        slot: u64,
-    ) -> Result<H256, anyhow::Error> {
-        // Parse the wallet address
-        let wallet_address: H160 = wallet_addr.parse()?;
-
-        // Get the storage at the specified slot
-        Ok(self
-            .client
-            .get_storage_at(wallet_address, u64_to_u8_array_32(slot).into(), None)
-            .await?)
-    }
-
-    /// Gets the recovered account from an acceptance command.
-    ///
-    /// # Arguments
-    ///
-    /// * `controller_eth_addr` - The controller Ethereum address as a string.
-    /// * `command_params` - The command parameters.
-    /// * `template_idx` - The template index.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing the recovered account address as H160.
-    pub async fn get_recovered_account_from_acceptance_command(
-        &self,
-        controller_eth_addr: &str,
-        command_params: Vec<TemplateValue>,
-        template_idx: u64,
-    ) -> Result<H160, ChainError> {
-        // Parse the controller Ethereum address
-        let controller_eth_addr: H160 =
-            controller_eth_addr.parse().map_err(ChainError::HexError)?;
-
-        // Create a new EmailAccountRecovery contract instance
-        let contract = EmailAccountRecovery::new(controller_eth_addr, self.client.clone());
-
-        // Encode the command parameters
-        let command_params_bytes = command_params
-            .iter()
-            .map(|s| {
-                s.abi_encode(None)
-                    .unwrap_or_else(|_| Bytes::from("Error encoding".as_bytes().to_vec()))
-            })
-            .collect::<Vec<_>>();
-
-        // Call the extract_recovered_account_from_acceptance_command method
-        let recovered_account = contract
-            .extract_recovered_account_from_acceptance_command(
-                command_params_bytes,
-                template_idx.into(),
-            )
-            .call()
-            .await
-            .map_err(|e| {
-                ChainError::contract_error(
-                    "Failed to get recovered account from acceptance subject",
-                    e,
-                )
-            })?;
-        Ok(recovered_account)
-    }
-
-    /// Gets the recovered account from a recovery command.
-    ///
-    /// # Arguments
-    ///
-    /// * `controller_eth_addr` - The controller Ethereum address as a string.
-    /// * `command_params` - The command parameters.
-    /// * `template_idx` - The template index.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing the recovered account address as H160.
-    pub async fn get_recovered_account_from_recovery_command(
-        &self,
-        controller_eth_addr: &str,
-        command_params: Vec<TemplateValue>,
-        template_idx: u64,
-    ) -> Result<H160, ChainError> {
-        // Parse the controller Ethereum address
-        let controller_eth_addr: H160 =
-            controller_eth_addr.parse().map_err(ChainError::HexError)?;
-
-        // Create a new EmailAccountRecovery contract instance
-        let contract = EmailAccountRecovery::new(controller_eth_addr, self.client.clone());
-
-        // Encode the command parameters
-        let command_params_bytes = command_params
-            .iter()
-            .map(|s| {
-                s.abi_encode(None).map_err(|_| {
-                    ChainError::Validation("Error encoding subject parameters".to_string())
-                })
-            })
-            .collect::<Result<Vec<_>, ChainError>>()?;
-
-        // Call the extract_recovered_account_from_recovery_command method
-        let recovered_account = contract
-            .extract_recovered_account_from_recovery_command(
-                command_params_bytes,
-                template_idx.into(),
-            )
-            .call()
-            .await
-            .map_err(|e| {
-                ChainError::contract_error(
-                    "Failed to get recovered account from recovery subject",
-                    e,
-                )
-            })?;
-        Ok(recovered_account)
-    }
-
-    /// Checks if an account is activated.
-    ///
-    /// # Arguments
-    ///
-    /// * `controller_eth_addr` - The controller Ethereum address as a string.
-    /// * `account_eth_addr` - The account Ethereum address as a string.
-    ///
-    /// # Returns
-    ///
-    /// A `Result` containing a boolean indicating if the account is activated.
-    pub async fn get_is_activated(
-        &self,
-        controller_eth_addr: &str,
-        account_eth_addr: &str,
-    ) -> Result<bool, ChainError> {
-        // Parse the controller and account Ethereum addresses
-        let controller_eth_addr: H160 =
-            controller_eth_addr.parse().map_err(ChainError::HexError)?;
-        let account_eth_addr: H160 = account_eth_addr.parse().map_err(ChainError::HexError)?;
-
-        // Create a new EmailAccountRecovery contract instance
-        let contract = EmailAccountRecovery::new(controller_eth_addr, self.client.clone());
-
-        // Call the is_activated method
-        let is_activated = contract
-            .is_activated(account_eth_addr)
-            .call()
-            .await
-            .map_err(|e| ChainError::contract_error("Failed to check if is activated", e))?;
-        Ok(is_activated)
     }
 }
