@@ -1,0 +1,103 @@
+Delivered-To: suegamisora@gmail.com
+Received: by 2002:a05:7010:980b:b0:420:b530:eccd with SMTP id cl11csp3133670mdb;
+        Sat, 21 Dec 2024 08:30:18 -0800 (PST)
+X-Received: by 2002:a05:6a00:1411:b0:725:f376:f4f4 with SMTP id d2e1a72fcca58-72abde01aa8mr9512964b3a.13.1734798618169;
+        Sat, 21 Dec 2024 08:30:18 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1734798618; cv=none;
+        d=google.com; s=arc-20240605;
+        b=XHyQ4HK8LawoFnOPlvDBxDpZlaSSs7DY65IlYnfi0AtPqxUNmGPhPUaq0pTqp+cEN3
+         t33zvhdlCubdgW2LS0VVe4Y2Qbm4hLgm0XtrMvZogFJNGp0ysUEsL9FXsNsX1aHgDVyA
+         lNEpxPkY4ZlbfOVM3ZUQwHZxIQCk+fLSLiL7D53TSEwcX51wG98yL+fadDe2sVjiCHPL
+         n3ZeMgJaThySYTDWgUrhILq0xKecvDrDSCnRRQzJpi8+CYXf9rxHqGBuxYdVpbo+DBgy
+         syLew82xM0+j3kJdwMWTht8J59jnqBiImF/4BnfH2pXNxtEyYlfAhAFlWZAPAIW2RWQ9
+         ceWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=subject:to:from:mime-version:date:message-id:dkim-signature;
+        bh=PJlZrxDrAYMUHxY9BzahqCFg+QakUDe4bowN0beQXPk=;
+        fh=r9ZW45D/4i7BIl/4UeFGrkYKwbplztqhOVKfbV+WD3I=;
+        b=PnXzUvLksyYYMd/0Ii+dhz0FnoYwZ5+whAnzY7cmb9NMu+TLzb1QZ/p8BAcSZEQRsJ
+         L3jSDVG3yefPS5XXJjmr8vT0VIKgDImw45P8rco+Wz0VIhv9AeK/JjcgZ8Vh4YJAwEer
+         naeiKWSPQ4o2P/+rRUdsjQUU55aFAyapc4ChXq+r8cCc5HKd/ZzBlb9nfXmQ+mi8h6z1
+         ECx/OCGtqqp/+T/qHtnYKRUDQOe04odsA5wm1Q5eYOYYv5GpyMpvUC+mIdiCJGN3ICqa
+         TH09+Pj4RDjUKFTcnf2JNTwHa+n1Dt1xH1z60IRG+VegRSG/ql6QrtbWRgzO8B0ejgLA
+         CmZA==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20230601 header.b=PyEbQtEI;
+       spf=pass (google.com: domain of emaiwallet.alice@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=emaiwallet.alice@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;
+       dara=pass header.i=@gmail.com
+Return-Path: <emaiwallet.alice@gmail.com>
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])
+        by mx.google.com with SMTPS id d2e1a72fcca58-72aad841441sor3172428b3a.1.2024.12.21.08.30.18
+        for <suegamisora@gmail.com>
+        (Google Transport Security);
+        Sat, 21 Dec 2024 08:30:18 -0800 (PST)
+Received-SPF: pass (google.com: domain of emaiwallet.alice@gmail.com designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20230601 header.b=PyEbQtEI;
+       spf=pass (google.com: domain of emaiwallet.alice@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=emaiwallet.alice@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;
+       dara=pass header.i=@gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734798617; x=1735403417; dara=google.com;
+        h=subject:to:from:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PJlZrxDrAYMUHxY9BzahqCFg+QakUDe4bowN0beQXPk=;
+        b=PyEbQtEIXATbQobMg5hVP4KFqbXJtN3df87fefPnFFocCriLrWcQL5ZWvMWvI9qtBF
+         5A8PMG/B/Lpc8sQbYqcGFBVPWA55t28mXbAEAmTbOtQJ2nFQtLcoSkvOAHXHi1G/GmTK
+         VhMOAx0emAnsgD9f/ipMYi4OpsGOuSwmvmN7n73NYexTFaja3jeO2f9rwv1kfBGldx/y
+         4oxcGHS2cZJWXOWFRg/XDaN6eGWDHMuPgZnDHWk9dfejKkWWgET54Sf8Y5TVqfAgYwRm
+         BM70sJF5jrxsYVOA8acmO5Cp6fsuoNCTUERnp7oWPpZ66MYPAK5G5z+jI8lvX5VRE6yj
+         tMRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734798617; x=1735403417;
+        h=subject:to:from:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PJlZrxDrAYMUHxY9BzahqCFg+QakUDe4bowN0beQXPk=;
+        b=FO2Bb5BCMLvc4p67jQJlRjFlYA5OZNJy1X0VoW+WBHFhm2raxcqd+MVh9usMtV7kMU
+         TZO0yGx4c3sM+pjHvIdtA5G5QU43bsq0ZuYxWzAd8rO/tUjdLTvpCzUh5y8XU8VY6clQ
+         j50j55KBVMRg0QNY80TlTMoxdMKTBn4LWsPygsz0f8uruq1joFsqpou6T8S2L+e5ybUy
+         rSVZhm18oo+oSKGyS2hsJOJMA5c4u/jrB3mZkPXIpzJl8Gupa4hiCyjpv62xVh4gwz5V
+         mhxhcRpd7ZS7mIFT7fORxwKVLcBZkWsOt5vsP/rtG/nMb0X5Cil3Gix6HicF4IWYXjws
+         Vm1w==
+X-Gm-Message-State: AOJu0YyFbeAUsfz/cnErFiUIjeAlcXAre5lGhN1O6O3Nprz0HPfxuoh2
+	QQWqQm5I6VW7z++8NBfO5WcqsP0TGbahjuDCaUgIL4bIP1f3lsLRclNFOGoe
+X-Gm-Gg: ASbGncvJv33DiugPeQcA7XyZ0Joxgw6yUY6jqpbYSwSka2drj8UfbEiglGC7IS491j5
+	QpqggmRHp9preeYA8H9PcZnixMkusrHWmGHPnpx6xD6HeEOuTe3HB+W4qFWZRP9AniTNVFlgwA8
+	aBJNZjrcHWKAkoIQoGqdYkA8XAwybqcA4dRFyQal9cp0gyRZ9i98tKILV32XYKe/o1GIfA+OFbO
+	AjOQgd4RtJ4ERFM7kesmTbwmKpCDZeVGU1ohOYe5zULJ49pvGb7kNBaZCXl+ljVttxp3yMBXjWs
+	wpEaDrb1KYqCqg==
+X-Google-Smtp-Source: AGHT+IHcVUNiqSW9gg0Cqtzb5NQVDRsvbI1w9uSXqrFZTdTx1oWXUqbo++vGp9cbDqM6tEU4XwAOrg==
+X-Received: by 2002:a05:6a20:d045:b0:1e4:8fda:78ea with SMTP id adf61e73a8af0-1e5e08661eemr13343836637.46.1734798616898;
+        Sat, 21 Dec 2024 08:30:16 -0800 (PST)
+Return-Path: <emaiwallet.alice@gmail.com>
+Received: from SoraMacBook-4.local ([86.48.12.156])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-842aba72f7csm4503099a12.4.2024.12.21.08.30.15
+        for <suegamisora@gmail.com>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Dec 2024 08:30:16 -0800 (PST)
+Message-ID: <6766ed18.630a0220.3967cb.c37c@mx.google.com>
+Date: Sat, 21 Dec 2024 08:30:16 -0800 (PST)
+Content-Type: multipart/alternative; boundary="===============7786713304109607090=="
+MIME-Version: 1.0
+From: emaiwallet.alice@gmail.com
+To: suegamisora@gmail.com
+Subject: Re: Re: [Reply Needed] Test Email 9
+
+--===============7786713304109607090==
+Content-Type: text/html; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+
+    <html>
+    <body>
+        <h1>Hello!</h1>
+        <p>This is a test email with a basic HTML body.</p>
+        <div style="display: none;"><div id=3D"random">[zkemail-begin]Accept guardian request for 0x04884491560f38342C56E26BDD0fEAbb68E2d2FC Code 01eb9b204cc24c3baee11accc37d253a9c53e92b1a2cc07763475c135d575b76[zkemail-end]<br></div></div>
+        <p><b>Thank you!</b></p>
+    </body>
+    </html>
+    
+--===============7786713304109607090==--

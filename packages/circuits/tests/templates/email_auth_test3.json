@@ -1,0 +1,5 @@
+{
+    "subject": "[Reply Needed] Test Email 3",
+    "body": "[zkemail-begin]Send 1 ETH to bob@example.com[zkemail-end]",
+    "fromName": "\"dummy@outlook.com\""
+}

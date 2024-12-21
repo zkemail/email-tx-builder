@@ -33,12 +33,7 @@ export async function genEmailCircuitInput(
     const jsonStr = await relayerUtils.generateEmailCircuitInput(
         emailRaw,
         accountCode,
-        {
-            ignore_body_hash_check: options?.ignoreBodyHashCheck,
-            max_header_length: options?.maxHeaderLength,
-            max_body_length: options?.maxBodyLength,
-            sha_precompute_selector: options?.shaPrecomputeSelector,
-        }
+        options
     );
     return JSON.parse(jsonStr);
 }
