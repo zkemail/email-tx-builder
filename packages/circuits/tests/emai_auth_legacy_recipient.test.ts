@@ -56,7 +56,7 @@ describe("Email Auth Legacy with Recipient", () => {
             expect(BigInt(domainFields[idx])).toEqual(witness[1 + idx]);
         }
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
@@ -139,7 +139,7 @@ describe("Email Auth Legacy with Recipient", () => {
             expect(BigInt(domainFields[idx])).toEqual(witness[1 + idx]);
         }
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
@@ -222,7 +222,7 @@ describe("Email Auth Legacy with Recipient", () => {
             expect(BigInt(domainFields[idx])).toEqual(witness[1 + idx]);
         }
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
@@ -303,7 +303,7 @@ describe("Email Auth Legacy with Recipient", () => {
             expect(BigInt(domainFields[idx])).toEqual(witness[1 + idx]);
         }
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]

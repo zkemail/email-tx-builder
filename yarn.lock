@@ -1724,10 +1724,9 @@
     "@openzeppelin/contracts-upgradeable" "^5.0.0"
     dotenv "^16.3.1"
 
-"@zk-email/relayer-utils@=0.4.59":
-  version "0.4.59"
-  resolved "https://registry.yarnpkg.com/@zk-email/relayer-utils/-/relayer-utils-0.4.59.tgz#a57b540fa3cf603b3d9d89624d9994e44453bb91"
-  integrity sha512-pSKCH/wYuI54Ci5L13md8LNQbwrulQ+HWUyjoiKFH3VtI/NebR98n2JOBvnVHmvpnXfi/l/uimoHnHFD+MOX6A==
+"@zk-email/relayer-utils@https://gitpkg.vercel.app/zkemail/relayer-utils/pkg?feat/fix-selector-bugs":
+  version "0.4.60"
+  resolved "https://gitpkg.vercel.app/zkemail/relayer-utils/pkg?feat/fix-selector-bugs#2ece4577e83ba322eb56708f95d637666bd81001"
 
 "@zk-email/zk-regex-circom@=2.3.2":
   version "2.3.2"

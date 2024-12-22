@@ -13,6 +13,8 @@ const option = {
     output: path.join(__dirname, "../build"),
     recompile: true,
 };
+const shaPrecomputeSelector = '\\\[zkemail-begin\\\]';
+
 
 jest.setTimeout(1440000);
 describe("Email Auth with Recipient", () => {
@@ -36,7 +38,6 @@ describe("Email Auth with Recipient", () => {
 
         const emailRaw = readFileSync(emailFilePath, "utf8");
         const parsedEmail = await relayerUtils.parseEmail(emailRaw);
-        console.log(parsedEmail);
         const accountCode = await relayerUtils.generateAccountCode();
 
         const {
@@ -44,10 +45,10 @@ describe("Email Auth with Recipient", () => {
             ...emailAuthInput
         } =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 640,
+                maxHeaderLength: 768,
                 maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
-                shaPrecomputeSelector: '(<(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)? (=\r\n)?i(=\r\n)?d(=\r\n)?=3D(=\r\n)?"(=\r\n)?[^"]*(=\r\n)?z(=\r\n)?k(=\r\n)?e(=\r\n)?m(=\r\n)?a(=\r\n)?i(=\r\n)?l(=\r\n)?[^"]*(=\r\n)?"(=\r\n)?[^>]*(=\r\n)?>(=\r\n)?)(=\r\n)?([^<>/]+)(<(=\r\n)?/(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)?>(=\r\n)?)',
+                shaPrecomputeSelector
             });
         const command = "Send 0.1 ETH to alice@gmail.com";
         const recipientInput = await genRecipientInput(command, parsedEmail.signature);
@@ -67,7 +68,7 @@ describe("Email Auth with Recipient", () => {
         }
 
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
@@ -80,7 +81,7 @@ describe("Email Auth with Recipient", () => {
             witness[1 + domainFields.length + 1]
         );
 
-        const timestamp = BigInt(1729865810);
+        const timestamp = BigInt(1734798639);
         expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
 
         const maskedCommand = "Send 0.1 ETH to ";
@@ -130,7 +131,6 @@ describe("Email Auth with Recipient", () => {
 
         const emailRaw = readFileSync(emailFilePath, "utf8");
         const parsedEmail = await relayerUtils.parseEmail(emailRaw);
-        console.log(parsedEmail);
         const accountCode = await relayerUtils.generateAccountCode();
 
         const {
@@ -138,10 +138,10 @@ describe("Email Auth with Recipient", () => {
             ...emailAuthInput
         } =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 640,
+                maxHeaderLength: 768,
                 maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
-                shaPrecomputeSelector: '(<(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)? (=\r\n)?i(=\r\n)?d(=\r\n)?=3D(=\r\n)?"(=\r\n)?[^"]*(=\r\n)?z(=\r\n)?k(=\r\n)?e(=\r\n)?m(=\r\n)?a(=\r\n)?i(=\r\n)?l(=\r\n)?[^"]*(=\r\n)?"(=\r\n)?[^>]*(=\r\n)?>(=\r\n)?)(=\r\n)?([^<>/]+)(<(=\r\n)?/(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)?>(=\r\n)?)',
+                shaPrecomputeSelector
             });
         const command = "Swap 1 ETH to DAI";
         const recipientInput = await genRecipientInput(command, parsedEmail.signature);
@@ -160,7 +160,7 @@ describe("Email Auth with Recipient", () => {
         }
 
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
@@ -173,7 +173,7 @@ describe("Email Auth with Recipient", () => {
             witness[1 + domainFields.length + 1]
         );
 
-        const timestamp = BigInt(1729865832);
+        const timestamp = BigInt(1734798636);
         expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
 
         const maskedCommand = "Swap 1 ETH to DAI";

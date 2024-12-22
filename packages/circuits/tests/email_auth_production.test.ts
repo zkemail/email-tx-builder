@@ -57,7 +57,7 @@ describe("Email Auth Production", () => {
         }
 
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
@@ -127,7 +127,7 @@ describe("Email Auth Production", () => {
         }
 
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
@@ -196,7 +196,7 @@ describe("Email Auth Production", () => {
         }
 
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
@@ -265,7 +265,7 @@ describe("Email Auth Production", () => {
         }
 
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
@@ -337,7 +337,7 @@ describe("Email Auth Production", () => {
     //     console.log("domainFields done");
 
     //     const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-    //         parsedEmail.public_key
+    //         parsedEmail.publicKey
     //     );
     //     expect(BigInt(expectedPubKeyHash)).toEqual(
     //         witness[1 + domainFields.length]
