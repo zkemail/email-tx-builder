@@ -9,7 +9,13 @@ import re
 
 
 def send_html_email(
-    sender_email, sender_password, recipient_email, subject, message, sender_name
+    sender_email,
+    sender_password,
+    recipient_email,
+    subject,
+    message,
+    message_plain,
+    sender_name,
 ):
     # Create a multipart message
     msg = MIMEMultipart("alternative")
@@ -30,6 +36,8 @@ def send_html_email(
     </html>
     """
 
+    if message_plain != None:
+        msg.attach(MIMEText(message_plain, "plain"))
     # Attach the HTML body to the email
     msg.attach(MIMEText(html_content, "html"))
 
@@ -71,6 +79,7 @@ if __name__ == "__main__":
             data = json.load(file)
             subject = data.get("subject")
             message = data.get("body")
+            message_plain = data.get("bodyPlain")
             sender_name = data.get("senderName")
             print(f"Sending email with {subject}; {message}; {sender_name}")
             send_html_email(
@@ -79,5 +88,6 @@ if __name__ == "__main__":
                 recipient_email,
                 subject,
                 message,
+                message_plain,
                 sender_name,
             )
