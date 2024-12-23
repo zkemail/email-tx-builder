@@ -1,6 +1,10 @@
 name: Unit Tests
 
-on: [push]
+on:
+  workflow_run:
+    workflows: ["Build and Format"]
+    types:
+      - completed
 
 jobs:
   start-spot-vm:
