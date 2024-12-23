@@ -1,0 +1,66 @@
+name: start-and-stop-self-hosted-runner
+
+on:
+  workflow_run: # to start/stop vm instance when workflow has been started/completed.
+    workflows: [Build and Format, Unit Tests]
+    types: 
+      - requested # start
+      - completed # completed
+
+concurrency:
+  group: start-and-stop-self-hosted-runner
+  cancel-in-progress: true
+
+env:
+  VM_NAME: email-tx-builder-runner-spot
+  VM_ZONE: us-central1-c
+  GCP_PROJECT: zkairdrop
+
+jobs:
+  action:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
+    steps:
+      - name: Determine action
+        id: determine-action
+        run: |
+          if [[ "${{ github.event.action }}" == "requested" ]];then
+            echo "action=start" >> "$GITHUB_OUTPUT"
+            echo "MESSAGE=VM ${VM_NAME} has been stgarted." >> "$GITHUB_OUTPUT"
+          else
+            echo "action=stop" >> "$GITHUB_OUTPUT"
+            echo "MESSAGE=VM ${VM_NAME} has been stopped." >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 363.0.0'
+  
+      - name: Check the status of the instance
+        id: check-status
+        run: |
+          status=$(gcloud compute instances describe "${{ env.VM_NAME }}" --zone "${{ env.VM_ZONE }}" --format="get(status)" --project ${{ env.GCP_PROJECT }})
+          # set need to update desired status
+          if [ "${{ steps.determine-action.outputs.action }}" == 'start' ] && [ "$status" == 'TERMINATED' ]; then
+            echo "need_to_update=true" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.determine-action.outputs.action }}" == 'stop' ] && [ "$status" == 'RUNNING' ]; then
+            echo "need_to_update=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "need_to_update=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: "${{ steps.determine-action.outputs.action }} instance"
+        if: steps.check-status.outputs.need_to_update == 'true'
+        run: |
+          echo "${{ steps.determine-action.outputs.action }} instance..."
+          gcloud compute instances "${{ steps.determine-action.outputs.action }}" "${{ env.VM_NAME }}" --zone "${{ env.VM_ZONE }}" --project ${{ env.GCP_PROJECT }} --async
+  
