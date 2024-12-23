@@ -2,7 +2,7 @@ name: start-and-stop-self-hosted-runner
 
 on:
   workflow_run: # to start/stop vm instance when workflow has been started/completed.
-    workflows: [Build and Format, Unit Tests]
+    workflows: [Unit Tests]
     types: 
       - requested # start
       - completed # completed
