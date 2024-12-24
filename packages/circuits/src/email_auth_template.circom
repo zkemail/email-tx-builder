@@ -112,10 +112,18 @@ template EmailAuth(n, k, max_header_bytes, max_body_bytes, max_command_bytes, re
     // Timestamp regex + convert to decimal format
     signal timestamp_regex_out, timestamp_regex_reveal[max_header_bytes];
     (timestamp_regex_out, timestamp_regex_reveal) <== TimestampRegex(max_header_bytes)(padded_header);
-    signal timestamp_str[timestamp_len];
     signal is_valid_timestamp_idx <== LessThan(log2Ceil(max_header_bytes))([timestamp_idx, max_header_bytes]);
     is_valid_timestamp_idx === 1;
-    timestamp_str <== SelectRegexReveal(max_header_bytes, timestamp_len)(timestamp_regex_reveal, timestamp_idx);
+    signal replaced_timestamp_regex_reveal[max_header_bytes];
+    for(var i=0; i<max_header_bytes; i++) {
+        if(i>=0 && i < timestamp_len) {
+            replaced_timestamp_regex_reveal[i] <== (timestamp_regex_reveal[i] - 1) * timestamp_regex_out + 48;
+        } else {
+            replaced_timestamp_regex_reveal[i] <== timestamp_regex_reveal[i] * timestamp_regex_out;
+        }
+    }
+    signal timestamp_str[timestamp_len];
+    timestamp_str <== SelectRegexReveal(max_header_bytes, timestamp_len)(replaced_timestamp_regex_reveal, timestamp_idx);
     signal raw_timestamp <== Digit2Int(timestamp_len)(timestamp_str);
     timestamp <== timestamp_regex_out * raw_timestamp;
 
