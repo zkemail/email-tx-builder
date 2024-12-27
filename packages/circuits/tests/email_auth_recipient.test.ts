@@ -67,7 +67,7 @@ describe("Email Auth with Recipient", () => {
         }
 
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
@@ -160,7 +160,7 @@ describe("Email Auth with Recipient", () => {
         }
 
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]

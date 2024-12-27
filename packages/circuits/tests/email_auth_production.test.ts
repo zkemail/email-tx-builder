@@ -12,6 +12,7 @@ const option = {
     output: path.join(__dirname, "../build"),
     recompile: true,
 };
+const shaPrecomputeSelector = '<div id=3D\"[^"]*zkemail[^"]*\"[^>]*>[^<>/]+</div>';
 
 jest.setTimeout(1440000);
 describe("Email Auth Production", () => {
@@ -57,7 +58,7 @@ describe("Email Auth Production", () => {
         }
 
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
@@ -127,7 +128,7 @@ describe("Email Auth Production", () => {
         }
 
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
@@ -196,7 +197,7 @@ describe("Email Auth Production", () => {
         }
 
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
@@ -265,7 +266,7 @@ describe("Email Auth Production", () => {
         }
 
         const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-            parsedEmail.public_key
+            parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
@@ -292,6 +293,76 @@ describe("Email Auth Production", () => {
         }
 
         const fromAddr = "clavertest1@gmail.com";
+        const accountSalt = await relayerUtils.generateAccountSalt(fromAddr, accountCode);
+        expect(BigInt(accountSalt)).toEqual(
+            witness[1 + domainFields.length + 3 + maskedCommandFields.length]
+        );
+
+        expect(BigInt(1)).toEqual(
+            witness[
+            1 + domainFields.length + 3 + maskedCommandFields.length + 1
+            ]
+        );
+    });
+
+    it("Verify a production email for recovery sent from apple email mobile", async () => {
+        const emailFilePath = path.join(
+            __dirname,
+            "./emails/recovery_gmail_from_apple_mail.eml"
+        );
+
+        const emailRaw = readFileSync(emailFilePath, "utf8");
+        const parsedEmail = await relayerUtils.parseEmail(emailRaw);
+        const accountCode =
+            "0x1162ebff40918afe5305e68396f0283eb675901d0387f97d21928d423aaa0b20";
+
+        const circuitInputs =
+            await genEmailCircuitInput(emailFilePath, accountCode, {
+                maxHeaderLength: 1024,
+                maxBodyLength: 1024,
+                ignoreBodyHashCheck: false,
+                shaPrecomputeSelector
+            });
+        console.log(circuitInputs);
+
+        const witness = await circuit.calculateWitness(circuitInputs);
+        await circuit.checkConstraints(witness);
+
+        const domainName = "gmail.com";
+        const paddedDomain = relayerUtils.padString(domainName, 255);
+        const domainFields = await relayerUtils.bytesToFields(paddedDomain);
+        for (let idx = 0; idx < domainFields.length; ++idx) {
+            expect(BigInt(domainFields[idx])).toEqual(witness[1 + idx]);
+        }
+
+        const expectedPubKeyHash = await relayerUtils.publicKeyHash(
+            parsedEmail.publicKey
+        );
+        expect(BigInt(expectedPubKeyHash)).toEqual(
+            witness[1 + domainFields.length]
+        );
+
+        const expectedEmailNullifier = await relayerUtils.emailNullifier(
+            parsedEmail.signature
+        );
+        expect(BigInt(expectedEmailNullifier)).toEqual(
+            witness[1 + domainFields.length + 1]
+        );
+
+        const timestamp = BigInt(1735305312);
+        expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
+
+        const maskedCommand = "Accept guardian request for 0x952541bDfe8aae3805D5b9A37D5Ae5e1EE68346f";
+        const paddedMaskedCommand = relayerUtils.padString(maskedCommand, 605);
+        const maskedCommandFields =
+            await relayerUtils.bytesToFields(paddedMaskedCommand);
+        for (let idx = 0; idx < maskedCommandFields.length; ++idx) {
+            expect(BigInt(maskedCommandFields[idx])).toEqual(
+                witness[1 + domainFields.length + 3 + idx]
+            );
+        }
+
+        const fromAddr = "suegamisora@gmail.com";
         const accountSalt = await relayerUtils.generateAccountSalt(fromAddr, accountCode);
         expect(BigInt(accountSalt)).toEqual(
             witness[1 + domainFields.length + 3 + maskedCommandFields.length]
