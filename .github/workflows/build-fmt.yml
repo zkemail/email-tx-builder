@@ -44,6 +44,9 @@ jobs:
         with:
           node-version: 18
           cache: "yarn"
+      
+      - name: Cache clean
+        run: yarn cache clean
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
