@@ -14,10 +14,8 @@ pub struct Config {
     pub database_url: String,
     /// The URL for the SMTP server.
     pub smtp_url: String,
-    /// The URL for the prover service.
-    pub prover_url: String,
-    // /// The API key for Alchemy services.
-    // pub alchemy_api_key: String,
+    /// Configuration for the prover service.
+    pub prover: ProverConfig,
     /// Configuration for file paths.
     pub path: PathConfig,
     /// Configuration for ICP (Internet Computer Protocol).
@@ -57,8 +55,21 @@ pub struct ChainConfig {
     pub rpc_url: String,
     /// The chain ID for the blockchain.
     pub chain_id: u32,
-    // /// The name used for Alchemy services.
-    // pub alchemy_name: String,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct ProverConfig {
+    /// The URL for the prover service.
+    pub url: String,
+    /// The blueprint ID for the prover.
+    pub blueprint_id: String,
+    /// The URL for downloading zkey files.
+    pub zkey_download_url: String,
+    /// The URL for downloading circuit CPP files.
+    pub circuit_cpp_download_url: String,
+    /// The API key for the prover.
+    pub api_key: String,
 }
 
 // Function to load the configuration from a JSON file

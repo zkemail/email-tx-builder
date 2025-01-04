@@ -1,7 +1,7 @@
 use anyhow::Result;
 use relayer_utils::{
-    generate_email_circuit_input, generate_proof, u256_to_bytes32, EmailCircuitParams, ParsedEmail,
-    LOG,
+    generate_email_circuit_input, generate_proof, generate_proof_gpu, u256_to_bytes32,
+    EmailCircuitParams, ParsedEmail, LOG,
 };
 use slog::info;
 
@@ -54,10 +54,14 @@ pub async fn generate_email_proof(
     .await?;
 
     // Generate the proof and public signals using the circuit input
-    let (proof, public_signals) = generate_proof(
+    let (proof, public_signals) = generate_proof_gpu(
         &circuit_input,
-        "email_auth",
-        &relayer_state.config.prover_url,
+        &relayer_state.config.prover.blueprint_id,
+        &uuid::Uuid::new_v4().to_string(),
+        &relayer_state.config.prover.zkey_download_url,
+        &relayer_state.config.prover.circuit_cpp_download_url,
+        &relayer_state.config.prover.api_key,
+        &relayer_state.config.prover.url,
     )
     .await?;
 
