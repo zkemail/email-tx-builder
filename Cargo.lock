@@ -4168,7 +4168,7 @@ dependencies = [
 [[package]]
 name = "relayer-utils"
 version = "0.4.60"
-source = "git+https://github.com/zkemail/relayer-utils.git#cb50b38e9f35d275e19dd8f2cfbe0d0203452c18"
+source = "git+https://github.com/zkemail/relayer-utils.git?branch=main#d5564d385783ecc63a513ba8f4a03833d31a0c55"
 dependencies = [
  "anyhow",
  "base64 0.22.1",
@@ -6025,6 +6025,9 @@ name = "uuid"
 version = "1.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8c5f0a0af699448548ad1a2fbf920fb4bee257eae39953ba95cb84891a0446a"
+dependencies = [
+ "getrandom",
+]
 
 [[package]]
 name = "vcpkg"
