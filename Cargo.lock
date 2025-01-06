@@ -1943,13 +1943,13 @@ checksum = "1b43ede17f21864e81be2fa654110bf1e793774238d86ef8555c37e6519c0403"
 [[package]]
 name = "halo2curves"
 version = "0.7.0"
-source = "git+https://github.com/privacy-scaling-explorations/halo2curves.git#8771fe5a5d54fc03e74dbc8915db5dad3ab46a83"
+source = "git+https://github.com/privacy-scaling-explorations/halo2curves.git?rev=8771fe5a5d54fc03e74dbc8915db5dad3ab46a83#8771fe5a5d54fc03e74dbc8915db5dad3ab46a83"
 dependencies = [
  "blake2",
  "digest 0.10.7",
  "ff",
  "group",
- "halo2derive",
+ "halo2derive 0.1.0 (git+https://github.com/privacy-scaling-explorations/halo2curves.git?rev=8771fe5a5d54fc03e74dbc8915db5dad3ab46a83)",
  "lazy_static",
  "num-bigint",
  "num-integer",
@@ -1964,6 +1964,45 @@ dependencies = [
  "static_assertions",
  "subtle",
  "unroll",
+]
+
+[[package]]
+name = "halo2curves"
+version = "0.7.0"
+source = "git+https://github.com/privacy-scaling-explorations/halo2curves.git#8771fe5a5d54fc03e74dbc8915db5dad3ab46a83"
+dependencies = [
+ "blake2",
+ "digest 0.10.7",
+ "ff",
+ "group",
+ "halo2derive 0.1.0 (git+https://github.com/privacy-scaling-explorations/halo2curves.git)",
+ "lazy_static",
+ "num-bigint",
+ "num-integer",
+ "num-traits",
+ "pairing",
+ "pasta_curves",
+ "paste",
+ "rand",
+ "rand_core",
+ "rayon",
+ "sha2 0.10.8",
+ "static_assertions",
+ "subtle",
+ "unroll",
+]
+
+[[package]]
+name = "halo2derive"
+version = "0.1.0"
+source = "git+https://github.com/privacy-scaling-explorations/halo2curves.git?rev=8771fe5a5d54fc03e74dbc8915db5dad3ab46a83#8771fe5a5d54fc03e74dbc8915db5dad3ab46a83"
+dependencies = [
+ "num-bigint",
+ "num-integer",
+ "num-traits",
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
 ]
 
 [[package]]
@@ -3606,7 +3645,7 @@ version = "1.0.0"
 source = "git+https://github.com/zkemail/poseidon-rs.git#fe5ce2634c27326219d4faf75beb73b40a0beb7d"
 dependencies = [
  "getrandom",
- "halo2curves",
+ "halo2curves 0.7.0 (git+https://github.com/privacy-scaling-explorations/halo2curves.git)",
  "once_cell",
  "serde",
  "thiserror 1.0.69",
@@ -3921,15 +3960,16 @@ checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 
 [[package]]
 name = "relayer-utils"
-version = "0.4.2"
-source = "git+https://github.com/zkemail/relayer-utils.git?branch=main#0663df1271beac13ec14c731ee1ce7ae4be54d16"
+version = "0.4.60"
+source = "git+https://github.com/zkemail/relayer-utils.git?branch=main#d5564d385783ecc63a513ba8f4a03833d31a0c55"
 dependencies = [
  "anyhow",
  "base64 0.22.1",
  "cfdkim",
+ "console_error_panic_hook",
  "ethers",
  "file-rotate",
- "halo2curves",
+ "halo2curves 0.7.0 (git+https://github.com/privacy-scaling-explorations/halo2curves.git?rev=8771fe5a5d54fc03e74dbc8915db5dad3ab46a83)",
  "hex",
  "hmac-sha256",
  "itertools 0.10.5",
@@ -6342,7 +6382,7 @@ dependencies = [
 [[package]]
 name = "zk-regex-apis"
 version = "2.3.1"
-source = "git+https://github.com/zkemail/zk-regex.git#7002a2179e076449b84e3e7e8ba94e88d0a2dc2f"
+source = "git+https://github.com/zkemail/zk-regex.git?branch=dimidumo/zk-802-consistent-casing-everywhere#5b357f2c7aa4643964534d88ebe5db3512048a71"
 dependencies = [
  "fancy-regex",
  "itertools 0.13.0",

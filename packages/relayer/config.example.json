@@ -2,8 +2,13 @@
   "port": 8000,
   "databaseUrl": "postgres://relayer:relayer_password@db:5432/relayer",
   "smtpUrl": "http://smtp_server_1:3000",
-  "proverUrl": "https://zkemail--email-auth-prover-v1-5-4-flask-app.modal.run",
-  "alchemyApiKey": "",
+  "prover": {
+    "url": "https://prover.zk.email/api/prove",
+    "apiKey": "",
+    "blueprintId": "7f3c3bc2-7c5d-4682-8d7f-f3d2f9046722",
+    "zkeyDownloadUrl": "https://storage.googleapis.com/circom-ether-email-auth/v2.0.2-dev/circuit_zkey.zip",
+    "circuitCppDownloadUrl": "https://storage.googleapis.com/circom-ether-email-auth/v2.0.2-dev/circuit.zip"
+  },
   "path": {
     "pem": "./.ic.pem",
     "emailTemplates": "./email_templates"

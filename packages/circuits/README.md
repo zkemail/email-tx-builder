@@ -7,6 +7,17 @@ We provide one main circuit as follows.
 #### `email_auth.circom`
 A circuit to verify that a message in the subject is authorized by a user of an account salt, derived from an email address in the From field and a random field value called account code.
 
+The circuit has the following blueprint ID and download URLs for the proving key and witness generator:
+```json
+{
+  "blueprintId": "7f3c3bc2-7c5d-4682-8d7f-f3d2f9046722",
+  "zkeyDownloadUrl": "https://storage.googleapis.com/circom-ether-email-auth/v2.0.2-dev/circuit_zkey.zip",
+  "circuitCppDownloadUrl": "https://storage.googleapis.com/circom-ether-email-auth/v2.0.2-dev/circuit.zip"
+}
+```
+
+It takes as input the following data:
+1. a padded email header `padded_header`.
 It takes as input the following data:
 1. a padded email header `padded_header`.
 2. the bytes of the padded email header `padded_header_len`.
