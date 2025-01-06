@@ -13,7 +13,7 @@ const option = {
     output: path.join(__dirname, "../build"),
     recompile: true,
 };
-const shaPrecomputeSelector = '\\\[zkemail-begin\\\]';
+const shaPrecomputeSelector = '<div id=3D\"[^"]*zkemail[^"]*\"[^>]*>(<[^<>]+>)*[^<>/]+(<[^<>]+>)*</div>';
 
 
 jest.setTimeout(1440000);
@@ -81,7 +81,7 @@ describe("Email Auth with Recipient", () => {
             witness[1 + domainFields.length + 1]
         );
 
-        const timestamp = BigInt(1734798639);
+        const timestamp = BigInt(1729865810);
         expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
 
         const maskedCommand = "Send 0.1 ETH to ";
@@ -173,7 +173,7 @@ describe("Email Auth with Recipient", () => {
             witness[1 + domainFields.length + 1]
         );
 
-        const timestamp = BigInt(1734798636);
+        const timestamp = BigInt(1729865832);
         expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
 
         const maskedCommand = "Swap 1 ETH to DAI";

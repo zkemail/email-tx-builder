@@ -12,7 +12,7 @@ const option = {
     output: path.join(__dirname, "../build"),
     recompile: true,
 };
-const shaPrecomputeSelector = '<div id=3D\"[^"]*zkemail[^"]*\"[^>]*>[^<>/]+</div>';
+const shaPrecomputeSelector = '<div id=3D\"[^"]*zkemail[^"]*\"[^>]*>(<[^<>]+>)*[^<>/]+(<[^<>]+>)*</div>';
 
 jest.setTimeout(1440000);
 describe("Email Auth Production", () => {
@@ -700,7 +700,7 @@ describe("Email Auth Production", () => {
         );
         console.log("expectedEmailNullifier done");
 
-        const timestamp = BigInt(1734913850);
+        const timestamp = BigInt(1736165125);
         expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
         console.log("timestamp done");
 
