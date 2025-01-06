@@ -10,9 +10,9 @@ export async function genRecipientInputLegacy(emailFilePath: string): Promise<{
   const emailRaw = await promisify(fs.readFile)(emailFilePath, "utf8");
   const parsedEmail = await relayerUtils.parseEmail(emailRaw);
   const subjectEmailIdxes = relayerUtils.extractSubjectAllIdxes(
-    parsedEmail.canonicalized_header
+    parsedEmail.canonicalizedHeader
   )[0];
-  const subject = parsedEmail.canonicalized_header.slice(
+  const subject = parsedEmail.canonicalizedHeader.slice(
     subjectEmailIdxes[0],
     subjectEmailIdxes[1]
   );

@@ -1,4 +1,4 @@
 {
     "subject": "[Reply Needed] Test Email 1",
-    "body": "[zkemail-begin]Send 0.1 ETH to alice@gmail.com[zkemail-end]"
+    "body": "<div id=3D\"zkemail\">Send 0.1 ETH to alice@gmail.com</div>"
 }

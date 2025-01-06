@@ -12,7 +12,8 @@ const option = {
     recompile: true,
 };
 
-const shaPrecomputeSelector = '\\\[zkemail-begin\\\]';
+const shaPrecomputeSelector = '<div id=3D\"[^"]*zkemail[^"]*\"[^>]*>(<[^<>]+>)*[^<>/]+(<[^<>]+>)*</div>';
+
 jest.setTimeout(1440000);
 describe("Email Auth", () => {
     let circuit;
@@ -35,12 +36,12 @@ describe("Email Auth", () => {
 
         const emailRaw = readFileSync(emailFilePath, "utf8");
         const parsedEmail = await relayerUtils.parseEmail(emailRaw);
-        console.log(parsedEmail);
         const accountCode = await relayerUtils.generateAccountCode();
 
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768, maxBodyLength: 768,
+                maxHeaderLength: 640,
+                maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
             });
@@ -68,7 +69,7 @@ describe("Email Auth", () => {
             witness[1 + domainFields.length + 1]
         );
 
-        const timestamp = BigInt(1734798639);
+        const timestamp = BigInt(1729865810);
         expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
 
         const maskedCommand = "Send 0.1 ETH to ";
@@ -105,7 +106,8 @@ describe("Email Auth", () => {
         const accountCode = await relayerUtils.generateAccountCode();
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768, maxBodyLength: 768,
+                maxHeaderLength: 640,
+                maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
             });
@@ -133,7 +135,7 @@ describe("Email Auth", () => {
             witness[1 + domainFields.length + 1]
         );
 
-        const timestamp = BigInt(1734798636);
+        const timestamp = BigInt(1729865832);
         expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
 
         const maskedCommand = "Swap 1 ETH to DAI";
@@ -171,7 +173,8 @@ describe("Email Auth", () => {
 
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768, maxBodyLength: 768,
+                maxHeaderLength: 640,
+                maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
             });
@@ -199,7 +202,7 @@ describe("Email Auth", () => {
             witness[1 + domainFields.length + 1]
         );
 
-        const timestamp = BigInt(1734798632);
+        const timestamp = BigInt(1729866032);
         expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
 
         const maskedCommand = "Send 1 ETH to ";
@@ -237,7 +240,8 @@ describe("Email Auth", () => {
 
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768, maxBodyLength: 768,
+                maxHeaderLength: 640,
+                maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
             });
@@ -265,7 +269,7 @@ describe("Email Auth", () => {
             witness[1 + domainFields.length + 1]
         );
 
-        const timestamp = BigInt(1734798624);
+        const timestamp = BigInt(1729866112);
         expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
 
         const maskedCommand = "Send 1 ETH to ";
@@ -304,7 +308,8 @@ describe("Email Auth", () => {
 
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768, maxBodyLength: 768,
+                maxHeaderLength: 640,
+                maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
             });
@@ -332,7 +337,7 @@ describe("Email Auth", () => {
             witness[1 + domainFields.length + 1]
         );
 
-        const timestamp = BigInt(1734798620);
+        const timestamp = BigInt(1729866146);
         expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
 
         const maskedCommand =
@@ -371,7 +376,8 @@ describe("Email Auth", () => {
 
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768, maxBodyLength: 768,
+                maxHeaderLength: 640,
+                maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
             });
@@ -399,7 +405,7 @@ describe("Email Auth", () => {
             witness[1 + domainFields.length + 1]
         );
 
-        const timestamp = BigInt(1734798645);
+        const timestamp = BigInt(1729866214);
         expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
 
         const maskedCommand =
@@ -432,12 +438,14 @@ describe("Email Auth", () => {
         );
         const emailRaw = readFileSync(emailFilePath, "utf8");
         const parsedEmail = await relayerUtils.parseEmail(emailRaw);
+
         const accountCode =
             "0x01eb9b204cc24c3baee11accc37d253a9c53e92b1a2cc07763475c135d575b76";
 
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768, maxBodyLength: 768,
+                maxHeaderLength: 640,
+                maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
             });
@@ -465,7 +473,7 @@ describe("Email Auth", () => {
             witness[1 + domainFields.length + 1]
         );
 
-        const timestamp = BigInt(1734798642);
+        const timestamp = BigInt(1729866476);
         expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
 
         const maskedCommand =
@@ -503,7 +511,7 @@ describe("Email Auth", () => {
 
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768, maxBodyLength: 768,
+                maxHeaderLength: 640, maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
             });
@@ -531,7 +539,7 @@ describe("Email Auth", () => {
             witness[1 + domainFields.length + 1]
         );
 
-        const timestamp = BigInt(1734798629);
+        const timestamp = BigInt(1736157561);
         expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
 
         const maskedCommand =
@@ -570,7 +578,7 @@ describe("Email Auth", () => {
 
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768, maxBodyLength: 768,
+                maxHeaderLength: 640, maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
             });
@@ -598,7 +606,7 @@ describe("Email Auth", () => {
             witness[1 + domainFields.length + 1]
         );
 
-        const timestamp = BigInt(1734798617);
+        const timestamp = BigInt(1736157558);
         expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
 
         const maskedCommand =
@@ -635,7 +643,7 @@ describe("Email Auth", () => {
 
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768,
+                maxHeaderLength: 640,
                 maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
@@ -659,7 +667,7 @@ describe("Email Auth", () => {
 
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768,
+                maxHeaderLength: 640,
                 maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
@@ -683,7 +691,7 @@ describe("Email Auth", () => {
 
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768,
+                maxHeaderLength: 640,
                 maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
@@ -707,7 +715,7 @@ describe("Email Auth", () => {
 
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768, maxBodyLength: 768,
+                maxHeaderLength: 640, maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
             });
@@ -730,7 +738,7 @@ describe("Email Auth", () => {
 
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768, maxBodyLength: 768,
+                maxHeaderLength: 640, maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
             });
@@ -752,7 +760,7 @@ describe("Email Auth", () => {
 
         const circuitInputs =
             await genEmailCircuitInput(emailFilePath, accountCode, {
-                maxHeaderLength: 768, maxBodyLength: 768,
+                maxHeaderLength: 640, maxBodyLength: 768,
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector,
             });

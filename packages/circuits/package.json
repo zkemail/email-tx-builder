@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@zk-email/circuits": "=6.3.2",
-    "@zk-email/relayer-utils": "https://gitpkg.vercel.app/zkemail/relayer-utils/pkg?feat/fix-selector-bugs",
-    "@zk-email/zk-regex-circom": "=2.3.2",
+    "@zk-email/relayer-utils": "=0.4.60",
+    "@zk-email/zk-regex-circom": "=2.3.1",
     "commander": "^12.1.0",
     "snarkjs": "=0.7.5"
   },

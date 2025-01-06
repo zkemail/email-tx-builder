@@ -1724,11 +1724,20 @@
     "@openzeppelin/contracts-upgradeable" "^5.0.0"
     dotenv "^16.3.1"
 
-"@zk-email/relayer-utils@https://gitpkg.vercel.app/zkemail/relayer-utils/pkg?feat/fix-selector-bugs":
+"@zk-email/relayer-utils@=0.4.60":
   version "0.4.60"
-  resolved "https://gitpkg.vercel.app/zkemail/relayer-utils/pkg?feat/fix-selector-bugs#056b6998e0cb52971ef981e57e7dd9fc449bb2a5"
+  resolved "https://registry.yarnpkg.com/@zk-email/relayer-utils/-/relayer-utils-0.4.60.tgz#ab41a7375470e8161caafaa46abb919c710d4a67"
+  integrity sha512-sOfRc8yoAGFUPXNC3a/64IH+8+GEYPfUF0x5HtElsNfYxM/xtLG6hYvNTl7WLhhxe83dl3VtGMcptiiSvRdVrg==
 
-"@zk-email/zk-regex-circom@=2.3.2", "@zk-email/zk-regex-circom@^2.3.1":
+"@zk-email/zk-regex-circom@=2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@zk-email/zk-regex-circom/-/zk-regex-circom-2.3.1.tgz#032cdf12b5f587f828d6e872a235c0120d463bc8"
+  integrity sha512-FJNi4QL07teQPuXV4EZqosPpA4riOSeFX2xD+cd4CCuf5b1RmqGqXoBz7yxT0QXuwNqdgooY6v6/xhH1o4X7vg==
+  dependencies:
+    commander "^11.0.0"
+    snarkjs "^0.7.5"
+
+"@zk-email/zk-regex-circom@^2.3.1":
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/@zk-email/zk-regex-circom/-/zk-regex-circom-2.3.2.tgz#d3ad819ea0de3ce7612aa9ecde0497c3fac514fc"
   integrity sha512-GXp4Z/93iF54hfJwlWl52HFiqpmLCeSHFc4HlYpxj5EWHQK6ibFQMLUWTJsdA3eh/erjO4UX+HlEIJ/gHhLg9g==
@@ -2398,9 +2407,9 @@ ejs@^3.1.10, ejs@^3.1.6:
     jake "^10.8.5"
 
 electron-to-chromium@^1.5.73:
-  version "1.5.75"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.75.tgz#bba96eabf0e8ca36324679caa38b982800acc87d"
-  integrity sha512-Lf3++DumRE/QmweGjU+ZcKqQ+3bKkU/qjaKYhIJKEOhgIO9Xs6IiAQFkfFoj+RhgDk4LUeNsLo6plExHqSyu6Q==
+  version "1.5.76"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.76.tgz#db20295c5061b68f07c8ea4dfcbd701485d94a3d"
+  integrity sha512-CjVQyG7n7Sr+eBXE86HIulnL5N8xZY1sgmOPGuq/F0Rr0FJq63lg0kEtOIDfZBk44FnDLf6FUJ+dsJcuiUDdDQ==
 
 elliptic@6.5.4:
   version "6.5.4"
@@ -2685,7 +2694,7 @@ for-each@^0.3.3:
 
 "forge-std@https://github.com/foundry-rs/forge-std":
   version "1.9.5"
-  resolved "https://github.com/foundry-rs/forge-std#b93cf4bc34ff214c099dc970b153f85ade8c9f66"
+  resolved "https://github.com/foundry-rs/forge-std#b5a86914561f38735ef1fc357685de3e7c92dc48"
 
 fs.realpath@^1.0.0:
   version "1.0.0"

@@ -88,6 +88,9 @@ jobs:
       - name: Install yarn
         run: npm install -g yarn
 
+      - name: Cache clean
+        run: yarn cache clean
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
@@ -117,6 +120,9 @@ jobs:
 
       - name: Install yarn
         run: npm install -g yarn
+
+      - name: Cache clean
+        run: yarn cache clean
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
