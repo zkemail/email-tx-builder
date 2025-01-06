@@ -12,7 +12,7 @@ use ethers::{
 };
 use relayer_utils::{
     extract_substr_idxes, extract_template_vals_from_command, generate_email_circuit_input,
-    generate_proof, EmailCircuitParams, LOG,
+    generate_proof_gpu, EmailCircuitParams, LOG,
 };
 
 const DOMAIN_FIELDS: usize = 9;
@@ -404,8 +404,17 @@ async fn generate_email_proof(
     )
     .await?;
 
-    let (proof, public_signals) =
-        generate_proof(&circuit_input, "email_auth", PROVER_ADDRESS.get().unwrap()).await?;
+    // Generate the proof and public signals using the circuit input
+    let (proof, public_signals) = generate_proof_gpu(
+        &circuit_input,
+        &PROVER_BLUEPRINT_ID.get().unwrap(),
+        &uuid::Uuid::new_v4().to_string(),
+        &PROVER_ZKEY_DOWNLOAD_URL.get().unwrap(),
+        &PROVER_CIRCUIT_CPP_DOWNLOAD_URL.get().unwrap(),
+        &PROVER_API_KEY.get().unwrap(),
+        &PROVER_URL.get().unwrap(),
+    )
+    .await?;
 
     info!(LOG, "Public signals: {:?}", public_signals);
 

@@ -33,7 +33,6 @@ use tokio::time::Duration;
 
 pub static REGEX_JSON_DIR_PATH: OnceLock<PathBuf> = OnceLock::new();
 pub static WEB_SERVER_ADDRESS: OnceLock<String> = OnceLock::new();
-pub static PROVER_ADDRESS: OnceLock<String> = OnceLock::new();
 pub static PRIVATE_KEY: OnceLock<String> = OnceLock::new();
 pub static CHAIN_ID: OnceLock<u32> = OnceLock::new();
 pub static EMAIL_ACCOUNT_RECOVERY_VERSION_ID: OnceLock<u8> = OnceLock::new();
@@ -49,6 +48,12 @@ pub static DKIM_CANISTER_ID: OnceLock<String> = OnceLock::new();
 pub static WALLET_CANISTER_ID: OnceLock<String> = OnceLock::new();
 pub static PEM_PATH: OnceLock<String> = OnceLock::new();
 pub static IC_REPLICA_URL: OnceLock<String> = OnceLock::new();
+
+pub static PROVER_URL: OnceLock<String> = OnceLock::new();
+pub static PROVER_API_KEY: OnceLock<String> = OnceLock::new();
+pub static PROVER_BLUEPRINT_ID: OnceLock<String> = OnceLock::new();
+pub static PROVER_ZKEY_DOWNLOAD_URL: OnceLock<String> = OnceLock::new();
+pub static PROVER_CIRCUIT_CPP_DOWNLOAD_URL: OnceLock<String> = OnceLock::new();
 
 static DB_CELL: OnceCell<Arc<Database>> = OnceCell::const_new();
 
@@ -111,7 +116,6 @@ pub async fn run(config: RelayerConfig) -> Result<()> {
     // Initialize realyer configuration
     REGEX_JSON_DIR_PATH.set(config.regex_json_dir_path).unwrap();
     WEB_SERVER_ADDRESS.set(config.web_server_address).unwrap();
-    PROVER_ADDRESS.set(config.prover_address).unwrap();
     PRIVATE_KEY.set(config.private_key).unwrap();
     DATABASE_PATH.set(config.db_path).unwrap();
     CHAIN_ID.set(config.chain_id).unwrap();
@@ -130,6 +134,16 @@ pub async fn run(config: RelayerConfig) -> Result<()> {
     WALLET_CANISTER_ID.set(config.wallet_canister_id).unwrap();
     PEM_PATH.set(config.pem_path).unwrap();
     IC_REPLICA_URL.set(config.ic_replica_url).unwrap();
+
+    PROVER_URL.set(config.prover_url).unwrap();
+    PROVER_API_KEY.set(config.prover_api_key).unwrap();
+    PROVER_BLUEPRINT_ID.set(config.prover_blueprint_id).unwrap();
+    PROVER_ZKEY_DOWNLOAD_URL
+        .set(config.prover_zkey_download_url)
+        .unwrap();
+    PROVER_CIRCUIT_CPP_DOWNLOAD_URL
+        .set(config.prover_circuit_cpp_download_url)
+        .unwrap();
 
     // Spawn the API server task
     let api_server_task = tokio::task::spawn(async move {
