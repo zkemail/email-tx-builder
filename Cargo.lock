@@ -3961,7 +3961,7 @@ checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 [[package]]
 name = "relayer-utils"
 version = "0.4.60"
-source = "git+https://github.com/zkemail/relayer-utils.git?branch=feat/gpu_prover#92e0db380d6340cd4b608acf5b4b87af099ef12a"
+source = "git+https://github.com/zkemail/relayer-utils.git?branch=main#d5564d385783ecc63a513ba8f4a03833d31a0c55"
 dependencies = [
  "anyhow",
  "base64 0.22.1",

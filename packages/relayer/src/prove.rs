@@ -1,7 +1,7 @@
 use anyhow::Result;
 use relayer_utils::{
-    generate_email_circuit_input, generate_proof, generate_proof_gpu, u256_to_bytes32,
-    EmailCircuitParams, ParsedEmail, LOG,
+    generate_email_circuit_input, generate_proof_gpu, u256_to_bytes32, EmailCircuitParams,
+    ParsedEmail, LOG,
 };
 use slog::info;
 
