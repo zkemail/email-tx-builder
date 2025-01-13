@@ -48,7 +48,7 @@ WORKDIR /relayer/packages/contracts
 RUN source $HOME/.nvm/nvm.sh && nvm use default && yarn
 
 # Build the contracts using Foundry
-RUN source $HOME/.bashrc && forge build
+RUN source $HOME/.bashrc && yarn build
 
 # Copy the project files
 COPY packages/relayer /relayer/packages/relayer
