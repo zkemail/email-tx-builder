@@ -10,9 +10,14 @@ import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeab
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {IEmailAuth, EmailAuthMsg} from "./interfaces/IEmailAuth.sol";
 
-/// @title Email Authentication/Authorization Contract
-/// @notice This contract provides functionalities for the authentication of the email sender and the authorization of the message in the command part of the email body using DKIM and custom verification logic.
-/// @dev Inherits from OwnableUpgradeable and UUPSUpgradeable for upgradeability and ownership management.
+/// @title Email Authentication/Authorization Contract for Signature-like Usage
+/// @notice This contract provides a signature-like authentication mechanism using emails.
+/// Similar to how ECDSA signatures work, this contract only verifies the authenticity
+/// of an email command without handling replay protection or nullifiers - these should
+/// be implemented at the application level.
+/// @dev Unlike EmailAuth.sol which handles nullifiers internally, this contract is designed
+/// to be used like a signature verification mechanism where the calling contract manages
+/// its own replay protection.
 contract EmailAuthSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
     /// The CREATE2 salt of this contract defined as a hash of an email address and an account code.
     bytes32 public accountSalt;
@@ -80,8 +85,11 @@ contract EmailAuthSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
         emit VerifierUpdated(_verifierAddr);
     }
 
-    /// @notice Authenticate the email sender and authorize the message in the email command based on the provided email auth message.
-    /// @param emailAuthMsg The email auth message containing all necessary information for authentication and authorization.
+    /// @notice Authenticate the email sender and authorize the message in the email command.
+    /// @dev This function only verifies the authenticity of the email and command, without
+    /// handling replay protection. The calling contract should implement its own mechanisms
+    /// to prevent replay attacks, similar to how nonces are used with ECDSA signatures.
+    /// @param emailAuthMsg The email auth message containing all necessary information for authentication.
     function authEmail(EmailAuthMsg memory emailAuthMsg) public {
         require(templateId == emailAuthMsg.templateId, "invalid template id");
         string[] memory signHashTemplate = new string[](2);
