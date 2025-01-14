@@ -8,38 +8,20 @@ import {CommandUtils} from "./libraries/CommandUtils.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-
-/// @notice Struct to hold the email authentication/authorization message.
-struct EmailAuthMsg {
-    /// @notice The ID of the command template that the command in the email body should satisfy.
-    uint templateId;
-    /// @notice The parameters in the command of the email body, which should be taken according to the specified command template.
-    bytes[] commandParams;
-    /// @notice The number of skipped bytes in the command.
-    uint skippedCommandPrefix;
-    /// @notice The email proof containing the zk proof and other necessary information for the email verification by the verifier contract.
-    EmailProof proof;
-}
+import {IEmailAuth, EmailAuthMsg} from "./interfaces/IEmailAuth.sol";
 
 /// @title Email Authentication/Authorization Contract
 /// @notice This contract provides functionalities for the authentication of the email sender and the authorization of the message in the command part of the email body using DKIM and custom verification logic.
 /// @dev Inherits from OwnableUpgradeable and UUPSUpgradeable for upgradeability and ownership management.
-contract EmailAuthSigner is OwnableUpgradeable, UUPSUpgradeable {
+contract EmailAuthSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
     /// The CREATE2 salt of this contract defined as a hash of an email address and an account code.
     bytes32 public accountSalt;
     /// An instance of the DKIM registry contract.
     address public dkimRegistryAddr;
     /// An instance of the Verifier contract.
     address public verifierAddr;
-
-    event DKIMRegistryUpdated(address indexed dkimRegistry);
-    event VerifierUpdated(address indexed verifier);
-    event EmailAuthed(
-        bytes32 indexed emailNullifier,
-        bytes32 indexed accountSalt,
-        bool isCodeExist,
-        uint templateId
-    );
+    /// The templateId of the sign hash command.
+    uint256 public templateId;
 
     constructor() {}
 
@@ -48,15 +30,17 @@ contract EmailAuthSigner is OwnableUpgradeable, UUPSUpgradeable {
     /// @param _accountSalt The account salt to derive CREATE2 address of this contract.
     /// @param _dkimRegistryAddr The address of the DKIM registry contract.
     /// @param _verifierAddr The address of the verifier contract.
+    /// @param _templateId The templateId of the sign hash command.
     function initialize(
         address _initialOwner,
         bytes32 _accountSalt,
         address _dkimRegistryAddr,
-        address _verifierAddr
+        address _verifierAddr,
+        uint256 _templateId
     ) public initializer {
         __Ownable_init(_initialOwner);
         accountSalt = _accountSalt;
-
+        templateId = _templateId;
         require(
             _dkimRegistryAddr != address(0),
             "invalid dkim registry address"
@@ -99,6 +83,7 @@ contract EmailAuthSigner is OwnableUpgradeable, UUPSUpgradeable {
     /// @notice Authenticate the email sender and authorize the message in the email command based on the provided email auth message.
     /// @param emailAuthMsg The email auth message containing all necessary information for authentication and authorization.
     function authEmail(EmailAuthMsg memory emailAuthMsg) public {
+        require(templateId == emailAuthMsg.templateId, "invalid template id");
         string[] memory signHashTemplate = new string[](2);
         signHashTemplate[0] = "signHash";
         signHashTemplate[1] = "{uint}";

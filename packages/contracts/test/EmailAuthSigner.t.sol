@@ -10,7 +10,7 @@ import "../src/utils/ECDSAOwnedDKIMRegistry.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "./helpers/SignerStructHelper.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-
+import {IEmailAuth} from "../src/interfaces/IEmailAuth.sol";
 contract EmailAuthSignerTest is SignerStructHelper {
     function setUp() public override {
         super.setUp();
@@ -21,7 +21,8 @@ contract EmailAuthSignerTest is SignerStructHelper {
             deployer,
             accountSalt,
             address(dkim),
-            address(verifier)
+            address(verifier),
+            templateId
         );
         vm.stopPrank();
     }
@@ -50,7 +51,7 @@ contract EmailAuthSignerTest is SignerStructHelper {
             newDKIM = ECDSAOwnedDKIMRegistry(address(dkimProxy));
         }
         vm.expectEmit(true, false, false, false);
-        emit EmailAuthSigner.DKIMRegistryUpdated(address(newDKIM));
+        emit IEmailAuth.DKIMRegistryUpdated(address(newDKIM));
         emailAuthSigner.updateDKIMRegistry(address(newDKIM));
         vm.stopPrank();
 
@@ -74,7 +75,7 @@ contract EmailAuthSignerTest is SignerStructHelper {
         vm.startPrank(deployer);
         Verifier newVerifier = new Verifier();
         vm.expectEmit(true, false, false, false);
-        emit EmailAuthSigner.VerifierUpdated(address(newVerifier));
+        emit IEmailAuth.VerifierUpdated(address(newVerifier));
         emailAuthSigner.updateVerifier(address(newVerifier));
         vm.stopPrank();
 
@@ -94,7 +95,7 @@ contract EmailAuthSignerTest is SignerStructHelper {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
 
         vm.expectEmit(true, true, true, true);
-        emit EmailAuthSigner.EmailAuthed(
+        emit IEmailAuth.EmailAuthed(
             emailAuthMsg.proof.emailNullifier,
             emailAuthMsg.proof.accountSalt,
             emailAuthMsg.proof.isCodeExist,
@@ -176,7 +177,13 @@ contract EmailAuthSignerTest is SignerStructHelper {
             address(emailAuthSigner),
             abi.encodeCall(
                 emailAuthSigner.initialize,
-                (deployer, accountSalt, address(dkim), address(verifier))
+                (
+                    deployer,
+                    accountSalt,
+                    address(dkim),
+                    address(verifier),
+                    templateId
+                )
             )
         );
         EmailAuthSigner emailAuthSignerProxy = EmailAuthSigner(payable(proxy));
@@ -194,5 +201,13 @@ contract EmailAuthSignerTest is SignerStructHelper {
         assertEq(beforeAccountSalt, afterAccountSalt);
 
         vm.stopPrank();
+    }
+
+    function testExpectRevertAuthEmailInvalidTemplateId() public {
+        EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
+        emailAuthMsg.templateId = uint256(1234); // Different template ID than the one set in initialization
+
+        vm.expectRevert(bytes("invalid template id"));
+        emailAuthSigner.authEmail(emailAuthMsg);
     }
 }
