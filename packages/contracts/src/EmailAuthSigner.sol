@@ -9,7 +9,7 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {IEmailAuth, EmailAuthMsg} from "./interfaces/IEmailAuth.sol";
-import {SignatureValidator} from "./SignatureValidator.sol";
+import {ERC1271SignatureValidator} from "./ERC1271SignatureValidator.sol";
 
 /// @title Email Authentication/Authorization Contract for Signature-like Usage
 /// @notice This contract provides a signature-like authentication mechanism using emails.
@@ -23,7 +23,7 @@ contract EmailAuthSigner is
     OwnableUpgradeable,
     UUPSUpgradeable,
     IEmailAuth,
-    SignatureValidator
+    ERC1271SignatureValidator
 {
     /// The CREATE2 salt of this contract defined as a hash of an email address and an account code.
     bytes32 public accountSalt;
