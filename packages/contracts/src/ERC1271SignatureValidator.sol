@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract SignatureValidator {
+contract ERC1271SignatureValidator {
     /// Mapping to store if a hash has been signed.
     mapping(bytes32 => bool) public isHashSigned;
 
