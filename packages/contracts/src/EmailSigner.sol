@@ -30,7 +30,9 @@ contract EmailSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
     /// The templateId of the sign hash command.
     uint256 public templateId;
 
-    constructor() {}
+    constructor() {
+        _disableInitializers();
+    }
 
     /// @notice Initialize the contract with an initial owner, account salt, DKIM registry address, and verifier address.
     /// @param _initialOwner The address of the initial owner.
