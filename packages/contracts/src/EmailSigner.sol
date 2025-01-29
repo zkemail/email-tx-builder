@@ -19,7 +19,7 @@ import {ERC1271SignatureValidator} from "./ERC1271SignatureValidator.sol";
 /// @dev Unlike EmailAuth.sol which handles nullifiers internally, this contract is designed
 /// to be used like a signature verification mechanism where the calling contract manages
 /// its own replay protection.
-contract EmailAuthSigner is
+contract EmailSigner is
     OwnableUpgradeable,
     UUPSUpgradeable,
     IEmailAuth,
