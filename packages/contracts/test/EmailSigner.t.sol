@@ -17,21 +17,6 @@ contract EmailSignerTest is SignerStructHelper, IEmailAuthErrors {
     string message = "message to sign";
     bytes32 msgHash = keccak256(abi.encode(message));
 
-    function setUp() public override {
-        super.setUp();
-
-        vm.startPrank(deployer);
-        // TODO: expect emit
-        emailSigner.initialize(
-            deployer,
-            accountSalt,
-            address(dkim),
-            address(verifier),
-            templateId
-        );
-        vm.stopPrank();
-    }
-
     function testDkimRegistryAddr() public view {
         address dkimAddr = emailSigner.dkimRegistryAddr();
         assertEq(dkimAddr, address(dkim));
@@ -168,35 +153,27 @@ contract EmailSignerTest is SignerStructHelper, IEmailAuthErrors {
         // Deploy new implementation
         EmailSigner newImplementation = new EmailSigner();
 
-        // Execute upgrade using proxy
-        // Upgrade implementation through proxy contract
-        ERC1967Proxy proxy = new ERC1967Proxy(
-            address(emailSigner),
-            abi.encodeCall(
-                emailSigner.initialize,
-                (
-                    deployer,
-                    accountSalt,
-                    address(dkim),
-                    address(verifier),
-                    templateId
-                )
-            )
-        );
-        EmailSigner emailSignerProxy = EmailSigner(payable(proxy));
-        bytes32 beforeAccountSalt = emailSignerProxy.accountSalt();
+        bytes32 beforeAccountSalt = emailSigner.accountSalt();
 
         // Upgrade to new implementation through proxy
-        emailSignerProxy.upgradeToAndCall(
-            address(newImplementation),
-            new bytes(0)
-        );
+        emailSigner.upgradeToAndCall(address(newImplementation), new bytes(0));
 
-        bytes32 afterAccountSalt = emailSignerProxy.accountSalt();
+        bytes32 afterAccountSalt = emailSigner.accountSalt();
 
         // Verify the upgrade
         assertEq(beforeAccountSalt, afterAccountSalt);
 
+        vm.stopPrank();
+    }
+
+    function testExpectRevertUpgradeEmailAuthNotDeployer() public {
+        // Deploy new implementation
+        EmailSigner newImplementation = new EmailSigner();
+        address alice = makeAddr("alice");
+        // Try to upgrade from non-deployer account
+        vm.startPrank(alice);
+        vm.expectRevert();
+        emailSigner.upgradeToAndCall(address(newImplementation), new bytes(0));
         vm.stopPrank();
     }
 
