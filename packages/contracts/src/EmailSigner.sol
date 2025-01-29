@@ -10,6 +10,7 @@ import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeab
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {IEmailAuth, EmailAuthMsg} from "./interfaces/IEmailAuth.sol";
 import {IERC1271} from "./interfaces/IERC1271.sol";
+import {ERC1271} from "./libraries/ERC1271.sol";
 
 /// @title Email Authentication/Authorization Contract for Signature-like Usage
 /// @notice This contract provides a signature-like authentication mechanism using emails.
@@ -83,7 +84,7 @@ contract EmailSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
     /// handling replay protection. The calling contract should implement its own mechanisms
     /// to prevent replay attacks, similar to how nonces are used with ECDSA signatures.
     /// @param emailAuthMsg The email auth message containing all necessary information for authentication.
-    function authEmail(EmailAuthMsg memory emailAuthMsg) public {
+    function authEmail(EmailAuthMsg memory emailAuthMsg) public view {
         if (templateId != emailAuthMsg.templateId) revert InvalidTemplateId();
         string[] memory signHashTemplate = new string[](2);
         signHashTemplate[0] = "signHash";
@@ -130,13 +131,48 @@ contract EmailSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
 
         if (!IVerifier(verifierAddr).verifyEmailProof(emailAuthMsg.proof))
             revert InvalidEmailProof();
+    }
 
-        emit EmailAuthed(
-            emailAuthMsg.proof.emailNullifier,
-            emailAuthMsg.proof.accountSalt,
-            emailAuthMsg.proof.isCodeExist,
-            emailAuthMsg.templateId
+    /// @notice Validates a signature of an EmailAuthMsg. ERC1271 compatible.
+    /// @param _hash The hash of the EmailAuthMsg.
+    /// @param _signature The signature of the EmailAuthMsg.
+    /// @return bytes4(0) if the signature is invalid, ERC1271.MAGIC_VALUE if the signature is valid.
+    function isValidSignature(
+        bytes32 _hash,
+        bytes calldata _signature
+    ) public view returns (bytes4) {
+        // signature is a serialized EmailAuthMsg
+        EmailAuthMsg memory emailAuthMsg = abi.decode(
+            _signature,
+            (EmailAuthMsg)
         );
+
+        authEmail(emailAuthMsg); // reverts if invalid
+        bytes32 signedHash = abi.decode(
+            emailAuthMsg.commandParams[0],
+            (bytes32)
+        );
+
+        // signature is valid
+        if (signedHash == _hash) return ERC1271.MAGIC_VALUE;
+
+        // signature is invalid
+        return bytes4(0);
+    }
+
+    /// @notice Validates a signature of an EmailAuthMsg. Legacy ERC1271 compatible.
+    /// @param _data The data to validate the signature against.
+    /// @param _signature The signature to validate.
+    /// @return bytes4(0) if the signature is invalid, ERC1271.MAGIC_VALUE_LEGACY if the signature is valid.
+    function isValidSignature(
+        bytes calldata _data,
+        bytes calldata _signature
+    ) external view returns (bytes4) {
+        if (
+            isValidSignature(keccak256(_data), _signature) ==
+            ERC1271.MAGIC_VALUE
+        ) return ERC1271.LEGACY_MAGIC_VALUE;
+        return bytes4(0);
     }
 
     /// @notice Upgrade the implementation of the proxy.
