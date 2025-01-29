@@ -11,8 +11,9 @@ import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.s
 import "./helpers/SignerStructHelper.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {IEmailAuth} from "../src/interfaces/IEmailAuth.sol";
+import {IEmailAuthErrors} from "../src/interfaces/IEmailAuth.sol";
 
-contract EmailSignerTest is SignerStructHelper {
+contract EmailSignerTest is SignerStructHelper, IEmailAuthErrors {
     function setUp() public override {
         super.setUp();
 
@@ -65,7 +66,7 @@ contract EmailSignerTest is SignerStructHelper {
         assertEq(emailSigner.dkimRegistryAddr(), address(dkim));
 
         vm.startPrank(deployer);
-        vm.expectRevert(bytes("invalid dkim registry address"));
+        vm.expectRevert(InvalidDKIMRegistryAddress.selector);
         emailSigner.updateDKIMRegistry(address(0));
         vm.stopPrank();
     }
@@ -87,7 +88,7 @@ contract EmailSignerTest is SignerStructHelper {
         assertEq(emailSigner.verifierAddr(), address(verifier));
 
         vm.startPrank(deployer);
-        vm.expectRevert(bytes("invalid verifier address"));
+        vm.expectRevert(InvalidVerifierAddress.selector);
         emailSigner.updateVerifier(address(0));
         vm.stopPrank();
     }
@@ -109,7 +110,7 @@ contract EmailSignerTest is SignerStructHelper {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
         emailAuthMsg.proof.domainName = "invalid.com";
 
-        vm.expectRevert(bytes("invalid dkim public key hash"));
+        vm.expectRevert(InvalidDKIMPublicKeyHash.selector);
         emailSigner.authEmail(emailAuthMsg);
     }
 
@@ -117,7 +118,7 @@ contract EmailSignerTest is SignerStructHelper {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
         emailAuthMsg.proof.accountSalt = bytes32(uint256(1234));
 
-        vm.expectRevert(bytes("invalid account salt"));
+        vm.expectRevert(InvalidAccountSalt.selector);
         emailSigner.authEmail(emailAuthMsg);
     }
 
@@ -125,7 +126,7 @@ contract EmailSignerTest is SignerStructHelper {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
         emailAuthMsg.commandParams[0] = abi.encode(2 ether);
 
-        vm.expectRevert(bytes("invalid command"));
+        vm.expectRevert(InvalidCommand.selector);
         emailSigner.authEmail(emailAuthMsg);
     }
 
@@ -140,7 +141,7 @@ contract EmailSignerTest is SignerStructHelper {
             ),
             abi.encode(false)
         );
-        vm.expectRevert(bytes("invalid email proof"));
+        vm.expectRevert(InvalidEmailProof.selector);
         emailSigner.authEmail(emailAuthMsg);
     }
 
@@ -150,7 +151,7 @@ contract EmailSignerTest is SignerStructHelper {
         // Set masked command length to 606, which should be 605 or less defined in the verifier.
         emailAuthMsg.proof.maskedCommand = string(new bytes(606));
 
-        vm.expectRevert(bytes("invalid masked command length"));
+        vm.expectRevert(InvalidMaskedCommandLength.selector);
         emailSigner.authEmail(emailAuthMsg);
     }
 
@@ -162,7 +163,7 @@ contract EmailSignerTest is SignerStructHelper {
         // Set skipped command prefix length to 605, it should be less than 605.
         emailAuthMsg.skippedCommandPrefix = 605;
 
-        vm.expectRevert(bytes("invalid size of the skipped command prefix"));
+        vm.expectRevert(InvalidSkippedCommandPrefixSize.selector);
         emailSigner.authEmail(emailAuthMsg);
     }
 
@@ -208,7 +209,7 @@ contract EmailSignerTest is SignerStructHelper {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
         emailAuthMsg.templateId = uint256(1234); // Different template ID than the one set in initialization
 
-        vm.expectRevert(bytes("invalid template id"));
+        vm.expectRevert(InvalidTemplateId.selector);
         emailSigner.authEmail(emailAuthMsg);
     }
 }

@@ -3,6 +3,32 @@ pragma solidity ^0.8.12;
 
 import {EmailProof} from "../utils/Verifier.sol";
 
+/// @notice Custom errors for email authentication
+interface IEmailAuthErrors {
+    /// @notice Thrown when the DKIM registry address is zero
+    error InvalidDKIMRegistryAddress();
+    /// @notice Thrown when attempting to initialize DKIM registry that's already set
+    error DKIMRegistryAlreadyInitialized();
+    /// @notice Thrown when the verifier address is zero
+    error InvalidVerifierAddress();
+    /// @notice Thrown when attempting to initialize verifier that's already set
+    error VerifierAlreadyInitialized();
+    /// @notice Thrown when the template ID doesn't match
+    error InvalidTemplateId();
+    /// @notice Thrown when the DKIM public key hash verification fails
+    error InvalidDKIMPublicKeyHash();
+    /// @notice Thrown when the account salt doesn't match
+    error InvalidAccountSalt();
+    /// @notice Thrown when the masked command length exceeds the maximum
+    error InvalidMaskedCommandLength();
+    /// @notice Thrown when the skipped command prefix size is invalid
+    error InvalidSkippedCommandPrefixSize();
+    /// @notice Thrown when the command format is invalid
+    error InvalidCommand();
+    /// @notice Thrown when the email proof verification fails
+    error InvalidEmailProof();
+}
+
 /// @notice Struct to hold the email authentication/authorization message.
 struct EmailAuthMsg {
     /// @notice The ID of the command template that the command in the email body should satisfy.
@@ -16,7 +42,7 @@ struct EmailAuthMsg {
 }
 
 /// @title Interface for Email Authentication/Authorization Contract
-interface IEmailAuth {
+interface IEmailAuth is IEmailAuthErrors {
     event DKIMRegistryUpdated(address indexed dkimRegistry);
     event VerifierUpdated(address indexed verifier);
     event EmailAuthed(

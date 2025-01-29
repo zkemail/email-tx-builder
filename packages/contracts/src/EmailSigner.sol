@@ -52,22 +52,16 @@ contract EmailSigner is
         __Ownable_init(_initialOwner);
         accountSalt = _accountSalt;
         templateId = _templateId;
-        require(
-            _dkimRegistryAddr != address(0),
-            "invalid dkim registry address"
-        );
-        require(
-            address(dkimRegistryAddr) == address(0),
-            "dkim registry already initialized"
-        );
+        if (_dkimRegistryAddr == address(0))
+            revert InvalidDKIMRegistryAddress();
+        if (address(dkimRegistryAddr) != address(0))
+            revert DKIMRegistryAlreadyInitialized();
         dkimRegistryAddr = _dkimRegistryAddr;
         emit DKIMRegistryUpdated(_dkimRegistryAddr);
 
-        require(_verifierAddr != address(0), "invalid verifier address");
-        require(
-            address(verifierAddr) == address(0),
-            "verifier already initialized"
-        );
+        if (_verifierAddr == address(0)) revert InvalidVerifierAddress();
+        if (address(verifierAddr) != address(0))
+            revert VerifierAlreadyInitialized();
         verifierAddr = _verifierAddr;
         emit VerifierUpdated(_verifierAddr);
     }
@@ -75,10 +69,8 @@ contract EmailSigner is
     /// @notice Updates the address of the DKIM registry contract.
     /// @param _dkimRegistryAddr The new address of the DKIM registry contract.
     function updateDKIMRegistry(address _dkimRegistryAddr) public onlyOwner {
-        require(
-            _dkimRegistryAddr != address(0),
-            "invalid dkim registry address"
-        );
+        if (_dkimRegistryAddr == address(0))
+            revert InvalidDKIMRegistryAddress();
         dkimRegistryAddr = _dkimRegistryAddr;
         emit DKIMRegistryUpdated(_dkimRegistryAddr);
     }
@@ -86,7 +78,7 @@ contract EmailSigner is
     /// @notice Updates the address of the verifier contract.
     /// @param _verifierAddr The new address of the verifier contract.
     function updateVerifier(address _verifierAddr) public onlyOwner {
-        require(_verifierAddr != address(0), "invalid verifier address");
+        if (_verifierAddr == address(0)) revert InvalidVerifierAddress();
         verifierAddr = _verifierAddr;
         emit VerifierUpdated(_verifierAddr);
     }
@@ -97,31 +89,29 @@ contract EmailSigner is
     /// to prevent replay attacks, similar to how nonces are used with ECDSA signatures.
     /// @param emailAuthMsg The email auth message containing all necessary information for authentication.
     function authEmail(EmailAuthMsg memory emailAuthMsg) public {
-        require(templateId == emailAuthMsg.templateId, "invalid template id");
+        if (templateId != emailAuthMsg.templateId) revert InvalidTemplateId();
         string[] memory signHashTemplate = new string[](2);
         signHashTemplate[0] = "signHash";
         signHashTemplate[1] = "{uint}";
-        require(
-            IDKIMRegistry(dkimRegistryAddr).isDKIMPublicKeyHashValid(
+        if (
+            !IDKIMRegistry(dkimRegistryAddr).isDKIMPublicKeyHashValid(
                 emailAuthMsg.proof.domainName,
                 emailAuthMsg.proof.publicKeyHash
-            ) == true,
-            "invalid dkim public key hash"
-        );
-        require(
-            accountSalt == emailAuthMsg.proof.accountSalt,
-            "invalid account salt"
-        );
-        require(
-            bytes(emailAuthMsg.proof.maskedCommand).length <=
-                IVerifier(verifierAddr).commandBytes(),
-            "invalid masked command length"
-        );
-        require(
-            emailAuthMsg.skippedCommandPrefix <
-                IVerifier(verifierAddr).commandBytes(),
-            "invalid size of the skipped command prefix"
-        );
+            )
+        ) revert InvalidDKIMPublicKeyHash();
+
+        if (accountSalt != emailAuthMsg.proof.accountSalt)
+            revert InvalidAccountSalt();
+
+        if (
+            bytes(emailAuthMsg.proof.maskedCommand).length >
+            IVerifier(verifierAddr).commandBytes()
+        ) revert InvalidMaskedCommandLength();
+
+        if (
+            emailAuthMsg.skippedCommandPrefix >=
+            IVerifier(verifierAddr).commandBytes()
+        ) revert InvalidSkippedCommandPrefixSize();
 
         // Construct an expectedCommand from template and the values of emailAuthMsg.commandParams.
         string memory trimmedMaskedCommand = removePrefix(
@@ -139,15 +129,12 @@ contract EmailSigner is
                 break;
             }
             if (stringCase == 2) {
-                revert("invalid command");
+                revert InvalidCommand();
             }
         }
 
-        require(
-            IVerifier(verifierAddr).verifyEmailProof(emailAuthMsg.proof) ==
-                true,
-            "invalid email proof"
-        );
+        if (!IVerifier(verifierAddr).verifyEmailProof(emailAuthMsg.proof))
+            revert InvalidEmailProof();
 
         emit EmailAuthed(
             emailAuthMsg.proof.emailNullifier,
@@ -171,10 +158,8 @@ contract EmailSigner is
         string memory str,
         uint numBytes
     ) private pure returns (string memory) {
-        require(
-            numBytes <= bytes(str).length,
-            "Invalid size of the removed bytes"
-        );
+        if (numBytes > bytes(str).length)
+            revert InvalidSkippedCommandPrefixSize();
 
         bytes memory strBytes = bytes(str);
         bytes memory result = new bytes(strBytes.length - numBytes);
