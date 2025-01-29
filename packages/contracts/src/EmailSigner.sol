@@ -9,7 +9,7 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {IEmailAuth, EmailAuthMsg} from "./interfaces/IEmailAuth.sol";
-import {ERC1271SignatureValidator} from "./ERC1271SignatureValidator.sol";
+import {IERC1271} from "./interfaces/IERC1271.sol";
 
 /// @title Email Authentication/Authorization Contract for Signature-like Usage
 /// @notice This contract provides a signature-like authentication mechanism using emails.
@@ -19,12 +19,7 @@ import {ERC1271SignatureValidator} from "./ERC1271SignatureValidator.sol";
 /// @dev Unlike EmailAuth.sol which handles nullifiers internally, this contract is designed
 /// to be used like a signature verification mechanism where the calling contract manages
 /// its own replay protection.
-contract EmailSigner is
-    OwnableUpgradeable,
-    UUPSUpgradeable,
-    IEmailAuth,
-    ERC1271SignatureValidator
-{
+contract EmailSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
     /// The CREATE2 salt of this contract defined as a hash of an email address and an account code.
     bytes32 public accountSalt;
     /// An instance of the DKIM registry contract.
