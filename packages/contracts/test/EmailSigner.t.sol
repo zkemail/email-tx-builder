@@ -11,13 +11,14 @@ import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.s
 import "./helpers/SignerStructHelper.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {IEmailAuth} from "../src/interfaces/IEmailAuth.sol";
-contract EmailAuthSignerTest is SignerStructHelper {
+
+contract EmailSignerTest is SignerStructHelper {
     function setUp() public override {
         super.setUp();
 
         vm.startPrank(deployer);
         // TODO: expect emit
-        emailAuthSigner.initialize(
+        emailSigner.initialize(
             deployer,
             accountSalt,
             address(dkim),
@@ -28,17 +29,17 @@ contract EmailAuthSignerTest is SignerStructHelper {
     }
 
     function testDkimRegistryAddr() public view {
-        address dkimAddr = emailAuthSigner.dkimRegistryAddr();
+        address dkimAddr = emailSigner.dkimRegistryAddr();
         assertEq(dkimAddr, address(dkim));
     }
 
     function testVerifierAddr() public view {
-        address verifierAddr = emailAuthSigner.verifierAddr();
+        address verifierAddr = emailSigner.verifierAddr();
         assertEq(verifierAddr, address(verifier));
     }
 
     function testUpdateDKIMRegistryToECDSA() public {
-        assertEq(emailAuthSigner.dkimRegistryAddr(), address(dkim));
+        assertEq(emailSigner.dkimRegistryAddr(), address(dkim));
 
         vm.startPrank(deployer);
         ECDSAOwnedDKIMRegistry newDKIM;
@@ -52,42 +53,42 @@ contract EmailAuthSignerTest is SignerStructHelper {
         }
         vm.expectEmit(true, false, false, false);
         emit IEmailAuth.DKIMRegistryUpdated(address(newDKIM));
-        emailAuthSigner.updateDKIMRegistry(address(newDKIM));
+        emailSigner.updateDKIMRegistry(address(newDKIM));
         vm.stopPrank();
 
-        assertEq(emailAuthSigner.dkimRegistryAddr(), address(newDKIM));
+        assertEq(emailSigner.dkimRegistryAddr(), address(newDKIM));
     }
 
     function testExpectRevertUpdateDKIMRegistryInvalidDkimRegistryAddress()
         public
     {
-        assertEq(emailAuthSigner.dkimRegistryAddr(), address(dkim));
+        assertEq(emailSigner.dkimRegistryAddr(), address(dkim));
 
         vm.startPrank(deployer);
         vm.expectRevert(bytes("invalid dkim registry address"));
-        emailAuthSigner.updateDKIMRegistry(address(0));
+        emailSigner.updateDKIMRegistry(address(0));
         vm.stopPrank();
     }
 
     function testUpdateVerifier() public {
-        assertEq(emailAuthSigner.verifierAddr(), address(verifier));
+        assertEq(emailSigner.verifierAddr(), address(verifier));
 
         vm.startPrank(deployer);
         Verifier newVerifier = new Verifier();
         vm.expectEmit(true, false, false, false);
         emit IEmailAuth.VerifierUpdated(address(newVerifier));
-        emailAuthSigner.updateVerifier(address(newVerifier));
+        emailSigner.updateVerifier(address(newVerifier));
         vm.stopPrank();
 
-        assertEq(emailAuthSigner.verifierAddr(), address(newVerifier));
+        assertEq(emailSigner.verifierAddr(), address(newVerifier));
     }
 
     function testExpectRevertUpdateVerifierInvalidVerifierAddress() public {
-        assertEq(emailAuthSigner.verifierAddr(), address(verifier));
+        assertEq(emailSigner.verifierAddr(), address(verifier));
 
         vm.startPrank(deployer);
         vm.expectRevert(bytes("invalid verifier address"));
-        emailAuthSigner.updateVerifier(address(0));
+        emailSigner.updateVerifier(address(0));
         vm.stopPrank();
     }
 
@@ -101,7 +102,7 @@ contract EmailAuthSignerTest is SignerStructHelper {
             emailAuthMsg.proof.isCodeExist,
             emailAuthMsg.templateId
         );
-        emailAuthSigner.authEmail(emailAuthMsg);
+        emailSigner.authEmail(emailAuthMsg);
     }
 
     function testExpectRevertAuthEmailInvalidDkimPublicKeyHash() public {
@@ -109,7 +110,7 @@ contract EmailAuthSignerTest is SignerStructHelper {
         emailAuthMsg.proof.domainName = "invalid.com";
 
         vm.expectRevert(bytes("invalid dkim public key hash"));
-        emailAuthSigner.authEmail(emailAuthMsg);
+        emailSigner.authEmail(emailAuthMsg);
     }
 
     function testExpectRevertAuthEmailInvalidAccountSalt() public {
@@ -117,7 +118,7 @@ contract EmailAuthSignerTest is SignerStructHelper {
         emailAuthMsg.proof.accountSalt = bytes32(uint256(1234));
 
         vm.expectRevert(bytes("invalid account salt"));
-        emailAuthSigner.authEmail(emailAuthMsg);
+        emailSigner.authEmail(emailAuthMsg);
     }
 
     function testExpectRevertAuthEmailInvalidCommand() public {
@@ -125,7 +126,7 @@ contract EmailAuthSignerTest is SignerStructHelper {
         emailAuthMsg.commandParams[0] = abi.encode(2 ether);
 
         vm.expectRevert(bytes("invalid command"));
-        emailAuthSigner.authEmail(emailAuthMsg);
+        emailSigner.authEmail(emailAuthMsg);
     }
 
     function testExpectRevertAuthEmailInvalidEmailProof() public {
@@ -140,7 +141,7 @@ contract EmailAuthSignerTest is SignerStructHelper {
             abi.encode(false)
         );
         vm.expectRevert(bytes("invalid email proof"));
-        emailAuthSigner.authEmail(emailAuthMsg);
+        emailSigner.authEmail(emailAuthMsg);
     }
 
     function testExpectRevertAuthEmailInvalidMaskedCommandLength() public {
@@ -150,7 +151,7 @@ contract EmailAuthSignerTest is SignerStructHelper {
         emailAuthMsg.proof.maskedCommand = string(new bytes(606));
 
         vm.expectRevert(bytes("invalid masked command length"));
-        emailAuthSigner.authEmail(emailAuthMsg);
+        emailSigner.authEmail(emailAuthMsg);
     }
 
     function testExpectRevertAuthEmailInvalidSizeOfTheSkippedCommandPrefix()
@@ -162,21 +163,21 @@ contract EmailAuthSignerTest is SignerStructHelper {
         emailAuthMsg.skippedCommandPrefix = 605;
 
         vm.expectRevert(bytes("invalid size of the skipped command prefix"));
-        emailAuthSigner.authEmail(emailAuthMsg);
+        emailSigner.authEmail(emailAuthMsg);
     }
 
     function testUpgradeEmailAuth() public {
         vm.startPrank(deployer);
 
         // Deploy new implementation
-        EmailAuthSigner newImplementation = new EmailAuthSigner();
+        EmailSigner newImplementation = new EmailSigner();
 
         // Execute upgrade using proxy
         // Upgrade implementation through proxy contract
         ERC1967Proxy proxy = new ERC1967Proxy(
-            address(emailAuthSigner),
+            address(emailSigner),
             abi.encodeCall(
-                emailAuthSigner.initialize,
+                emailSigner.initialize,
                 (
                     deployer,
                     accountSalt,
@@ -186,16 +187,16 @@ contract EmailAuthSignerTest is SignerStructHelper {
                 )
             )
         );
-        EmailAuthSigner emailAuthSignerProxy = EmailAuthSigner(payable(proxy));
-        bytes32 beforeAccountSalt = emailAuthSignerProxy.accountSalt();
+        EmailSigner emailSignerProxy = EmailSigner(payable(proxy));
+        bytes32 beforeAccountSalt = emailSignerProxy.accountSalt();
 
         // Upgrade to new implementation through proxy
-        emailAuthSignerProxy.upgradeToAndCall(
+        emailSignerProxy.upgradeToAndCall(
             address(newImplementation),
             new bytes(0)
         );
 
-        bytes32 afterAccountSalt = emailAuthSignerProxy.accountSalt();
+        bytes32 afterAccountSalt = emailSignerProxy.accountSalt();
 
         // Verify the upgrade
         assertEq(beforeAccountSalt, afterAccountSalt);
@@ -208,6 +209,6 @@ contract EmailAuthSignerTest is SignerStructHelper {
         emailAuthMsg.templateId = uint256(1234); // Different template ID than the one set in initialization
 
         vm.expectRevert(bytes("invalid template id"));
-        emailAuthSigner.authEmail(emailAuthMsg);
+        emailSigner.authEmail(emailAuthMsg);
     }
 }
