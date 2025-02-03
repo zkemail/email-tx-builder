@@ -19,10 +19,10 @@ contract EmailAuthTest is StructHelper {
         vm.startPrank(deployer);
         emailAuth.initialize(deployer, accountSalt, deployer);
         vm.expectEmit(true, false, false, false);
-        emit EmailAuth.VerifierUpdated(address(verifier));
+        emit IEmailAuth.VerifierUpdated(address(verifier));
         emailAuth.updateVerifier(address(verifier));
         vm.expectEmit(true, false, false, false);
-        emit EmailAuth.DKIMRegistryUpdated(address(dkim));
+        emit IEmailAuth.DKIMRegistryUpdated(address(dkim));
         emailAuth.updateDKIMRegistry(address(dkim));
         vm.stopPrank();
     }
@@ -51,7 +51,7 @@ contract EmailAuthTest is StructHelper {
             newDKIM = ECDSAOwnedDKIMRegistry(address(dkimProxy));
         }
         vm.expectEmit(true, false, false, false);
-        emit EmailAuth.DKIMRegistryUpdated(address(newDKIM));
+        emit IEmailAuth.DKIMRegistryUpdated(address(newDKIM));
         emailAuth.updateDKIMRegistry(address(newDKIM));
         vm.stopPrank();
 
@@ -75,7 +75,7 @@ contract EmailAuthTest is StructHelper {
         vm.startPrank(deployer);
         Verifier newVerifier = new Verifier();
         vm.expectEmit(true, false, false, false);
-        emit EmailAuth.VerifierUpdated(address(newVerifier));
+        emit IEmailAuth.VerifierUpdated(address(newVerifier));
         emailAuth.updateVerifier(address(newVerifier));
         vm.stopPrank();
 
@@ -236,7 +236,7 @@ contract EmailAuthTest is StructHelper {
 
         vm.startPrank(deployer);
         vm.expectEmit(true, true, true, true);
-        emit EmailAuth.EmailAuthed(
+        emit IEmailAuth.EmailAuthed(
             emailAuthMsg.proof.emailNullifier,
             emailAuthMsg.proof.accountSalt,
             emailAuthMsg.proof.isCodeExist,
@@ -449,7 +449,7 @@ contract EmailAuthTest is StructHelper {
 
         vm.startPrank(deployer);
         vm.expectEmit(true, true, true, true);
-        emit EmailAuth.EmailAuthed(
+        emit IEmailAuth.EmailAuthed(
             emailAuthMsg.proof.emailNullifier,
             emailAuthMsg.proof.accountSalt,
             emailAuthMsg.proof.isCodeExist,

@@ -8,23 +8,12 @@ import {CommandUtils} from "./libraries/CommandUtils.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-
-/// @notice Struct to hold the email authentication/authorization message.
-struct EmailAuthMsg {
-    /// @notice The ID of the command template that the command in the email body should satisfy.
-    uint templateId;
-    /// @notice The parameters in the command of the email body, which should be taken according to the specified command template.
-    bytes[] commandParams;
-    /// @notice The number of skipped bytes in the command.
-    uint skippedCommandPrefix;
-    /// @notice The email proof containing the zk proof and other necessary information for the email verification by the verifier contract.
-    EmailProof proof;
-}
+import {IEmailAuth, EmailAuthMsg} from "./interfaces/IEmailAuth.sol";
 
 /// @title Email Authentication/Authorization Contract
 /// @notice This contract provides functionalities for the authentication of the email sender and the authentication of the message in the command part of the email body using DKIM and custom verification logic.
 /// @dev Inherits from OwnableUpgradeable and UUPSUpgradeable for upgradeability and ownership management.
-contract EmailAuth is OwnableUpgradeable, UUPSUpgradeable {
+contract EmailAuth is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
     /// The CREATE2 salt of this contract defined as a hash of an email address and an account code.
     bytes32 public accountSalt;
     /// An instance of the DKIM registry contract.
@@ -42,17 +31,9 @@ contract EmailAuth is OwnableUpgradeable, UUPSUpgradeable {
     /// A boolean whether timestamp check is enabled or not.
     bool public timestampCheckEnabled;
 
-    event DKIMRegistryUpdated(address indexed dkimRegistry);
-    event VerifierUpdated(address indexed verifier);
     event CommandTemplateInserted(uint indexed templateId);
     event CommandTemplateUpdated(uint indexed templateId);
     event CommandTemplateDeleted(uint indexed templateId);
-    event EmailAuthed(
-        bytes32 indexed emailNullifier,
-        bytes32 indexed accountSalt,
-        bool isCodeExist,
-        uint templateId
-    );
     event TimestampCheckEnabled(bool enabled);
 
     modifier onlyController() {
