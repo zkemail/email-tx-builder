@@ -50,17 +50,15 @@ contract EmailSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
         __Ownable_init(_initialOwner);
         accountSalt = _accountSalt;
         templateId = _templateId;
+
         if (_dkimRegistryAddr == address(0))
             revert InvalidDKIMRegistryAddress();
-        if (address(dkimRegistryAddr) != address(0))
-            revert DKIMRegistryAlreadyInitialized();
-        dkimRegistryAddr = _dkimRegistryAddr;
-        emit DKIMRegistryUpdated(_dkimRegistryAddr);
-
         if (_verifierAddr == address(0)) revert InvalidVerifierAddress();
-        if (address(verifierAddr) != address(0))
-            revert VerifierAlreadyInitialized();
+
+        dkimRegistryAddr = _dkimRegistryAddr;
         verifierAddr = _verifierAddr;
+
+        emit DKIMRegistryUpdated(_dkimRegistryAddr);
         emit VerifierUpdated(_verifierAddr);
     }
 
