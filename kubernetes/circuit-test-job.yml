@@ -8,7 +8,12 @@ spec:
     spec:
       containers:
         - name: circuits-runner
-          image: wshino/circuits-runner:latest
+          image: wshino/circuits-runner@sha256:3a089cde127bc40fd2244c555e01d51fe4a7abfa4bd636108723c8dfa8ae7a45
+          env:
+            - name: REPO_URL
+              value: "${REPO_URL}"
+            - name: COMMIT_HASH
+              value: "${COMMIT_HASH}"
           resources:
             requests:
               cpu: "8"
