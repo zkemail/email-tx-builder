@@ -27,8 +27,12 @@ RUN mkdir -p /root/bin && \
 # Install Yarn
 RUN npm install -g yarn
 
-# Set working directory
-WORKDIR /workspace
+# Install Git
+RUN apt-get update && apt-get install -y git
+
+# Add entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Entrypoint
-CMD ["sh", "-c", "yarn install --frozen-lockfile && cd packages/circuits && yarn test --maxWorkers=75% --no-cache"]
+ENTRYPOINT ["/entrypoint.sh"]
