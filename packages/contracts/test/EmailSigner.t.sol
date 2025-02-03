@@ -81,36 +81,36 @@ contract EmailSignerTest is SignerStructHelper, IEmailAuthErrors {
         vm.stopPrank();
     }
 
-    function testAuthEmail() public {
+    function testVerifyEmail() public {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg(msgHash);
-        emailSigner.authEmail(emailAuthMsg); // should not revert
+        emailSigner.verifyEmail(emailAuthMsg); // should not revert
     }
 
-    function testExpectRevertAuthEmailInvalidDkimPublicKeyHash() public {
+    function testExpectRevertVerifyEmailInvalidDkimPublicKeyHash() public {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg(msgHash);
         emailAuthMsg.proof.domainName = "invalid.com";
 
         vm.expectRevert(InvalidDKIMPublicKeyHash.selector);
-        emailSigner.authEmail(emailAuthMsg);
+        emailSigner.verifyEmail(emailAuthMsg);
     }
 
-    function testExpectRevertAuthEmailInvalidAccountSalt() public {
+    function testExpectRevertVerifyEmailInvalidAccountSalt() public {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg(msgHash);
         emailAuthMsg.proof.accountSalt = bytes32(uint256(1234));
 
         vm.expectRevert(InvalidAccountSalt.selector);
-        emailSigner.authEmail(emailAuthMsg);
+        emailSigner.verifyEmail(emailAuthMsg);
     }
 
-    function testExpectRevertAuthEmailInvalidCommand() public {
+    function testExpectRevertVerifyEmailInvalidCommand() public {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg(msgHash);
         emailAuthMsg.commandParams[0] = abi.encode(2 ether);
 
         vm.expectRevert(InvalidCommand.selector);
-        emailSigner.authEmail(emailAuthMsg);
+        emailSigner.verifyEmail(emailAuthMsg);
     }
 
-    function testExpectRevertAuthEmailInvalidEmailProof() public {
+    function testExpectRevertVerifyEmailInvalidEmailProof() public {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg(msgHash);
 
         vm.mockCall(
@@ -122,20 +122,20 @@ contract EmailSignerTest is SignerStructHelper, IEmailAuthErrors {
             abi.encode(false)
         );
         vm.expectRevert(InvalidEmailProof.selector);
-        emailSigner.authEmail(emailAuthMsg);
+        emailSigner.verifyEmail(emailAuthMsg);
     }
 
-    function testExpectRevertAuthEmailInvalidMaskedCommandLength() public {
+    function testExpectRevertVerifyEmailInvalidMaskedCommandLength() public {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg(msgHash);
 
         // Set masked command length to 606, which should be 605 or less defined in the verifier.
         emailAuthMsg.proof.maskedCommand = string(new bytes(606));
 
         vm.expectRevert(InvalidMaskedCommandLength.selector);
-        emailSigner.authEmail(emailAuthMsg);
+        emailSigner.verifyEmail(emailAuthMsg);
     }
 
-    function testExpectRevertAuthEmailInvalidSizeOfTheSkippedCommandPrefix()
+    function testExpectRevertVerifyEmailInvalidSizeOfTheSkippedCommandPrefix()
         public
     {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg(msgHash);
@@ -144,7 +144,7 @@ contract EmailSignerTest is SignerStructHelper, IEmailAuthErrors {
         emailAuthMsg.skippedCommandPrefix = 605;
 
         vm.expectRevert(InvalidSkippedCommandPrefixSize.selector);
-        emailSigner.authEmail(emailAuthMsg);
+        emailSigner.verifyEmail(emailAuthMsg);
     }
 
     function testUpgradeEmailAuth() public {
@@ -177,12 +177,12 @@ contract EmailSignerTest is SignerStructHelper, IEmailAuthErrors {
         vm.stopPrank();
     }
 
-    function testExpectRevertAuthEmailInvalidTemplateId() public {
+    function testExpectRevertVerifyEmailInvalidTemplateId() public {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg(msgHash);
         emailAuthMsg.templateId = uint256(1234); // Different template ID than the one set in initialization
 
         vm.expectRevert(InvalidTemplateId.selector);
-        emailSigner.authEmail(emailAuthMsg);
+        emailSigner.verifyEmail(emailAuthMsg);
     }
 
     function testIsValidSignature() public {

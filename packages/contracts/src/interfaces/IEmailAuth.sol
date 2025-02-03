@@ -58,6 +58,4 @@ interface IEmailAuth is IEmailAuthErrors {
 
     function updateDKIMRegistry(address _dkimRegistryAddr) external;
     function updateVerifier(address _verifierAddr) external;
-
-    function authEmail(EmailAuthMsg memory emailAuthMsg) external;
 }

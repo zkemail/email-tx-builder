@@ -84,7 +84,7 @@ contract EmailSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
     /// handling replay protection. The calling contract should implement its own mechanisms
     /// to prevent replay attacks, similar to how nonces are used with ECDSA signatures.
     /// @param emailAuthMsg The email auth message containing all necessary information for authentication.
-    function authEmail(EmailAuthMsg memory emailAuthMsg) public view {
+    function verifyEmail(EmailAuthMsg memory emailAuthMsg) public view {
         if (templateId != emailAuthMsg.templateId) revert InvalidTemplateId();
         string[] memory signHashTemplate = new string[](2);
         signHashTemplate[0] = "signHash";
@@ -147,7 +147,7 @@ contract EmailSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
             (EmailAuthMsg)
         );
 
-        authEmail(emailAuthMsg); // reverts if invalid
+        verifyEmail(emailAuthMsg); // reverts if invalid
         bytes32 signedHash = abi.decode(
             emailAuthMsg.commandParams[0],
             (bytes32)
