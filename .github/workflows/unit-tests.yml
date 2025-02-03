@@ -51,7 +51,7 @@ jobs:
 
       - name: Deploy Circuits Job to GKE
         run: |
-          kubectl apply -f kubernetes/circuit-test-job.yml
+          envsubst < kubernetes/circuit-test-job.yml | kubectl apply -f -
 
       - name: Stream Logs from GKE
         run: |
