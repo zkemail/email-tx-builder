@@ -41,6 +41,10 @@ jobs:
         with:
           version: '>= 363.0.0'
 
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          gcloud components install gke-gcloud-auth-plugin -q
+
       - name: Configure kubectl
         run: |
           gcloud container clusters get-credentials ${{ secrets.YOUR_CLUSTER_NAME }} --region ${{ secrets.YOUR_REGION }}
