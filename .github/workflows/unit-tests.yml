@@ -50,6 +50,9 @@ jobs:
           gcloud container clusters get-credentials ${{ secrets.YOUR_CLUSTER_NAME }} --region ${{ secrets.YOUR_REGION }}
 
       - name: Deploy Circuits Job to GKE
+        env:
+          REPO_URL: "https://github.com/${{ github.repository }}"
+          COMMIT_HASH: "${{ github.sha }}"
         run: |
           envsubst < kubernetes/circuit-test-job.yml | kubectl apply -f -
 
