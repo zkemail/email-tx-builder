@@ -7,8 +7,13 @@ spec:
   template:
     spec:
       containers:
-        - name: circuits-runner
-          image: wshino/circuits-runner:latest
+        - name: circuits-container
+          image: wshino/circuits-runner@sha256:3a089cde127bc40fd2244c555e01d51fe4a7abfa4bd636108723c8dfa8ae7a45
+          env:
+            - name: REPO_URL
+              value: "https://github.com/${GITHUB_REPOSITORY}"
+            - name: COMMIT_HASH
+              value: "${GITHUB_SHA}"
           resources:
             requests:
               cpu: "8"
