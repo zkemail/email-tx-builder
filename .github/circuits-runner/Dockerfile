@@ -21,8 +21,10 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 # Install Circom
 RUN mkdir -p /root/bin && \
     wget https://github.com/iden3/circom/releases/download/v2.1.9/circom-linux-amd64 -O /root/bin/circom && \
-    chmod +x /root/bin/circom && \
-    echo "export PATH=/root/bin:\$PATH" >> ~/.bashrc
+    chmod +x /root/bin/circom
+
+# Set PATH
+ENV PATH="/root/bin:${PATH}"
 
 # Install Yarn
 RUN npm install -g yarn
