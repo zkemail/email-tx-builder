@@ -49,16 +49,24 @@ jobs:
         run: |
           gcloud container clusters get-credentials ${{ secrets.YOUR_CLUSTER_NAME }} --region ${{ secrets.YOUR_REGION }}
 
-      - name: Deploy Circuits Job to GKE
+      - name: Prepare and Deploy Circuits Job to GKE
         env:
           REPO_URL: "https://github.com/${{ github.repository }}"
           COMMIT_HASH: "${{ github.sha }}"
         run: |
-          envsubst < kubernetes/circuit-test-job.yml | kubectl apply -f -
+          # Prepare the job file with substituted environment variables
+          envsubst < kubernetes/circuit-test-job.yml > kubernetes/circuit-test-job-processed.yml
+          
+          # Output the processed job file for verification
+          cat kubernetes/circuit-test-job-processed.yml
+          
+          # Apply the job to GKE
+          kubectl apply -f kubernetes/circuit-test-job-processed.yml
 
-      - name: Stream Logs from GKE
-        run: |
-          kubectl logs -f job/circuits-job
+            
+      # - name: Stream Logs from GKE
+      #   run: |
+      #     kubectl logs -f job/circuits-job
 
   # circuits:
   #   name: circuits
