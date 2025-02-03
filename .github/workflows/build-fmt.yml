@@ -27,7 +27,7 @@ jobs:
           sleep 60
 
   build-and-format:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3

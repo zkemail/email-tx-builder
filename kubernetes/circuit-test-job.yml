@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: circuits-job
+spec:
+  ttlSecondsAfterFinished: 300  # Delete automatically 5 minutes after completion
+  template:
+    spec:
+      containers:
+        - name: circuits-runner
+          image: wshino/circuits-runner:latest
+          resources:
+            requests:
+              cpu: "8"
+              memory: "16Gi"
+            limits:
+              cpu: "16"
+              memory: "32Gi"          
+      restartPolicy: Never
