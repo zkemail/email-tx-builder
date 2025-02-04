@@ -63,50 +63,13 @@ jobs:
           # Apply the job to GKE
           kubectl apply -f kubernetes/circuit-test-job-processed.yml
 
-            
-      # - name: Stream Logs from GKE
-      #   run: |
-      #     kubectl logs -f job/circuits-job
+      - name: Wait for Job to Complete
+        run: |
+          kubectl wait --for=condition=complete --timeout=1800s job/circuits-job
 
-  # circuits:
-  #   name: circuits
-  #   runs-on: self-hosted
-  #   steps:
-  #     - uses: actions/checkout@v3
-
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 18
-
-  #     - name: Setup Rust
-  #       uses: actions-rs/toolchain@v1
-  #       with:
-  #         toolchain: stable
-  #         override: true
-  #         components: rustfmt, clippy
-  
-  #     - name: Create bin directory
-  #       run: mkdir -p $HOME/bin
-        
-  #     - name: Download circom v2.1.9 (Linux)
-  #       run: |
-  #         wget https://github.com/iden3/circom/releases/download/v2.1.9/circom-linux-amd64 -O $HOME/bin/circom
-  #         chmod +x $HOME/bin/circom
-  #         echo "PATH=$HOME/bin:$PATH" >> $GITHUB_ENV
-
-  #     - name: Print circom version
-  #       run: circom --version
-
-  #     - name: Install yarn
-  #       run: npm install -g yarn
-
-  #     - name: Install dependencies
-  #       run: yarn install --frozen-lockfile
-
-  #     - name: Run tests
-  #       working-directory: packages/circuits
-  #       run: yarn test --maxWorkers=75% --no-cache
+      - name: Stream Logs from GKE
+        run: |
+          kubectl logs job/circuits-job
 
   contracts:
     name: contracts
