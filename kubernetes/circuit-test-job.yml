@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
         - name: circuits-runner
-          image: wshino/circuits-runner:test2
+          image: wshino/circuits-runner:test5
           imagePullPolicy: Always  # Always pull the latest image
           env:
             - name: REPO_URL
@@ -21,5 +21,5 @@ spec:
               memory: "16Gi"
             limits:
               cpu: "16"
-              memory: "32Gi"          
+              memory: "64Gi"
       restartPolicy: Never
