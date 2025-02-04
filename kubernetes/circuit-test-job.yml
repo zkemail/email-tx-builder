@@ -3,7 +3,7 @@ kind: Job
 metadata:
   name: circuits-job
 spec:
-  ttlSecondsAfterFinished: 5  # Delete automatically 5 minutes after completion
+  ttlSecondsAfterFinished: 60  # Delete automatically 1 minute after completion
   template:
     spec:
       nodeSelector:
