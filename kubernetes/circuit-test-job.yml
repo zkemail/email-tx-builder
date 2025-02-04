@@ -3,10 +3,11 @@ kind: Job
 metadata:
   name: circuits-job
 spec:
-  ttlSecondsAfterFinished: 300  # Delete automatically 5 minutes after completion
-  backoffLimit: 0  # Set retry attempts to 0
+  ttlSecondsAfterFinished: 5  # Delete automatically 5 minutes after completion
   template:
     spec:
+      nodeSelector:
+        cloud.google.com/machine-family: c3
       containers:
         - name: circuits-runner
           image: wshino/circuits-runner:test5
