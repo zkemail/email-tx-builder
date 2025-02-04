@@ -4,6 +4,7 @@ metadata:
   name: circuits-job
 spec:
   ttlSecondsAfterFinished: 300  # Delete automatically 5 minutes after completion
+  backoffLimit: 0  # Set retry attempts to 0
   template:
     spec:
       containers:
