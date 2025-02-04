@@ -13,9 +13,6 @@ git checkout $COMMIT_HASH
 echo "Installing dependencies"
 yarn install --frozen-lockfile
 
-# Set NODE_OPTIONS to override the default memory limit
-export NODE_OPTIONS="--max_old_space_size=32768"
-
 echo "Running tests"
 cd packages/circuits
 yarn test-large --no-cache
