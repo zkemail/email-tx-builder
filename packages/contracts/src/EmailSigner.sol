@@ -90,7 +90,7 @@ contract EmailSigner is IEmailAuth, Initializable {
         ) revert InvalidSkippedCommandPrefixSize();
 
         // Construct an expectedCommand from template and the values of emailAuthMsg.commandParams.
-        string memory trimmedMaskedCommand = removePrefix(
+        string memory trimmedMaskedCommand = CommandUtils.removePrefix(
             emailAuthMsg.proof.maskedCommand,
             emailAuthMsg.skippedCommandPrefix
         );
@@ -153,26 +153,5 @@ contract EmailSigner is IEmailAuth, Initializable {
             ERC1271.MAGIC_VALUE
         ) return ERC1271.LEGACY_MAGIC_VALUE;
         return bytes4(0);
-    }
-
-    /// @notice Remove a prefix from a string.
-    /// @param str The original string.
-    /// @param numBytes The number of bytes to remove from the start of the string.
-    /// @return The string with the prefix removed.
-    function removePrefix(
-        string memory str,
-        uint numBytes
-    ) private pure returns (string memory) {
-        if (numBytes > bytes(str).length)
-            revert InvalidSkippedCommandPrefixSize();
-
-        bytes memory strBytes = bytes(str);
-        bytes memory result = new bytes(strBytes.length - numBytes);
-
-        for (uint i = numBytes; i < strBytes.length; i++) {
-            result[i - numBytes] = strBytes[i];
-        }
-
-        return string(result);
     }
 }
