@@ -55,7 +55,4 @@ interface IEmailAuth is IEmailAuthErrors {
     function accountSalt() external view returns (bytes32);
     function dkimRegistryAddr() external view returns (address);
     function verifierAddr() external view returns (address);
-
-    function updateDKIMRegistry(address _dkimRegistryAddr) external;
-    function updateVerifier(address _verifierAddr) external;
 }

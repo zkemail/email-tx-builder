@@ -13,6 +13,7 @@ import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/Own
 import {IEmailAuth} from "../src/interfaces/IEmailAuth.sol";
 import {IEmailAuthErrors} from "../src/interfaces/IEmailAuth.sol";
 import {ERC1271} from "../src/libraries/ERC1271.sol";
+
 contract EmailSignerTest is SignerStructHelper, IEmailAuthErrors {
     string message = "message to sign";
     bytes32 msgHash = keccak256(abi.encode(message));
@@ -25,60 +26,6 @@ contract EmailSignerTest is SignerStructHelper, IEmailAuthErrors {
     function testVerifierAddr() public view {
         address verifierAddr = emailSigner.verifierAddr();
         assertEq(verifierAddr, address(verifier));
-    }
-
-    function testUpdateDKIMRegistryToECDSA() public {
-        assertEq(emailSigner.dkimRegistryAddr(), address(dkim));
-
-        vm.startPrank(deployer);
-        ECDSAOwnedDKIMRegistry newDKIM;
-        {
-            ECDSAOwnedDKIMRegistry dkimImpl = new ECDSAOwnedDKIMRegistry();
-            ERC1967Proxy dkimProxy = new ERC1967Proxy(
-                address(dkimImpl),
-                abi.encodeCall(dkimImpl.initialize, (msg.sender, msg.sender))
-            );
-            newDKIM = ECDSAOwnedDKIMRegistry(address(dkimProxy));
-        }
-        vm.expectEmit(true, false, false, false);
-        emit IEmailAuth.DKIMRegistryUpdated(address(newDKIM));
-        emailSigner.updateDKIMRegistry(address(newDKIM));
-        vm.stopPrank();
-
-        assertEq(emailSigner.dkimRegistryAddr(), address(newDKIM));
-    }
-
-    function testExpectRevertUpdateDKIMRegistryInvalidDkimRegistryAddress()
-        public
-    {
-        assertEq(emailSigner.dkimRegistryAddr(), address(dkim));
-
-        vm.startPrank(deployer);
-        vm.expectRevert(InvalidDKIMRegistryAddress.selector);
-        emailSigner.updateDKIMRegistry(address(0));
-        vm.stopPrank();
-    }
-
-    function testUpdateVerifier() public {
-        assertEq(emailSigner.verifierAddr(), address(verifier));
-
-        vm.startPrank(deployer);
-        Verifier newVerifier = new Verifier();
-        vm.expectEmit(true, false, false, false);
-        emit IEmailAuth.VerifierUpdated(address(newVerifier));
-        emailSigner.updateVerifier(address(newVerifier));
-        vm.stopPrank();
-
-        assertEq(emailSigner.verifierAddr(), address(newVerifier));
-    }
-
-    function testExpectRevertUpdateVerifierInvalidVerifierAddress() public {
-        assertEq(emailSigner.verifierAddr(), address(verifier));
-
-        vm.startPrank(deployer);
-        vm.expectRevert(InvalidVerifierAddress.selector);
-        emailSigner.updateVerifier(address(0));
-        vm.stopPrank();
     }
 
     function testVerifyEmail() public {
@@ -145,36 +92,6 @@ contract EmailSignerTest is SignerStructHelper, IEmailAuthErrors {
 
         vm.expectRevert(InvalidSkippedCommandPrefixSize.selector);
         emailSigner.verifyEmail(emailAuthMsg);
-    }
-
-    function testUpgradeEmailAuth() public {
-        vm.startPrank(deployer);
-
-        // Deploy new implementation
-        EmailSigner newImplementation = new EmailSigner();
-
-        bytes32 beforeAccountSalt = emailSigner.accountSalt();
-
-        // Upgrade to new implementation through proxy
-        emailSigner.upgradeToAndCall(address(newImplementation), new bytes(0));
-
-        bytes32 afterAccountSalt = emailSigner.accountSalt();
-
-        // Verify the upgrade
-        assertEq(beforeAccountSalt, afterAccountSalt);
-
-        vm.stopPrank();
-    }
-
-    function testExpectRevertUpgradeEmailAuthNotDeployer() public {
-        // Deploy new implementation
-        EmailSigner newImplementation = new EmailSigner();
-        address alice = makeAddr("alice");
-        // Try to upgrade from non-deployer account
-        vm.startPrank(alice);
-        vm.expectRevert();
-        emailSigner.upgradeToAndCall(address(newImplementation), new bytes(0));
-        vm.stopPrank();
     }
 
     function testExpectRevertVerifyEmailInvalidTemplateId() public {
