@@ -19,16 +19,17 @@ contract SignerDeploymentHelper is DeploymentHelper {
         // Deploy proxy pointing to implementation
         bytes memory initData = abi.encodeWithSelector(
             EmailSigner.initialize.selector,
-            deployer,
             accountSalt,
             address(dkim),
             address(verifier),
             templateId
         );
+
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(emailSignerImpl),
             initData
         );
+
         emailSigner = EmailSigner(address(proxy));
 
         // Override the command template for signer-specific needs

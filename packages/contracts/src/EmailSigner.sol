@@ -6,11 +6,10 @@ import {IDKIMRegistry} from "@zk-email/contracts/DKIMRegistry.sol";
 import {IVerifier, EmailProof} from "./interfaces/IVerifier.sol";
 import {CommandUtils} from "./libraries/CommandUtils.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
-import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
-import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import {IEmailAuth, EmailAuthMsg} from "./interfaces/IEmailAuth.sol";
 import {IERC1271} from "./interfaces/IERC1271.sol";
 import {ERC1271} from "./libraries/ERC1271.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 /// @title Email Authentication/Authorization Contract for Signature-like Usage
 /// @notice This contract provides a signature-like authentication mechanism using emails.
@@ -20,8 +19,8 @@ import {ERC1271} from "./libraries/ERC1271.sol";
 /// @dev Unlike EmailAuth.sol which handles nullifiers internally, this contract is designed
 /// to be used like a signature verification mechanism where the calling contract manages
 /// its own replay protection.
-contract EmailSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
-    /// The CREATE2 salt of this contract defined as a hash of an email address and an account code.
+contract EmailSigner is IEmailAuth, Initializable {
+    /// Unique identifier for owner of this contract defined as a hash of an email address and an account code.
     bytes32 public accountSalt;
     /// An instance of the DKIM registry contract.
     address public dkimRegistryAddr;
@@ -35,19 +34,16 @@ contract EmailSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
     }
 
     /// @notice Initialize the contract with an initial owner, account salt, DKIM registry address, and verifier address.
-    /// @param _initialOwner The address of the initial owner.
     /// @param _accountSalt The account salt to derive CREATE2 address of this contract.
     /// @param _dkimRegistryAddr The address of the DKIM registry contract.
     /// @param _verifierAddr The address of the verifier contract.
     /// @param _templateId The templateId of the sign hash command.
     function initialize(
-        address _initialOwner,
         bytes32 _accountSalt,
         address _dkimRegistryAddr,
         address _verifierAddr,
         uint256 _templateId
     ) public initializer {
-        __Ownable_init(_initialOwner);
         accountSalt = _accountSalt;
         templateId = _templateId;
 
@@ -62,23 +58,6 @@ contract EmailSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
         emit VerifierUpdated(_verifierAddr);
     }
 
-    /// @notice Updates the address of the DKIM registry contract.
-    /// @param _dkimRegistryAddr The new address of the DKIM registry contract.
-    function updateDKIMRegistry(address _dkimRegistryAddr) public onlyOwner {
-        if (_dkimRegistryAddr == address(0))
-            revert InvalidDKIMRegistryAddress();
-        dkimRegistryAddr = _dkimRegistryAddr;
-        emit DKIMRegistryUpdated(_dkimRegistryAddr);
-    }
-
-    /// @notice Updates the address of the verifier contract.
-    /// @param _verifierAddr The new address of the verifier contract.
-    function updateVerifier(address _verifierAddr) public onlyOwner {
-        if (_verifierAddr == address(0)) revert InvalidVerifierAddress();
-        verifierAddr = _verifierAddr;
-        emit VerifierUpdated(_verifierAddr);
-    }
-
     /// @notice Authenticate the email sender and authorize the message in the email command.
     /// @dev This function only verifies the authenticity of the email and command, without
     /// handling replay protection. The calling contract should implement its own mechanisms
@@ -89,6 +68,7 @@ contract EmailSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
         string[] memory signHashTemplate = new string[](2);
         signHashTemplate[0] = "signHash";
         signHashTemplate[1] = "{uint}";
+
         if (
             !IDKIMRegistry(dkimRegistryAddr).isDKIMPublicKeyHashValid(
                 emailAuthMsg.proof.domainName,
@@ -174,12 +154,6 @@ contract EmailSigner is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
         ) return ERC1271.LEGACY_MAGIC_VALUE;
         return bytes4(0);
     }
-
-    /// @notice Upgrade the implementation of the proxy.
-    /// @param newImplementation Address of the new implementation.
-    function _authorizeUpgrade(
-        address newImplementation
-    ) internal override onlyOwner {}
 
     /// @notice Remove a prefix from a string.
     /// @param str The original string.
