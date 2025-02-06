@@ -249,21 +249,7 @@ Partial comment-out files can be found the following. Please uncomment them.
 Run the era-test-node forking zksync sepolia
 
 ```
-era_test_node fork https://sepolia.era.zksync.dev
-```
-
-At the first forge build, you need to detect the missing libraries.
-
-```
-forge build --zksync --zk-detect-missing-libraries
-```
-
-As you saw before, you need to deploy missing libraries.
-You can deploy them by the following command for example.
-
-```
-$ forge build --zksync --zk-detect-missing-libraries
-Missing libraries detected: src/libraries/CommandUtils.sol:CommandUtils, src/libraries/DecimalUtils.sol:DecimalUtils, src/libraries/StringUtils.sol:StringUtils
+anvil-zksync fork --fork-url mainnet
 ```
 
 Run the following command in order to deploy each missing libraries:
@@ -271,7 +257,7 @@ Run the following command in order to deploy each missing libraries:
 ```
 export PRIVATE_KEY={YOUR_PRIVATE_KEY}
 export RPC_URL=http://127.0.0.1:8011
-export CHAIN_ID=260
+export CHAIN_ID=324
 
 forge create src/libraries/DecimalUtils.sol:DecimalUtils --private-key $PRIVATE_KEY --rpc-url $RPC_URL --chain $CHAIN_ID --zksync
 forge create src/libraries/CommandUtils.sol:CommandUtils --private-key $PRIVATE_KEY --rpc-url $RPC_URL --chain $CHAIN_ID --zksync --libraries src/libraries/DecimalUtils.sol:DecimalUtils:{DECIMAL_UTILS_ADDRESS_YOU_DEPLOYED}
@@ -298,7 +284,7 @@ Perhaps that is a different value in each compiler version and library addresses
 Run the following commands, you'll get the bytecode hash.
 
 ```
-forge test --match-test "testComputeCreate2Address" --no-match-contract ".*Script.*" --system-mode=true --zksync --gas-limit 1000000000 --chain 300 -vvv --fork-url http://127.0.0.1:8011
+forge test --match-test "testComputeCreate2Address" --no-match-contract ".*Script.*" --system-mode=true --zksync --gas-limit 1000000000 --chain 324 -vvv --fork-url http://127.0.0.1:8011
 ```
 
 And then, you should replace `{YOUR_BYTECODE_HASH}` in the .env
@@ -322,7 +308,7 @@ Even if the contract size is fine for EVM, it may exceed the bytecode size limit
 
 ```
 source .env
-forge test --match-contract "IntegrationZKSyncTest" --system-mode=true --zksync --gas-limit 1000000000 --chain 300 -vvv --ffi
+forge test --match-contract "IntegrationZKSyncTest" --system-mode=true --zksync --gas-limit 1000000000 --chain 324 -vvv --ffi
 ```
 
 ## Deployment (For zksync sepolia)
