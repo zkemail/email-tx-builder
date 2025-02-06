@@ -23,7 +23,7 @@ ast = true
 build_info = true
 extra_output = ["storageLayout"]
 
-# For missing libraries, please comment out following line and replace some placeholders if you use foundry-zksync
+# For missing libraries, please comment out following line and replace some placeholders if you deploy to zksync with foundry-zksync
 #libraries = [
 #    "{PROJECT_DIR}/packages/contracts/src/libraries/DecimalUtils.sol:DecimalUtils:{DEPLOYED_ADDRESS}",
 #    "{PROJECT_DIR}/packages/contracts/src/libraries/CommandUtils.sol:CommandUtils:{DEPLOYED_ADDRESS}",
