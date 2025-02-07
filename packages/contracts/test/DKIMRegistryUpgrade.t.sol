@@ -6,7 +6,7 @@ import "forge-std/console.sol";
 
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "../src/EmailAuth.sol";
-import {IEmailAuth} from "../src/interfaces/IEmailAuth.sol";
+import {EmailAuthMsg} from "../src/interfaces/IEmailTypes.sol";
 import "../src/utils/Verifier.sol";
 import "../src/utils/ECDSAOwnedDKIMRegistry.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
@@ -20,10 +20,10 @@ contract DKIMRegistryUpgradeTest is StructHelper {
         vm.startPrank(deployer);
         emailAuth.initialize(deployer, accountSalt, deployer);
         vm.expectEmit(true, false, false, false);
-        emit IEmailAuth.VerifierUpdated(address(verifier));
+        emit EmailAuth.VerifierUpdated(address(verifier));
         emailAuth.updateVerifier(address(verifier));
         vm.expectEmit(true, false, false, false);
-        emit IEmailAuth.DKIMRegistryUpdated(address(dkim));
+        emit EmailAuth.DKIMRegistryUpdated(address(dkim));
         emailAuth.updateDKIMRegistry(address(dkim));
         UserOverrideableDKIMRegistry overrideableDkimImpl = new UserOverrideableDKIMRegistry();
         ERC1967Proxy overrideableDkimProxy = new ERC1967Proxy(
@@ -65,7 +65,7 @@ contract DKIMRegistryUpgradeTest is StructHelper {
         assertEq(emailAuth.lastTimestamp(), 0);
         vm.startPrank(deployer);
         vm.expectEmit(true, true, true, true);
-        emit IEmailAuth.EmailAuthed(
+        emit EmailAuth.EmailAuthed(
             emailAuthMsg.proof.emailNullifier,
             emailAuthMsg.proof.accountSalt,
             emailAuthMsg.proof.isCodeExist,
