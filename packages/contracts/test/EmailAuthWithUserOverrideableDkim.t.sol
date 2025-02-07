@@ -42,10 +42,10 @@ contract EmailAuthWithUserOverrideableDkimTest is StructHelper {
         }
         // emailAuth.initialize(emailAuthOwner, accountSalt, deployer);
         vm.expectEmit(true, false, false, false);
-        emit IEmailAuth.VerifierUpdated(address(verifier));
+        emit EmailAuth.VerifierUpdated(address(verifier));
         emailAuth.initVerifier(address(verifier));
         vm.expectEmit(true, false, false, false);
-        emit IEmailAuth.DKIMRegistryUpdated(address(overrideableDkim));
+        emit EmailAuth.DKIMRegistryUpdated(address(overrideableDkim));
         emailAuth.initDKIMRegistry(address(overrideableDkim));
         vm.stopPrank();
     }
@@ -88,7 +88,7 @@ contract EmailAuthWithUserOverrideableDkimTest is StructHelper {
 
         vm.startPrank(deployer);
         vm.expectEmit(true, true, true, true);
-        emit IEmailAuth.EmailAuthed(
+        emit EmailAuth.EmailAuthed(
             emailAuthMsg.proof.emailNullifier,
             emailAuthMsg.proof.accountSalt,
             emailAuthMsg.proof.isCodeExist,
@@ -129,7 +129,7 @@ contract EmailAuthWithUserOverrideableDkimTest is StructHelper {
 
         vm.startPrank(deployer);
         vm.expectEmit(true, true, true, true);
-        emit IEmailAuth.EmailAuthed(
+        emit EmailAuth.EmailAuthed(
             emailAuthMsg.proof.emailNullifier,
             emailAuthMsg.proof.accountSalt,
             emailAuthMsg.proof.isCodeExist,

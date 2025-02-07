@@ -8,12 +8,12 @@ import {CommandUtils} from "./libraries/CommandUtils.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {IEmailAuth, EmailAuthMsg} from "./interfaces/IEmailAuth.sol";
+import {EmailAuthMsg} from "./interfaces/IEmailTypes.sol";
 
 /// @title Email Authentication/Authorization Contract
 /// @notice This contract provides functionalities for the authentication of the email sender and the authentication of the message in the command part of the email body using DKIM and custom verification logic.
 /// @dev Inherits from OwnableUpgradeable and UUPSUpgradeable for upgradeability and ownership management.
-contract EmailAuth is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
+contract EmailAuth is OwnableUpgradeable, UUPSUpgradeable {
     /// The CREATE2 salt of this contract defined as a hash of an email address and an account code.
     bytes32 public accountSalt;
     /// An instance of the DKIM registry contract.
@@ -31,9 +31,17 @@ contract EmailAuth is OwnableUpgradeable, UUPSUpgradeable, IEmailAuth {
     /// A boolean whether timestamp check is enabled or not.
     bool public timestampCheckEnabled;
 
+    event DKIMRegistryUpdated(address indexed dkimRegistry);
+    event VerifierUpdated(address indexed verifier);
     event CommandTemplateInserted(uint indexed templateId);
     event CommandTemplateUpdated(uint indexed templateId);
     event CommandTemplateDeleted(uint indexed templateId);
+    event EmailAuthed(
+        bytes32 indexed emailNullifier,
+        bytes32 indexed accountSalt,
+        bool isCodeExist,
+        uint templateId
+    );
     event TimestampCheckEnabled(bool enabled);
 
     modifier onlyController() {

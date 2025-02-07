@@ -6,7 +6,7 @@ import {IDKIMRegistry} from "@zk-email/contracts/DKIMRegistry.sol";
 import {IVerifier, EmailProof} from "./interfaces/IVerifier.sol";
 import {CommandUtils} from "./libraries/CommandUtils.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
-import {IEmailAuth, EmailAuthMsg} from "./interfaces/IEmailAuth.sol";
+import {EmailAuthMsg} from "./interfaces/IEmailTypes.sol";
 import {IERC1271} from "./interfaces/IERC1271.sol";
 import {ERC1271} from "./libraries/ERC1271.sol";
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -19,7 +19,7 @@ import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Ini
 /// @dev Unlike EmailAuth.sol which handles nullifiers internally, this contract is designed
 /// to be used like a signature verification mechanism where the calling contract manages
 /// its own replay protection.
-contract EmailSigner is IEmailAuth, Initializable {
+contract EmailSigner is Initializable {
     /// Unique identifier for owner of this contract defined as a hash of an email address and an account code.
     bytes32 public accountSalt;
     /// An instance of the DKIM registry contract.
@@ -28,6 +28,25 @@ contract EmailSigner is IEmailAuth, Initializable {
     address public verifierAddr;
     /// The templateId of the sign hash command.
     uint256 public templateId;
+
+    /// @notice Thrown when the DKIM registry address is zero
+    error InvalidDKIMRegistryAddress();
+    /// @notice Thrown when the verifier address is zero
+    error InvalidVerifierAddress();
+    /// @notice Thrown when the template ID doesn't match
+    error InvalidTemplateId();
+    /// @notice Thrown when the DKIM public key hash verification fails
+    error InvalidDKIMPublicKeyHash();
+    /// @notice Thrown when the account salt doesn't match
+    error InvalidAccountSalt();
+    /// @notice Thrown when the masked command length exceeds the maximum
+    error InvalidMaskedCommandLength();
+    /// @notice Thrown when the skipped command prefix size is invalid
+    error InvalidSkippedCommandPrefixSize();
+    /// @notice Thrown when the command format is invalid
+    error InvalidCommand();
+    /// @notice Thrown when the email proof verification fails
+    error InvalidEmailProof();
 
     constructor() {
         _disableInitializers();
@@ -53,9 +72,6 @@ contract EmailSigner is IEmailAuth, Initializable {
 
         dkimRegistryAddr = _dkimRegistryAddr;
         verifierAddr = _verifierAddr;
-
-        emit DKIMRegistryUpdated(_dkimRegistryAddr);
-        emit VerifierUpdated(_verifierAddr);
     }
 
     /// @notice Authenticate the email sender and authorize the message in the email command.
