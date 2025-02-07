@@ -8,7 +8,6 @@ import {CommandUtils} from "./libraries/CommandUtils.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {EmailAuthMsg} from "./interfaces/IEmailTypes.sol";
 import {IERC1271} from "./interfaces/IERC1271.sol";
-import {ERC1271} from "./libraries/ERC1271.sol";
 import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 /// @title Email Authentication/Authorization Contract for Signature-like Usage
@@ -19,7 +18,15 @@ import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Ini
 /// @dev Unlike EmailAuth.sol which handles nullifiers internally, this contract is designed
 /// to be used like a signature verification mechanism where the calling contract manages
 /// its own replay protection.
-contract EmailSigner is Initializable {
+contract EmailSigner is IERC1271, Initializable {
+    /// @notice ERC-1271 magic value returned on valid signatures.
+    /// @dev Value is derived from `bytes4(keccak256("isValidSignature(bytes32,bytes)")`.
+    bytes4 constant MAGIC_VALUE = 0x1626ba7e;
+
+    /// @notice Legacy EIP-1271 magic value returned on valid signatures.
+    /// @dev Value is derived from `bytes4(keccak256("isValidSignature(bytes,bytes)")`.
+    bytes4 constant LEGACY_MAGIC_VALUE = 0x20c13b0b;
+
     /// Unique identifier for owner of this contract defined as a hash of an email address and an account code.
     bytes32 public accountSalt;
     /// An instance of the DKIM registry contract.
@@ -150,7 +157,7 @@ contract EmailSigner is Initializable {
         );
 
         // signature is valid
-        if (signedHash == _hash) return ERC1271.MAGIC_VALUE;
+        if (signedHash == _hash) return MAGIC_VALUE;
 
         // signature is invalid
         return bytes4(0);
@@ -164,10 +171,8 @@ contract EmailSigner is Initializable {
         bytes calldata _data,
         bytes calldata _signature
     ) external view returns (bytes4) {
-        if (
-            isValidSignature(keccak256(_data), _signature) ==
-            ERC1271.MAGIC_VALUE
-        ) return ERC1271.LEGACY_MAGIC_VALUE;
+        if (isValidSignature(keccak256(_data), _signature) == MAGIC_VALUE)
+            return LEGACY_MAGIC_VALUE;
         return bytes4(0);
     }
 }

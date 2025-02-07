@@ -10,7 +10,6 @@ import "../src/utils/ECDSAOwnedDKIMRegistry.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "./helpers/SignerStructHelper.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import {ERC1271} from "../src/libraries/ERC1271.sol";
 
 contract EmailSignerTest is SignerStructHelper {
     string message = "message to sign";
@@ -122,7 +121,7 @@ contract EmailSignerTest is SignerStructHelper {
 
         // Test valid signature
         bytes4 result = emailSigner.isValidSignature(msgHash, signature);
-        assertEq(result, ERC1271.MAGIC_VALUE);
+        assertEq(result, bytes4(0x1626ba7e));
 
         // Test invalid hash
         bytes32 wrongHash = keccak256("wrong message");
@@ -142,7 +141,7 @@ contract EmailSignerTest is SignerStructHelper {
             abi.encode(message),
             signature
         );
-        assertEq(result, ERC1271.LEGACY_MAGIC_VALUE);
+        assertEq(result, bytes4(0x20c13b0b));
 
         // Test invalid data
         bytes memory wrongData = bytes("wrong message");
