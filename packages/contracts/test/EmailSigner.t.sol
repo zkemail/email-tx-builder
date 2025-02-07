@@ -150,4 +150,38 @@ contract EmailSignerTest is SignerStructHelper {
         vm.expectRevert(EmailSigner.InvalidAccountSalt.selector);
         emailSigner.isValidSignature(msgHash, signature);
     }
+
+    function testExpectRevertInitializeInvalidDKIMRegistryAddress() public {
+        // Create new implementation
+        EmailSigner emailSignerImpl = new EmailSigner();
+
+        // Try to initialize with zero address for DKIM registry
+        bytes memory initData = abi.encodeWithSelector(
+            EmailSigner.initialize.selector,
+            accountSalt,
+            address(0), // Invalid DKIM registry address
+            address(verifier),
+            templateId
+        );
+
+        vm.expectRevert(EmailSigner.InvalidDKIMRegistryAddress.selector);
+        new ERC1967Proxy(address(emailSignerImpl), initData);
+    }
+
+    function testExpectRevertInitializeInvalidVerifierAddress() public {
+        // Create new implementation
+        EmailSigner emailSignerImpl = new EmailSigner();
+
+        // Try to initialize with zero address for verifier
+        bytes memory initData = abi.encodeWithSelector(
+            EmailSigner.initialize.selector,
+            accountSalt,
+            address(dkim),
+            address(0), // Invalid verifier address
+            templateId
+        );
+
+        vm.expectRevert(EmailSigner.InvalidVerifierAddress.selector);
+        new ERC1967Proxy(address(emailSignerImpl), initData);
+    }
 }
