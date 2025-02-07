@@ -80,12 +80,24 @@ contract EmailSignerTest is SignerStructHelper {
         emailSigner.verifyEmail(emailAuthMsg);
     }
 
-    function testExpectRevertVerifyEmailInvalidSizeOfTheSkippedCommandPrefix()
+    function testExpectRevertVerifyEmailInvalidSkippedCommandPrefixGreaterThan()
         public
     {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg(msgHash);
 
-        // Set skipped command prefix length to 605, it should be less than 605.
+        // Set skipped command prefix length to greater than command bytes (605)
+        emailAuthMsg.skippedCommandPrefix = 606;
+
+        vm.expectRevert(EmailSigner.InvalidSkippedCommandPrefixSize.selector);
+        emailSigner.verifyEmail(emailAuthMsg);
+    }
+
+    function testExpectRevertVerifyEmailInvalidSkippedCommandPrefixEqualTo()
+        public
+    {
+        EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg(msgHash);
+
+        // Set skipped command prefix length equal to command bytes (605)
         emailAuthMsg.skippedCommandPrefix = 605;
 
         vm.expectRevert(EmailSigner.InvalidSkippedCommandPrefixSize.selector);
