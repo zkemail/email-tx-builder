@@ -12,7 +12,6 @@ contract EmailSignerFactoryTest is Test {
     address deployer = makeAddr("deployer");
     address dkim = makeAddr("dkim");
     address verifier = makeAddr("verifier");
-    uint256 templateId = 1;
 
     function setUp() public {
         vm.startPrank(deployer);
@@ -24,8 +23,7 @@ contract EmailSignerFactoryTest is Test {
         factory = new EmailSignerFactory(
             address(implementation),
             address(dkim),
-            address(verifier),
-            templateId
+            address(verifier)
         );
 
         vm.stopPrank();
@@ -33,12 +31,7 @@ contract EmailSignerFactoryTest is Test {
 
     function testConstructorRevertInvalidImplementation() public {
         vm.expectRevert("Invalid implementation");
-        new EmailSignerFactory(
-            address(0),
-            address(dkim),
-            address(verifier),
-            templateId
-        );
+        new EmailSignerFactory(address(0), address(dkim), address(verifier));
     }
 
     function testConstructorRevertInvalidDkimRegistry() public {
@@ -46,8 +39,7 @@ contract EmailSignerFactoryTest is Test {
         new EmailSignerFactory(
             address(implementation),
             address(0),
-            address(verifier),
-            templateId
+            address(verifier)
         );
     }
 
@@ -56,8 +48,7 @@ contract EmailSignerFactoryTest is Test {
         new EmailSignerFactory(
             address(implementation),
             address(dkim),
-            address(0),
-            templateId
+            address(0)
         );
     }
 
@@ -79,7 +70,10 @@ contract EmailSignerFactoryTest is Test {
         assertEq(signer.accountSalt(), TEST_ACCOUNT_SALT);
         assertEq(signer.dkimRegistryAddr(), address(dkim));
         assertEq(signer.verifierAddr(), address(verifier));
-        assertEq(signer.templateId(), templateId);
+        uint256 expectedTemplateId = uint256(
+            keccak256(abi.encodePacked("EMAIL-SIGNER", TEST_ACCOUNT_SALT))
+        );
+        assertEq(signer.templateId(), expectedTemplateId);
     }
 
     function testDeployEmitsEvent() public {
