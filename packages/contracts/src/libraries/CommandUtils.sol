@@ -167,4 +167,27 @@ library CommandUtils {
         }
         return expectedCommand;
     }
+
+    /// @notice Remove a prefix from a string.
+    /// @param str The original string.
+    /// @param numBytes The number of bytes to remove from the start of the string.
+    /// @return The string with the prefix removed.
+    function removePrefix(
+        string memory str,
+        uint numBytes
+    ) external pure returns (string memory) {
+        require(
+            numBytes <= bytes(str).length,
+            "Invalid skipped command prefix size"
+        );
+
+        bytes memory strBytes = bytes(str);
+        bytes memory result = new bytes(strBytes.length - numBytes);
+
+        for (uint i = numBytes; i < strBytes.length; i++) {
+            result[i - numBytes] = strBytes[i];
+        }
+
+        return string(result);
+    }
 }

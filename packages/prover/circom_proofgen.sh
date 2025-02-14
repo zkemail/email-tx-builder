@@ -22,8 +22,10 @@ cd "${SCRIPT_DIR}"
 echo "entered zk email path: ${SCRIPT_DIR}"
 
 ${paramsDir}/${circuitName}_cpp/${circuitName} "${input_path}" "${witness_path}"
+# echo "NODE_OPTIONS='--max-old-space-size=644000' snarkjs wc "${paramsDir}/${circuitName}.wasm" "${input_path}" "${witness_path}""
+# NODE_OPTIONS='--max-old-space-size=644000' snarkjs wc "${paramsDir}/${circuitName}.wasm" "${input_path}" "${witness_path}"  | tee /dev/stderr
 status_jswitgen=$?
-echo "✓ Finished witness generation with cpp! ${status_jswitgen}"
+echo "✓ Finished witness generation with c++! ${status_jswitgen}"
 
 if [ $isLocal = 1 ]; then
     # DEFAULT SNARKJS PROVER (SLOW)

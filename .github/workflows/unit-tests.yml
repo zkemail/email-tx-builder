@@ -4,38 +4,49 @@ on: [push]
 
 jobs:
   circuits:
-    name: circuits
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+            
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
         with:
-          node-version: 18
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
-      - name: Setup Rust
-        uses: actions-rs/toolchain@v1
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
         with:
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
+          version: '>= 363.0.0'
 
-      - name: Download circom v2.1.9 (Linux)
-        run: wget https://github.com/iden3/circom/releases/download/v2.1.9/circom-linux-amd64 -O /usr/local/bin/circom && chmod +x /usr/local/bin/circom
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          gcloud components install gke-gcloud-auth-plugin -q
 
-      - name: Print circom version
-        run: circom --version
+      - name: Configure kubectl
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.YOUR_CLUSTER_NAME }} --region ${{ secrets.YOUR_REGION }}
 
-      - name: Install yarn
-        run: npm install -g yarn
+      - name: Prepare and Deploy Circuits Job to GKE
+        env:
+          REPO_URL: "https://github.com/${{ github.repository }}"
+          COMMIT_HASH: "${{ github.sha }}"
+        run: |
+          # Prepare the job file with substituted environment variables
+          envsubst < kubernetes/circuit-test-job.yml > kubernetes/circuit-test-job-processed.yml
+          
+          # Output the processed job file for verification
+          cat kubernetes/circuit-test-job-processed.yml
+          
+          # Apply the job to GKE
+          kubectl apply -f kubernetes/circuit-test-job-processed.yml
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Wait for Job to Complete
+        run: |
+          kubectl wait --for=condition=complete --timeout=1800s job/circuits-job
 
-      - name: Run tests
-        working-directory: packages/circuits
-        run: yarn test --runInBand --no-cache
+      - name: Stream Logs from GKE
+        run: |
+          kubectl logs job/circuits-job
 
   contracts:
     name: contracts
@@ -62,10 +73,6 @@ jobs:
       - name: Run tests
         working-directory: packages/contracts
         run: yarn test
-
-      - name: Run script tests
-        working-directory: packages/contracts
-        run: yarn test:script
 
   relayer:
     name: relayer

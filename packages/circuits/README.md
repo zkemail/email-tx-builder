@@ -7,6 +7,17 @@ We provide one main circuit as follows.
 #### `email_auth.circom`
 A circuit to verify that a message in the subject is authorized by a user of an account salt, derived from an email address in the From field and a random field value called account code.
 
+The circuit has the following blueprint ID and download URLs for the proving key and witness generator:
+```json
+{
+  "blueprintId": "7f3c3bc2-7c5d-4682-8d7f-f3d2f9046722",
+  "zkeyDownloadUrl": "https://storage.googleapis.com/circom-ether-email-auth/v2.0.2-dev/circuit_zkey.zip",
+  "circuitCppDownloadUrl": "https://storage.googleapis.com/circom-ether-email-auth/v2.0.2-dev/circuit.zip"
+}
+```
+
+It takes as input the following data:
+1. a padded email header `padded_header`.
 It takes as input the following data:
 1. a padded email header `padded_header`.
 2. the bytes of the padded email header `padded_header_len`.
@@ -71,3 +82,39 @@ This is basically the same as the `email_auth.circom` described above except for
 - Instead of `subject_idx`, it additionally takes as a private input a padded email body `padded_cleaned_body` and an index of the command in the email body `command_idx`.
 - It extracts a substring `command` between a prefix `(<div id=3D\"[^\"]*zkemail[^\"]*\"[^>]*>)"` and a suffix `</div>` from `padded_cleaned_body`.
 - It outputs `masked_command` instead of `masked_subject`, which removes the invitation code with the prefix and one email address from `command`.
+
+## How to Build the Container Image for Unit Tests in GitHub Actions
+
+Follow these steps to build and push the container image for unit tests.
+
+### Steps
+
+1. **Navigate to the Directory**
+
+   ```bash
+   cd .github/circuits-runner
+   ```
+
+2. **Create and Use a Buildx Builder**
+
+   ```bash
+   docker buildx create --use
+   ```
+
+3. **Log in to Docker Hub**
+
+   ```bash
+   docker login
+   ```
+
+4. **Build and Push the Image**
+
+   Build the image for multiple platforms and push it to Docker Hub.
+
+   ```bash
+   docker buildx build --platform linux/amd64,linux/arm64 \
+       -t YOUR_DOCKERHUB_USERNAME/circuits-runner:latest \
+       --push .
+   ```
+
+Replace `YOUR_DOCKERHUB_USERNAME` with your actual Docker Hub username.
