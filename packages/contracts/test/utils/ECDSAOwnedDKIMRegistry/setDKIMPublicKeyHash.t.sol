@@ -31,6 +31,7 @@ contract ECDSAOwnedDKIMRegistryTest_setDKIMPublicKeyHash is Test {
         }
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_Revert_IfInvalidSelector() public {
         string memory invalidSelector = ""; // Example of an invalid selector (empty string)
         string memory signedMsg = dkim.computeSignedMsg(
@@ -53,6 +54,7 @@ contract ECDSAOwnedDKIMRegistryTest_setDKIMPublicKeyHash is Test {
         );
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_Revert_IfInvalidDomainName() public {
         string memory invalidDomainName = ""; // Example of an invalid domain name (empty string)
         string memory signedMsg = dkim.computeSignedMsg(
@@ -129,6 +131,7 @@ contract ECDSAOwnedDKIMRegistryTest_setDKIMPublicKeyHash is Test {
         );
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_Revert_IfInvalidPublicKeyHash() public {
         bytes32 zeroPublicKeyHash = bytes32(0);
         string memory signedMsg = dkim.computeSignedMsg(
@@ -285,6 +288,7 @@ contract ECDSAOwnedDKIMRegistryTest_setDKIMPublicKeyHash is Test {
         require(!dkim.isDKIMPublicKeyHashValid(domainName, publicKeyHash));
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_RevertIfDuplicated() public {
         // vm.chainId(1);
         string memory signedMsg = dkim.computeSignedMsg(
@@ -319,6 +323,7 @@ contract ECDSAOwnedDKIMRegistryTest_setDKIMPublicKeyHash is Test {
         );
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_Revert_IfRevorked() public {
         // vm.chainId(1);
         string memory signedMsg = dkim.computeSignedMsg(
@@ -377,6 +382,7 @@ contract ECDSAOwnedDKIMRegistryTest_setDKIMPublicKeyHash is Test {
         );
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_Revert_IfSignatureInvalid() public {
         // vm.chainId(1);
         string memory signedMsg = dkim.computeSignedMsg(

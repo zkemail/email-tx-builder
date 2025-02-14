@@ -189,6 +189,7 @@ contract EmailAccountRecoveryZKSyncTest_completeRecovery is StructHelper {
         );
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertCompleteRecoveryRecoveryNotInProgress() public {
         skipIfNotZkSync();
 
@@ -224,6 +225,7 @@ contract EmailAccountRecoveryZKSyncTest_completeRecovery is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertCompleteRecovery() public {
         vm.warp(block.timestamp + 3 days);
 

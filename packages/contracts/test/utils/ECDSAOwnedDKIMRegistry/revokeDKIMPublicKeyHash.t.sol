@@ -31,6 +31,7 @@ contract ECDSAOwnedDKIMRegistryTest_revokeDKIMPublicKeyHash is Test {
         }
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_Revert_IfPublicKeyHashNotSet() public {
         // Attempt to revoke a public key hash that hasn't been set
         string memory revokeMsg = dkim.computeSignedMsg(
@@ -53,6 +54,7 @@ contract ECDSAOwnedDKIMRegistryTest_revokeDKIMPublicKeyHash is Test {
         );
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_Revert_IfSignerIsIncorrect() public {
         // Set a valid public key hash first
         string memory signedMsg = dkim.computeSignedMsg(
@@ -86,6 +88,7 @@ contract ECDSAOwnedDKIMRegistryTest_revokeDKIMPublicKeyHash is Test {
     }
 
     // Test invalid domain name
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_Revert_IfDomainNameIsInvalid() public {
         // Set a valid public key hash first
         string memory signedMsg = dkim.computeSignedMsg(
@@ -127,6 +130,7 @@ contract ECDSAOwnedDKIMRegistryTest_revokeDKIMPublicKeyHash is Test {
         );
     }
     // Test invalid public key hash
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_Revert_IfPublicKeyHashIsInvalid() public {
         // Set a valid public key hash first
         string memory signedMsg = dkim.computeSignedMsg(
@@ -168,6 +172,7 @@ contract ECDSAOwnedDKIMRegistryTest_revokeDKIMPublicKeyHash is Test {
         );
     }
     // Test if publicKeyHash is already revoked
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_Revert_IfPublicKeyHashIsAlreadyRevoked() public {
         // Set a valid public key hash first
         string memory signedMsg = dkim.computeSignedMsg(
@@ -223,6 +228,7 @@ contract ECDSAOwnedDKIMRegistryTest_revokeDKIMPublicKeyHash is Test {
         );
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_Revert_IfSignatureIsInvalid() public {
         // Set a valid public key hash first
         string memory signedMsg = dkim.computeSignedMsg(
@@ -252,6 +258,8 @@ contract ECDSAOwnedDKIMRegistryTest_revokeDKIMPublicKeyHash is Test {
             invalidSignature
         );
     }
+
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_Revert_IfDomainNameIsDifferent() public {
         // Set a valid public key hash first
         string memory signedMsg = dkim.computeSignedMsg(

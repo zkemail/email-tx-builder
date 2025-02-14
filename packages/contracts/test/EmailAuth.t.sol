@@ -58,6 +58,7 @@ contract EmailAuthTest is StructHelper {
         assertEq(emailAuth.dkimRegistryAddr(), address(newDKIM));
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertUpdateDKIMRegistryInvalidDkimRegistryAddress()
         public
     {
@@ -82,6 +83,7 @@ contract EmailAuthTest is StructHelper {
         assertEq(emailAuth.verifierAddr(), address(newVerifier));
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertUpdateVerifierInvalidVerifierAddress() public {
         assertEq(emailAuth.verifierAddr(), address(verifier));
 
@@ -99,6 +101,7 @@ contract EmailAuthTest is StructHelper {
         assertEq(result, commandTemplate);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertGetCommandTemplateTemplateIdNotExists() public {
         vm.expectRevert(bytes("template id not exists"));
         emailAuth.getCommandTemplate(templateId);
@@ -118,6 +121,7 @@ contract EmailAuthTest is StructHelper {
         assertEq(result, commandTemplate);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertInsertCommandTemplateCommandTemplateIsEmpty()
         public
     {
@@ -128,6 +132,7 @@ contract EmailAuthTest is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertInsertCommandTemplateTemplateIdAlreadyExists()
         public
     {
@@ -141,6 +146,7 @@ contract EmailAuthTest is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testUpdateCommandTemplate() public {
         vm.expectRevert(bytes("template id not exists"));
         string[] memory result = emailAuth.getCommandTemplate(templateId);
@@ -162,6 +168,7 @@ contract EmailAuthTest is StructHelper {
         assertEq(result, newCommandTemplate);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertUpdateCommandTemplateCallerIsNotTheModule()
         public
     {
@@ -169,6 +176,7 @@ contract EmailAuthTest is StructHelper {
         emailAuth.updateCommandTemplate(templateId, commandTemplate);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertUpdateCommandTemplateCommandTemplateIsEmpty()
         public
     {
@@ -181,6 +189,7 @@ contract EmailAuthTest is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertUpdateCommandTemplateTemplateIdNotExists() public {
         vm.startPrank(deployer);
 
@@ -190,6 +199,7 @@ contract EmailAuthTest is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testDeleteCommandTemplate() public {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
@@ -208,6 +218,7 @@ contract EmailAuthTest is StructHelper {
         emailAuth.getCommandTemplate(templateId);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertDeleteCommandTemplateCallerIsNotTheModule()
         public
     {
@@ -215,6 +226,7 @@ contract EmailAuthTest is StructHelper {
         emailAuth.deleteCommandTemplate(templateId);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertDeleteCommandTemplateTemplateIdNotExists() public {
         vm.startPrank(deployer);
         vm.expectRevert(bytes("template id not exists"));
@@ -252,6 +264,7 @@ contract EmailAuthTest is StructHelper {
         assertEq(emailAuth.lastTimestamp(), emailAuthMsg.proof.timestamp);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertAuthEmailCallerIsNotTheModule() public {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
 
@@ -265,6 +278,7 @@ contract EmailAuthTest is StructHelper {
         emailAuth.authEmail(emailAuthMsg);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertAuthEmailTemplateIdNotExists() public {
         vm.startPrank(deployer);
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
@@ -282,6 +296,7 @@ contract EmailAuthTest is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertAuthEmailInvalidDkimPublicKeyHash() public {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
@@ -301,6 +316,7 @@ contract EmailAuthTest is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertAuthEmailEmailNullifierAlreadyUsed() public {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
@@ -320,6 +336,7 @@ contract EmailAuthTest is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertAuthEmailInvalidAccountSalt() public {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
@@ -339,6 +356,7 @@ contract EmailAuthTest is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertAuthEmailInvalidTimestamp() public {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
@@ -361,6 +379,7 @@ contract EmailAuthTest is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertAuthEmailInvalidCommand() public {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
@@ -380,6 +399,7 @@ contract EmailAuthTest is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertAuthEmailInvalidEmailProof() public {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
@@ -406,6 +426,7 @@ contract EmailAuthTest is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertAuthEmailInvalidMaskedCommandLength() public {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
@@ -470,6 +491,7 @@ contract EmailAuthTest is StructHelper {
         assertEq(emailAuth.lastTimestamp(), emailAuthMsg.proof.timestamp);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertAuthEmailInvalidSizeOfTheSkippedCommandPrefix()
         public
     {
@@ -505,6 +527,7 @@ contract EmailAuthTest is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertSetTimestampCheckEnabled() public {
         vm.expectRevert("only controller");
         emailAuth.setTimestampCheckEnabled(false);
