@@ -130,6 +130,7 @@ contract EmailAccountRecoveryZKSyncTest_handleRecovery is StructHelper {
         );
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertHandleRecoveryGuardianIsNotDeployed() public {
         skipIfNotZkSync();
 
@@ -173,6 +174,7 @@ contract EmailAccountRecoveryZKSyncTest_handleRecovery is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertHandleRecoveryInvalidTemplateId() public {
         skipIfNotZkSync();
 
@@ -214,6 +216,7 @@ contract EmailAccountRecoveryZKSyncTest_handleRecovery is StructHelper {
     // Can not test recovery in progress using handleRecovery
     // Can not test invalid guardian using handleRecovery
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertHandleRecoveryGuardianStatusMustBeAccepted()
         public
     {
@@ -272,6 +275,7 @@ contract EmailAccountRecoveryZKSyncTest_handleRecovery is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertHandleRecoveryInvalidTemplateIndex() public {
         skipIfNotZkSync();
 
@@ -313,6 +317,7 @@ contract EmailAccountRecoveryZKSyncTest_handleRecovery is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertHandleRecoveryInvalidcommandParams() public {
         skipIfNotZkSync();
 
@@ -390,6 +395,7 @@ contract EmailAccountRecoveryZKSyncTest_handleRecovery is StructHelper {
     //     vm.stopPrank();
     // }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertHandleRecoveryInvalidNewSigner() public {
         skipIfNotZkSync();
 

@@ -29,6 +29,7 @@ contract ECDSAOwnedDKIMRegistryTest_changeSigner is Test {
         assertEq(dkim.signer(), newSigner, "Signer was not changed correctly");
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_Revert_IfNewSignerIsZeroAddress() public {
         address owner = dkim.owner();
         vm.startPrank(owner);
@@ -37,6 +38,7 @@ contract ECDSAOwnedDKIMRegistryTest_changeSigner is Test {
         dkim.changeSigner(address(0));
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_Revert_IfNewSignerIsSame() public {
         address owner = dkim.owner();
         address currentSigner = dkim.signer();
