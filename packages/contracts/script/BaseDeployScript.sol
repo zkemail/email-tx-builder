@@ -19,6 +19,7 @@ import {EmailAuth} from "../src/EmailAuth.sol";
 contract BaseDeployScript is Script {
     address initialOwner;
     uint256 deployerPrivateKey;
+    bytes32 salt;
 
     /// @notice Sets up deployment configuration based on whether using Defender or private key
     function run() public virtual {
@@ -32,6 +33,12 @@ contract BaseDeployScript is Script {
         if (initialOwner == address(0)) {
             initialOwner = vm.addr(deployerPrivateKey);
         }
+
+        salt = vm.envOr("CREATE2_SALT", bytes32(0));
+        if (salt == bytes32(0)) {
+            console.log("CREATE2_SALT env var not set");
+            return;
+        }
     }
 
     /// @notice Deploys a UserOverrideableDKIMRegistry contract with a specified owner, dkim signer and time delay
@@ -41,9 +48,11 @@ contract BaseDeployScript is Script {
         uint256 timeDelay
     ) public returns (address) {
         address dkimProxyAddress;
-        UserOverrideableDKIMRegistry dkimImpl = new UserOverrideableDKIMRegistry();
+        UserOverrideableDKIMRegistry dkimImpl = new UserOverrideableDKIMRegistry{
+                salt: salt
+            }();
         dkimProxyAddress = address(
-            new ERC1967Proxy(
+            new ERC1967Proxy{salt: salt}(
                 address(dkimImpl),
                 abi.encodeCall(
                     UserOverrideableDKIMRegistry.initialize,
@@ -64,9 +73,11 @@ contract BaseDeployScript is Script {
         address dkimSigner
     ) public returns (address) {
         address ecdsaDkimProxyAddress;
-        ECDSAOwnedDKIMRegistry ecdsaDkimImpl = new ECDSAOwnedDKIMRegistry();
+        ECDSAOwnedDKIMRegistry ecdsaDkimImpl = new ECDSAOwnedDKIMRegistry{
+            salt: salt
+        }();
         ecdsaDkimProxyAddress = address(
-            new ERC1967Proxy(
+            new ERC1967Proxy{salt: salt}(
                 address(ecdsaDkimImpl),
                 abi.encodeCall(ecdsaDkimImpl.initialize, (owner, dkimSigner))
             )
@@ -81,11 +92,14 @@ contract BaseDeployScript is Script {
     /// @notice Deploys a Verifier contract with a specified owner and Groth16 verifier
     function deployVerifier(address owner) public returns (address) {
         address verifierProxyAddress;
-        Verifier verifierImpl = new Verifier();
-        Groth16Verifier groth16Verifier = new Groth16Verifier();
-        console.log("Groth16Verifier deployed at: %s", address(groth16Verifier));
+        Verifier verifierImpl = new Verifier{salt: salt}();
+        Groth16Verifier groth16Verifier = new Groth16Verifier{salt: salt}();
+        console.log(
+            "Groth16Verifier deployed at: %s",
+            address(groth16Verifier)
+        );
         verifierProxyAddress = address(
-            new ERC1967Proxy(
+            new ERC1967Proxy{salt: salt}(
                 address(verifierImpl),
                 abi.encodeCall(
                     verifierImpl.initialize,
@@ -100,7 +114,7 @@ contract BaseDeployScript is Script {
     /// @notice Deploys an EmailAuth implementation contract
     function deployEmailAuthImplementation() public returns (address) {
         address emailAuthImplAddress;
-        emailAuthImplAddress = address(new EmailAuth());
+        emailAuthImplAddress = address(new EmailAuth{salt: salt}());
         console.log(
             "EmailAuth implementation deployed at: %s",
             emailAuthImplAddress
@@ -116,9 +130,11 @@ contract BaseDeployScript is Script {
         address emailAuthImpl
     ) public returns (address) {
         address recoveryControllerProxyAddress;
-        RecoveryController recoveryControllerImpl = new RecoveryController();
+        RecoveryController recoveryControllerImpl = new RecoveryController{
+            salt: salt
+        }();
         recoveryControllerProxyAddress = address(
-            new ERC1967Proxy(
+            new ERC1967Proxy{salt: salt}(
                 address(recoveryControllerImpl),
                 abi.encodeCall(
                     RecoveryController.initialize,
@@ -143,9 +159,11 @@ contract BaseDeployScript is Script {
         bytes32 proxyBytecodeHash
     ) public returns (address) {
         address recoveryControllerProxyAddress;
-        RecoveryControllerZKSync recoveryControllerZKSyncImpl = new RecoveryControllerZKSync();
+        RecoveryControllerZKSync recoveryControllerZKSyncImpl = new RecoveryControllerZKSync{
+                salt: salt
+            }();
         recoveryControllerProxyAddress = address(
-            new ERC1967Proxy(
+            new ERC1967Proxy{salt: salt}(
                 address(recoveryControllerZKSyncImpl),
                 abi.encodeCall(
                     recoveryControllerZKSyncImpl.initialize,
@@ -170,7 +188,7 @@ contract BaseDeployScript is Script {
     /// @notice Deploys a ZK Sync Create2 factory contract
     function deployZKSyncCreate2Factory() public returns (address) {
         address factoryImplAddress;
-        factoryImplAddress = address(new ZKSyncCreate2Factory());
+        factoryImplAddress = address(new ZKSyncCreate2Factory{salt: salt}());
         console.log("ZKSyncCreate2Factory deployed at: %s", factoryImplAddress);
         return factoryImplAddress;
     }
@@ -181,9 +199,9 @@ contract BaseDeployScript is Script {
         address recoveryController
     ) public returns (address) {
         address simpleWalletProxyAddress;
-        SimpleWallet simpleWalletImpl = new SimpleWallet();
+        SimpleWallet simpleWalletImpl = new SimpleWallet{salt: salt}();
         simpleWalletProxyAddress = address(
-            new ERC1967Proxy(
+            new ERC1967Proxy{salt: salt}(
                 address(simpleWalletImpl),
                 abi.encodeCall(
                     simpleWalletImpl.initialize,
