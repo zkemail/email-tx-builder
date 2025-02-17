@@ -365,20 +365,22 @@ pub async fn handle_email(
 
     info!(LOG, "Parsed email: {:?}", parsed_email);
 
-    let chain_client = ChainClient::setup(
+    // update dkim only if the chain and dkim_contract_address are present
+    if let (Some(chain), Some(dkim_contract_address)) = (
         request.clone().email_tx_auth.chain,
-        relayer_state.clone().config.chains,
-    )
-    .await?;
-
-    // Check and update DKIM using the parsed email and chain client
-    check_and_update_dkim(
-        &parsed_email,
         request.email_tx_auth.dkim_contract_address,
-        chain_client.clone(),
-        relayer_state.clone(),
-    )
-    .await?;
+    ) {
+        let chain_client = ChainClient::setup(chain, relayer_state.clone().config.chains).await?;
+
+        // Check and update DKIM using the parsed email and chain client
+        check_and_update_dkim(
+            &parsed_email,
+            dkim_contract_address,
+            chain_client.clone(),
+            relayer_state.clone(),
+        )
+        .await?;
+    }
 
     // Generate the email authentication message
     let email_auth_msg = get_email_auth_msg(&email, request.clone(), relayer_state.clone()).await?;
