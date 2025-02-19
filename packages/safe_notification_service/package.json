@@ -1,0 +1,27 @@
+{
+  "name": "safe_notification_service",
+  "license": "MIT",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.4.0",
+    "@types/express": "^5.0.0",
+    "@types/nodemailer": "^6.4.17",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "nodemailer": "^6.10.0",
+    "prisma": "^6.4.0",
+    "viem": "^2.23.3",
+    "zod": "^3.24.2"
+  },
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "dev": "bun --watch run src/index.ts"
+  }
+}
