@@ -1,0 +1,36 @@
+{
+    "abi": [
+        {
+            "inputs": [
+                {
+                    "internalType": "bytes32",
+                    "name": "salt",
+                    "type": "bytes32"
+                }
+            ],
+            "name": "deploy",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "bytes32",
+                    "name": "salt",
+                    "type": "bytes32"
+                }
+            ],
+            "name": "predictAddress",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ]
+}

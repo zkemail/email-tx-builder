@@ -28,3 +28,18 @@ Then run the server:
 ```bash
 bun run dev
 ```
+
+To run the tests:
+
+run migrations for test database:
+
+```bash
+DATABASE_URL="postgresql://user:password@localhost:5433/safe_monitor_test" bunx prisma db push
+```
+
+run tests:
+
+```bash
+bun test
+```
+

@@ -1,6 +1,6 @@
 import express from 'express';
 import { config } from 'dotenv';
-import prisma from './config/database';
+import accountRoutes from './routes/account.routes';
 
 config();
 
@@ -11,6 +11,9 @@ app.use(express.json());
 app.get('/health', (req, res) => {
     res.json({ status: 'ok' });
 });
+
+// Routes
+app.use('/api/accounts', accountRoutes);
 
 // Start the server
 const port = process.env.PORT || 3000;
