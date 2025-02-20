@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "@prisma/client": "^6.4.0",
+    "@safe-global/safe-core-sdk": "^3.3.5",
+    "@safe-global/safe-core-sdk-types": "^5.1.0",
     "@types/express": "^5.0.0",
     "@types/nodemailer": "^6.4.17",
     "dotenv": "^16.4.7",
@@ -21,8 +23,8 @@
     "nodemailer": "^6.10.0",
     "prisma": "^6.4.0",
     "viem": "^2.23.3",
-    "zod": "^3.24.2",
-    "winston": "^3.11.0"
+    "winston": "^3.11.0",
+    "zod": "^3.24.2"
   },
   "scripts": {
     "start": "bun run src/index.ts",

@@ -19,3 +19,25 @@ model Account {
 
     @@unique([email, accountCode, chainId])
 }
+
+model SafeTransaction {
+    id          String   @id @default(uuid())
+    safeTxHash  String
+    safeAddress String
+    chainId     Int
+    signature   String?
+    processed   Boolean  @default(false)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@unique([safeTxHash, chainId])
+}
+
+model ResponseCache {
+    cacheKey  String   @id
+    response  Json
+    createdAt DateTime @default(now())
+    expiresAt DateTime
+
+    @@map("response_cache")
+}
