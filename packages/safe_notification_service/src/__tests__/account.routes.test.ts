@@ -89,5 +89,56 @@ describe('Account Routes', () => {
             expect(response.status).toBe(409);
         });
 
+        it('should add new safe address to existing account', async () => {
+            const accountData = {
+                email: 'test@example.com',
+                accountCode: '0x22a2d51a892f866cf3c6cc4e138ba87a8a5059a1d80dea5b8ee8232034a105b7',
+                chainId: 84532,
+                safeAddress: '0x1234567890123456789012345678901234567890'
+            };
+
+            // Create first account
+            const firstResponse = await request(app)
+                .post('/api/accounts/register')
+                .send(accountData);
+
+            expect(firstResponse.status).toBe(201);
+
+            // Add new safe address to same account
+            const newSafeAddress = '0x2234567890123456789012345678901234567890';
+            const secondResponse = await request(app)
+                .post('/api/accounts/register')
+                .send({
+                    ...accountData,
+                    safeAddress: newSafeAddress
+                });
+
+            expect(secondResponse.status).toBe(200);
+            expect(secondResponse.body.safeAddresses).toHaveLength(2);
+            expect(secondResponse.body.safeAddresses).toContain(accountData.safeAddress);
+            expect(secondResponse.body.safeAddresses).toContain(newSafeAddress);
+        });
+
+        it('should reject duplicate safe address for same account', async () => {
+            const accountData = {
+                email: 'test@example.com',
+                accountCode: '0x22a2d51a892f866cf3c6cc4e138ba87a8a5059a1d80dea5b8ee8232034a105b7',
+                chainId: 84532,
+                safeAddress: '0x1234567890123456789012345678901234567890'
+            };
+
+            // Create first account
+            await request(app)
+                .post('/api/accounts/register')
+                .send(accountData);
+
+            // Try to add same safe address again
+            const response = await request(app)
+                .post('/api/accounts/register')
+                .send(accountData);
+
+            expect(response.status).toBe(409);
+            expect(response.body.error).toBe('Safe address already registered for this account');
+        });
     });
 }); 

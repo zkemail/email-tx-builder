@@ -20,9 +20,22 @@ export const registerAccount = async (req: Request, res: Response) => {
         });
 
         if (existingAccount) {
-            return res.status(409).json({
-                error: 'Account already exists with this email, account code and chain ID combination'
+            // Check if safe address already exists for this account
+            if (existingAccount.safeAddresses.includes(safeAddress)) {
+                return res.status(409).json({
+                    error: 'Safe address already registered for this account'
+                });
+            }
+
+            // Add new safe address to existing account
+            const updatedAccount = await prisma.account.update({
+                where: { id: existingAccount.id },
+                data: {
+                    safeAddresses: [...existingAccount.safeAddresses, safeAddress]
+                }
             });
+
+            return res.status(200).json(updatedAccount);
         }
 
         // Validate chain ID
@@ -36,7 +49,7 @@ export const registerAccount = async (req: Request, res: Response) => {
         // Calculate ETH address
         const ethAddress = await calculateEthAddress(accountCode, email, chainId);
 
-        // Register account in database and send response
+        // Register new account in database and send response
         const account = await prisma.account.create({
             data: {
                 email,
