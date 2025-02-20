@@ -8,13 +8,14 @@ generator client {
 }
 
 model Account {
-    id          String   @id @default(uuid())
-    email       String
-    accountCode String
-    chainId     Int
-    ethAddress  String   @unique
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+    id            String   @id @default(uuid())
+    email         String
+    accountCode   String
+    chainId       Int
+    ethAddress    String
+    safeAddresses String[]
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
 
     @@unique([email, accountCode, chainId])
 }

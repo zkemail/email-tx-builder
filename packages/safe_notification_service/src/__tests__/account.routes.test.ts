@@ -16,16 +16,33 @@ describe('Account Routes', () => {
         await prisma.account.deleteMany();
     });
 
-    describe('POST /api/accounts', () => {
-        it('should create a new account with valid data', async () => {
+    describe('POST /api/accounts/register', () => {
+        it('should reject account creation without safe address', async () => {
             const accountData = {
-                email: 'thezdev1@gmail.com',
+                email: 'test@example.com',
                 accountCode: '0x22a2d51a892f866cf3c6cc4e138ba87a8a5059a1d80dea5b8ee8232034a105b7',
                 chainId: 84532
             };
 
             const response = await request(app)
-                .post('/api/accounts')
+                .post('/api/accounts/register')
+                .send(accountData);
+
+            expect(response.status).toBe(400);
+            expect(response.body.error).toBe('Invalid input');
+            expect(response.body.details[0].path).toContain('safeAddress');
+        });
+
+        it('should create a new account with valid data including safe address', async () => {
+            const accountData = {
+                email: 'test@example.com',
+                accountCode: '0x22a2d51a892f866cf3c6cc4e138ba87a8a5059a1d80dea5b8ee8232034a105b7',
+                chainId: 84532,
+                safeAddress: '0x1234567890123456789012345678901234567890'
+            };
+
+            const response = await request(app)
+                .post('/api/accounts/register')
                 .send(accountData);
 
             expect(response.status).toBe(201);
@@ -33,8 +50,9 @@ describe('Account Routes', () => {
                 email: accountData.email,
                 accountCode: accountData.accountCode,
                 chainId: accountData.chainId,
-                ethAddress: '0xE39796F88Dd07631A7566D4f83A8C229D6F3ca55'
+                safeAddresses: [accountData.safeAddress]
             });
+            expect(response.body.ethAddress).toMatch(/^0x[a-fA-F0-9]{40}$/);
         });
 
         it('should return 400 for invalid email', async () => {
@@ -44,7 +62,7 @@ describe('Account Routes', () => {
             };
 
             const response = await request(app)
-                .post('/api/accounts')
+                .post('/api/accounts/register')
                 .send(invalidData);
 
             expect(response.status).toBe(400);
@@ -52,24 +70,24 @@ describe('Account Routes', () => {
 
         it('should return 409 for duplicate eth address', async () => {
             const accountData = {
-                email: 'thezdev1@gmail.com',
+                email: 'test@example.com',
                 accountCode: '0x22a2d51a892f866cf3c6cc4e138ba87a8a5059a1d80dea5b8ee8232034a105b7',
-                chainId: 84532
+                chainId: 84532,
+                safeAddress: '0x1234567890123456789012345678901234567890'
             };
 
             // Create first account
             await request(app)
-                .post('/api/accounts')
+                .post('/api/accounts/register')
                 .send(accountData);
 
             // Try to create second account with same eth address
             const response = await request(app)
-                .post('/api/accounts')
-                .send({
-                    ...accountData,
-                });
+                .post('/api/accounts/register')
+                .send(accountData);
 
             expect(response.status).toBe(409);
         });
+
     });
 }); 

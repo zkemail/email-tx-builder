@@ -8,7 +8,22 @@ import { SUPPORTED_CHAINS } from '../config/chains';
 export const registerAccount = async (req: Request, res: Response) => {
     try {
         // Validate input using zod schema
-        const { email, accountCode, chainId } = RegisterAccountSchema.parse(req.body);
+        const { email, accountCode, chainId, safeAddress } = RegisterAccountSchema.parse(req.body);
+
+        // Check if account already exists with this combination
+        const existingAccount = await prisma.account.findFirst({
+            where: {
+                email,
+                accountCode,
+                chainId
+            }
+        });
+
+        if (existingAccount) {
+            return res.status(409).json({
+                error: 'Account already exists with this email, account code and chain ID combination'
+            });
+        }
 
         // Validate chain ID
         if (!SUPPORTED_CHAINS[chainId]) {
@@ -27,7 +42,8 @@ export const registerAccount = async (req: Request, res: Response) => {
                 email,
                 accountCode,
                 ethAddress,
-                chainId
+                chainId,
+                safeAddresses: [safeAddress]
             }
         });
 
