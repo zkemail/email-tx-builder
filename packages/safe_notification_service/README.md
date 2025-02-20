@@ -6,10 +6,25 @@ To install dependencies:
 bun install
 ```
 
-To run:
+To run the server in development mode:
+
+first create `.env` file according to `.env.example`
+
+Then run the docker compose file to start the postgres database:
 
 ```bash
-bun run index.ts
+docker compose up -d
 ```
 
-This project was created using `bun init` in bun v1.1.38. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+Then run the prisma migrations:
+
+```bash
+bunx prisma generate
+bunx prisma db push
+```
+
+Then run the server:
+
+```bash
+bun run dev
+```
