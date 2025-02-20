@@ -3,7 +3,7 @@ import { registerAccount } from '../controllers/account.controller';
 
 const router = Router();
 
-router.post('/', async (req, res) => {
+router.post('/register', async (req, res) => {
     await registerAccount(req, res);
 });
 
