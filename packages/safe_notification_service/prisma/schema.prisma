@@ -9,8 +9,8 @@ generator client {
 
 model Account {
     id          String   @id @default(uuid())
-    email       String   @unique
-    accountCode String   @unique
+    email       String
+    accountCode String
     ethAddress  String   @unique
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
