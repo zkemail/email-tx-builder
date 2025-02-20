@@ -1,10 +1,10 @@
 # Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 
 # Logs
-
 logs
-_.log
-npm-debug.log_
+*.log
+
+# npm-debug.log_
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*

@@ -1,6 +1,6 @@
 import prisma from '../config/database';
 import SafeApiKit from '@safe-global/api-kit'
-
+import logger from '../utils/logger';
 
 export class SafeMonitorService {
     private intervalId: NodeJS.Timer | null = null;
@@ -21,10 +21,11 @@ export class SafeMonitorService {
 
         try {
             const batch = this.queue.splice(0, this.RATE_LIMIT);
+            logger.debug(`Processing batch of ${batch.length} tasks`);
             await Promise.all(batch.map(task => task()));
             this.lastProcessTime = Date.now();
         } catch (error) {
-            console.error('Error processing queue:', error);
+            logger.error('Error processing queue:', { error });
         } finally {
             this.processing = false;
             if (this.queue.length > 0) {
@@ -35,32 +36,39 @@ export class SafeMonitorService {
 
     private async processSafe(email: string, accountCode: string, safeAddress: string, chainId: number) {
         try {
-            console.log(`Processing safe for:`);
-            console.log(`Email: ${email}`);
-            console.log(`Account Code: ${accountCode}`);
-            console.log(`Safe Address: ${safeAddress}`);
-            console.log(`Chain ID: ${chainId}`);
+            logger.info('Processing safe', {
+                email,
+                accountCode,
+                safeAddress,
+                chainId
+            });
+
             const safeApiKit = new SafeApiKit({
-                chainId: BigInt(chainId) // e.g. Sepolia = 11155111
-            })
+                chainId: BigInt(chainId)
+            });
 
-            // Get pending transactions for a specific safe address
-            const pendingTxs = await safeApiKit.getPendingTransactions(safeAddress)
+            const pendingTxs = await safeApiKit.getPendingTransactions(safeAddress);
 
-            // Loop through pending transactions and check confirmation status
             for (const tx of pendingTxs.results) {
                 if (!tx.isExecuted && tx.confirmations) {
                     const txHash = tx.safeTxHash;
                     const requiredConfirmations = tx.confirmationsRequired;
                     const currentConfirmations = tx.confirmations.length;
 
-                    console.log(`Found pending transaction ${txHash} for safe ${safeAddress}`);
-                    console.log(`Confirmations: ${currentConfirmations}/${requiredConfirmations}`);
+                    logger.info('Found pending transaction', {
+                        txHash,
+                        safeAddress,
+                        currentConfirmations,
+                        requiredConfirmations
+                    });
                 }
             }
-
         } catch (error) {
-            console.error(`Error processing safe ${safeAddress} on chain ${chainId}:`, error);
+            logger.error('Error processing safe', {
+                safeAddress,
+                chainId,
+                error
+            });
         }
     }
 
@@ -76,7 +84,8 @@ export class SafeMonitorService {
                 distinct: ['email', 'accountCode']
             });
 
-            // Add each safe processing task to the queue
+            logger.info(`Found ${accounts.length} accounts to process`);
+
             accounts.forEach(account => {
                 account.safeAddresses.forEach(safeAddress => {
                     this.queue.push(async () => {
@@ -85,21 +94,21 @@ export class SafeMonitorService {
                 });
             });
 
-            // Start processing the queue
+            logger.debug(`Added ${this.queue.length} tasks to the queue`);
             this.processQueue();
         } catch (error) {
-            console.error('Error fetching safes:', error);
+            logger.error('Error fetching safes:', { error });
         }
     }
 
-    start(intervalMs: number = 10000) { // Default to 10 seconds
+    start(intervalMs: number = 10000) {
         if (this.intervalId) {
-            console.warn('Monitor already running');
+            logger.warn('Monitor already running');
             return;
         }
 
-        console.log('Starting Safe monitor...');
-        this.fetchAndProcessSafes(); // Initial run
+        logger.info('Starting Safe monitor', { intervalMs });
+        this.fetchAndProcessSafes();
         this.intervalId = setInterval(() => {
             this.fetchAndProcessSafes();
         }, intervalMs);
@@ -109,7 +118,7 @@ export class SafeMonitorService {
         if (this.intervalId) {
             clearInterval(this.intervalId);
             this.intervalId = null;
-            console.log('Safe monitor stopped');
+            logger.info('Safe monitor stopped');
         }
     }
 } 
