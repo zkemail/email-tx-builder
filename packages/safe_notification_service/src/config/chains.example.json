@@ -1,0 +1,8 @@
+{
+    "84532": {
+        "privateKey": "0000000000000000000000000000000000000000000000000000000000000000",
+        "factoryAddress": "0xf1E2581f46b222d2E773333dD6A867B2DB6960aF",
+        "rpcUrl": "https://sepolia.base.org",
+        "viemChain": "baseSepolia"
+    }
+}

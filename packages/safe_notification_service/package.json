@@ -18,6 +18,7 @@
     "@safe-global/safe-core-sdk-types": "^5.1.0",
     "@types/express": "^5.0.0",
     "@types/nodemailer": "^6.4.17",
+    "bullmq": "^5.41.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "nodemailer": "^6.10.0",

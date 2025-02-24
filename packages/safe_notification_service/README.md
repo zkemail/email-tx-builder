@@ -10,6 +10,7 @@ To run the server in development mode:
 
 first create `.env` file according to `.env.example`
 
+then create `src/config/chains.json` file according to `src/config/chains.example.json`
 Then run the docker compose file to start the postgres database:
 
 ```bash
