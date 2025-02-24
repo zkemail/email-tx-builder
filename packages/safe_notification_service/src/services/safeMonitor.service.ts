@@ -2,6 +2,8 @@ import prisma from '../config/database';
 import SafeApiKit from '@safe-global/api-kit'
 import logger from '../utils/logger';
 import { getEmailSignature } from '../utils/emailSignature';
+import { buildContractSignature, buildSignatureBytes, EthSafeSignature } from '@safe-global/protocol-kit';
+import SafeTransaction from '@safe-global/protocol-kit/dist/src/utils/transactions/SafeTransaction';
 
 export class SafeMonitorService {
     private intervalId: NodeJS.Timer | null = null;
@@ -55,7 +57,7 @@ export class SafeMonitorService {
                 });
             });
 
-            logger.debug(`Added ${this.queue.length} tasks to the queue`);
+            logger.info(`Added ${this.queue.length} tasks to the queue`);
             this.processQueue();
         } catch (error) {
             logger.error('Error fetching safes:', { error });
@@ -73,7 +75,7 @@ export class SafeMonitorService {
 
         try {
             const batch = this.queue.splice(0, this.RATE_LIMIT);
-            logger.debug(`Processing batch of ${batch.length} tasks`);
+            logger.info(`Processing batch of ${batch.length} tasks`);
             await Promise.all(batch.map(task => task()));
             this.lastProcessTime = Date.now();
         } catch (error) {
@@ -101,14 +103,22 @@ export class SafeMonitorService {
                 chainId: BigInt(chainId)
             });
 
-            const pendingTxs = await safeApiKit.getPendingTransactions(safeAddress);
-            logger.debug('Found pending transactions', {
-                count: pendingTxs.results.length,
+            const pendingTxsResponse = await safeApiKit.getPendingTransactions(safeAddress);
+
+            // Filter out transactions that already have enough confirmations
+            const pendingTxs = pendingTxsResponse.results.filter(tx =>
+                !tx.isExecuted &&
+                tx.confirmations &&
+                tx.confirmations.length < tx.confirmationsRequired
+            );
+
+            logger.info('Found pending transactions', {
+                count: pendingTxs.length,
                 safeAddress
             });
 
-            for (const tx of pendingTxs.results) {
-                if (!tx.isExecuted && tx.confirmations) {
+            for (const tx of pendingTxs) {
+                if (!tx.isExecuted && tx.confirmations && tx.confirmations.length < tx.confirmationsRequired) {
                     await this.processTransaction(tx, email, accountCode, safeAddress, ethAddress, chainId);
                 }
             }
@@ -116,9 +126,8 @@ export class SafeMonitorService {
             logger.error('Error processing safe', {
                 safeAddress,
                 chainId,
-                error
+                error: error instanceof Error ? error.message : 'Unknown error'
             });
-            throw error;
         }
     }
 
@@ -131,7 +140,9 @@ export class SafeMonitorService {
         chainId: number
     ) {
         const txHash = tx.safeTxHash;
-        logger.debug('Starting transaction processing', { txHash, safeAddress });
+        logger.info('Starting transaction processing', { txHash, safeAddress });
+
+        let signatureData;
 
         try {
             const existingTx = await prisma.safeTransaction.findUnique({
@@ -143,64 +154,71 @@ export class SafeMonitorService {
                 }
             });
 
-            // If we already have a signature, we've successfully called the API before
             if (existingTx?.signature) {
-                logger.debug('Transaction already has signature', { txHash });
-                return;
-            }
+                logger.info('Using existing signature', { txHash });
+                signatureData = existingTx.signature;
+            } else {
+                logger.info('Generating new signature', {
+                    txHash,
+                    safeAddress,
+                    currentConfirmations: tx.confirmations?.length,
+                    requiredConfirmations: tx.confirmationsRequired
+                });
 
-            // Create or update transaction record
-            if (!existingTx) {
-                await prisma.safeTransaction.create({
-                    data: {
+                const emailSignature = await getEmailSignature(
+                    email,
+                    accountCode,
+                    ethAddress,
+                    txHash,
+                    chainId
+                );
+
+                await prisma.safeTransaction.upsert({
+                    where: {
+                        safeTxHash_chainId: {
+                            safeTxHash: txHash,
+                            chainId
+                        }
+                    },
+                    create: {
                         safeTxHash: txHash,
                         safeAddress,
                         chainId,
-                        processed: false
+                        processed: false,
+                        signature: emailSignature
+                    },
+                    update: {
+                        signature: emailSignature
                     }
                 });
+
+                signatureData = emailSignature;
+                logger.info('Generated and saved signature for transaction', { txHash });
             }
 
-
-            logger.info('Processing pending transaction', {
-                txHash,
-                safeAddress,
-                currentConfirmations: tx.confirmations.length,
-                requiredConfirmations: tx.confirmationsRequired,
-                isNew: !existingTx
+            const safeApiKit = new SafeApiKit({
+                chainId: BigInt(chainId)
             });
 
-            // Generate signature using the utility function
-            const signature = await getEmailSignature(
-                email,
-                accountCode,
-                ethAddress,
+            // Create contract signature bytes
+            const safeSignature = new EthSafeSignature(ethAddress, signatureData, true);
+            const signatureBytes = buildSignatureBytes([safeSignature]);
+
+            logger.info('Submitting contract signature', {
                 txHash,
-                chainId
-            );
-
-            // Update transaction with signature
-            await prisma.safeTransaction.update({
-                where: {
-                    safeTxHash_chainId: {
-                        safeTxHash: txHash,
-                        chainId
-                    }
-                },
-                data: {
-                    signature: signature.data,
-                    processed: true
-                }
+                signer: ethAddress,
+                signatureBytes
             });
+            await safeApiKit.confirmTransaction(txHash, signatureBytes);
 
-            logger.info('Generated and saved signature for transaction', { txHash });
+            logger.info('Transaction confirmed', { txHash });
+
         } catch (error) {
             logger.error('Error processing transaction', {
                 txHash,
                 safeAddress,
-                error
+                error: error instanceof Error ? error.message : 'Unknown error'
             });
-            throw error;
         }
     }
 } 

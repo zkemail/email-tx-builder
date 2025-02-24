@@ -1,5 +1,4 @@
 import { encodeAbiParameters, getContract } from 'viem';
-import { EthSafeSignature } from '@safe-global/protocol-kit';
 import { publicClients } from '../config/viemClient';
 import EMAIL_SIGNER_ABI from '../abis/EmailSigner.json';
 import logger from './logger';
@@ -11,7 +10,7 @@ export async function getEmailSignature(
     ethAddress: string,
     safeTxHash: string,
     chainId: number
-): Promise<EthSafeSignature> {
+): Promise<string> {
     const client = publicClients[chainId];
     if (!client) {
         throw new Error(`No client found for chain ID ${chainId}`);
@@ -74,7 +73,8 @@ export async function getEmailSignature(
         ]
     );
 
-    return new EthSafeSignature(ethAddress, smartContractSignature, true);
+    logger.info('Email signature', { signature: smartContractSignature });
+    return smartContractSignature;
 }
 
 async function requestSignature(
