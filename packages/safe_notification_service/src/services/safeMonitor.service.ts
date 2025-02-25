@@ -7,13 +7,11 @@ import { createPublicClient, createWalletClient, http, parseAbiItem } from 'viem
 import { publicClients } from '@/config/viemClient';
 import { RPC_URLS, SUPPORTED_CHAINS } from '@/config/chains';
 import { privateKeyToAccount } from 'viem/accounts';
+import { Queue, Worker } from 'bullmq';
 
 export class SafeMonitorService {
     private intervalId: NodeJS.Timer | null = null;
-    private queue: (() => Promise<void>)[] = [];
-    private processing = false;
     private lastProcessTime = Date.now();
-    private activeTaskIds = new Set<string>();
     private readonly RATE_LIMIT = 5; // 5 requests per second
     private readonly INTERVAL = 1000; // 1 second in milliseconds
 
@@ -53,55 +51,22 @@ export class SafeMonitorService {
 
             logger.info(`Found ${accountsWithSafes.length} accounts with safes to process`);
 
-            accountsWithSafes.forEach(account => {
-                account.safeAddresses.forEach(safeAddress => {
-                    const taskId = `${safeAddress}-${account.chainId}`;
-                    if (!this.activeTaskIds.has(taskId)) {
-                        this.activeTaskIds.add(taskId);
-                        this.queue.push(async () => {
-                            try {
-                                await this.processSafe(account.email, account.accountCode, account.ethAddress, safeAddress, account.chainId);
-                            } finally {
-                                this.activeTaskIds.delete(taskId);
-                            }
-                        });
+            accountsWithSafes.forEach(async (account) => {
+                account.safeAddresses.forEach(async (safeAddress) => {
+                    try {
+                        await this.processSafe(account.email, account.accountCode, account.ethAddress, safeAddress, account.chainId);
+                    } catch (error) {
+                        logger.error('Error processing safe', { error });
                     }
                 });
             });
 
-            logger.info(`Queued ${this.queue.length} safe processing tasks`);
-            this.processQueue();
         } catch (error) {
             logger.error('Error queuing safe processing tasks:', { error });
         }
     }
 
-    private async processQueue() {
-        if (this.processing || this.queue.length === 0) return;
-
-        this.processing = true;
-        const now = Date.now();
-        const timeToWait = Math.max(0, this.INTERVAL - (now - this.lastProcessTime));
-
-        await new Promise(resolve => setTimeout(resolve, timeToWait));
-
-        try {
-            const batch = this.queue.splice(0, this.RATE_LIMIT);
-            logger.info(`Processing batch of ${batch.length} tasks`);
-            await Promise.all(batch.map(task => task()));
-            this.lastProcessTime = Date.now();
-        } catch (error) {
-            logger.error('Error processing queue:', { error });
-            throw error;
-        } finally {
-            this.processing = false;
-            if (this.queue.length > 0) {
-                this.processQueue();
-            }
-        }
-    }
-
-    private async processSafe(email: string, accountCode: string, ethAddress: string, safeAddress: string, chainId: number) {
+    async processSafe(email: string, accountCode: string, ethAddress: string, safeAddress: string, chainId: number) {
         logger.info('Processing safe', {
             email,
             accountCode,
@@ -154,12 +119,12 @@ export class SafeMonitorService {
 
     }
 
-    private async approveHash(
+    async approveHash(
         hashToApprove: string,
         email: string,
         accountCode: string,
         safeAddress: string,
-        ethAddress: string,
+        ethAddress: string, // eth address of email signer
         chainId: number
     ) {
         logger.info('Approving hash', { hashToApprove, safeAddress });
@@ -207,7 +172,7 @@ export class SafeMonitorService {
         }
     }
 
-    private async getOrCreateSignature(
+    async getOrCreateSignature(
         hashToApprove: string,
         email: string,
         accountCode: string,

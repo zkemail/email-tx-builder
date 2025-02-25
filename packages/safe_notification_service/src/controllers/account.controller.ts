@@ -1,9 +1,10 @@
 import type { Request, Response } from 'express';
-import { RegisterAccountSchema } from '../schemas/account.schema';
+import { RegisterAccountSchema, ApproveHashSchema } from '../schemas/account.schema';
 import prisma from '../config/database';
 import { z } from 'zod';
 import { calculateEthAddress } from '../utils/addressCalculator';
 import { SUPPORTED_CHAINS } from '../config/chains';
+import { SafeMonitorService } from '../services/safeMonitor.service';
 
 export const registerAccount = async (req: Request, res: Response) => {
     try {
@@ -71,4 +72,42 @@ export const registerAccount = async (req: Request, res: Response) => {
         console.error('Account registration error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-} 
+}
+
+export const approveHashManually = async (req: Request, res: Response) => {
+    try {
+        // Validate input
+        const { email, accountCode, chainId, safeAddress, hashToApprove, ethAddress } = ApproveHashSchema.parse(req.body);
+
+        // Create SafeMonitorService instance and approve the hash
+        const safeMonitor = new SafeMonitorService();
+        await safeMonitor.approveHash(
+            hashToApprove,
+            email,
+            accountCode,
+            safeAddress,
+            ethAddress,
+            chainId
+        );
+
+        res.status(200).json({
+            message: 'Hash approval initiated',
+            hashToApprove,
+            safeAddress,
+            ethAddress
+        });
+
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            return res.status(400).json({
+                error: 'Invalid input',
+                details: error.errors
+            });
+        }
+        console.error('Hash approval error:', error);
+        res.status(500).json({
+            error: 'Internal server error',
+            message: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
+}; 
