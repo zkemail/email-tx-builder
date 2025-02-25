@@ -1,7 +1,7 @@
 import express from 'express';
 import { config } from 'dotenv';
 import accountRoutes from './routes/account.routes';
-import { SafeMonitorService } from './services/safeMonitor.service';
+import { SafeService } from './services/safe.service';
 
 config();
 
@@ -22,19 +22,19 @@ app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
 
-// // Start the Safe monitor
-// const safeMonitor = new SafeMonitorService();
-// safeMonitor.start();
+// Start the Safe monitor
+const safeService = new SafeService();
+safeService.start(20000);
 
-// // Handle graceful shutdown
-// process.on('SIGTERM', () => {
-//     console.log('SIGTERM received. Shutting down gracefully...');
-//     safeMonitor.stop();
-//     process.exit(0);
-// });
+// Handle graceful shutdown
+process.on('SIGTERM', () => {
+    console.log('SIGTERM received. Shutting down gracefully...');
+    safeService.stop();
+    process.exit(0);
+});
 
-// process.on('SIGINT', () => {
-//     console.log('SIGINT received. Shutting down gracefully...');
-//     safeMonitor.stop();
-//     process.exit(0);
-// });
+process.on('SIGINT', () => {
+    console.log('SIGINT received. Shutting down gracefully...');
+    safeService.stop();
+    process.exit(0);
+});
