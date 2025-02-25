@@ -1,46 +1,62 @@
-# safe_notification_service
+# Safe Notification Service
 
-To install dependencies:
+## Installation
 
+### 1. Install Dependencies
 ```bash
 bun install
 ```
 
-To run the server in development mode:
+### 2. Set Up Environment Variables
+Create a `.env` file based on `.env.example`.
 
-first create `.env` file according to `.env.example`
+## Running the Server in Development Mode
 
-then create `src/config/chains.json` file according to `src/config/chains.example.json`
-Then run the docker compose file to start the postgres database:
+### 3. Start the Relay Service
+This backend depends on the relay service. If using a local relayer:
 
+1. Run the following command in the root directory to start the IMAP, SMTP service:
+   ```bash
+   docker compose up -d
+   ```
+2. Navigate to the `relayer` package directory:
+   ```bash
+   cd packages/relayer
+   ```
+3. Start the relayer:
+   ```bash
+   cargo run
+   ```
+
+### 4. Configure Chains
+Create `src/config/chains.json` based on `src/config/chains.example.json`.
+
+### 5. Start the Database
+Run the following command to start the PostgreSQL database:
 ```bash
 docker compose up -d
 ```
 
-Then run the prisma migrations:
-
+### 6. Run Prisma Migrations
 ```bash
 bunx prisma generate
 bunx prisma db push
 ```
 
-Then run the server:
-
+### 7. Start the Server
 ```bash
 bun run dev
 ```
 
-To run the tests:
+## Running Tests
 
-run migrations for test database:
-
+### 1. Set Up Test Database
+Run migrations for the test database:
 ```bash
 DATABASE_URL="postgresql://user:password@localhost:5433/safe_monitor_test" bunx prisma db push
 ```
 
-run tests:
-
+### 2. Run Tests
 ```bash
 bun test
-```
 
