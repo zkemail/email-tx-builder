@@ -24,17 +24,17 @@ app.listen(port, () => {
 
 // Start the Safe monitor
 const safeService = new SafeService();
-safeService.start(20000);
+safeService.start(5000);
 
 // Handle graceful shutdown
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
     console.log('SIGTERM received. Shutting down gracefully...');
-    safeService.stop();
+    await safeService.shutdown();
     process.exit(0);
 });
 
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
     console.log('SIGINT received. Shutting down gracefully...');
-    safeService.stop();
+    await safeService.shutdown();
     process.exit(0);
 });

@@ -26,6 +26,14 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379:0:samplepassword
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
 
 volumes:
   postgres_data:
