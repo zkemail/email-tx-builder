@@ -104,6 +104,7 @@ export class SafeService {
         const lockKey = `safe:${chainId}:${safeAddress}`;
 
         try {
+            // todo: properly handle the lock and don't add duplicates
             await this.lock.acquireLock(lockKey);
             await this.processSafe(email, accountCode, ethAddress, safeAddress, chainId);
         } catch (error) {
