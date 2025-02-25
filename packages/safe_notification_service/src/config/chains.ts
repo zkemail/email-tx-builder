@@ -6,6 +6,7 @@ interface ChainConfig {
     viemChain: keyof typeof viemChains
     factoryAddress: `0x${string}`
     rpcUrl: string
+    privateKey: string
 }
 
 // Type assertion for the imported JSON
@@ -36,4 +37,12 @@ export const RPC_URLS: Record<number, string> = Object.entries(chainConfiguratio
         [Number(chainId)]: config.rpcUrl,
     }),
     {}
-) 
+)
+
+export const PRIVATE_KEYS: Record<number, string> = Object.entries(chainConfigurations).reduce(
+    (acc, [chainId, config]) => ({
+        ...acc,
+        [Number(chainId)]: config.privateKey,
+    }),
+    {}
+)

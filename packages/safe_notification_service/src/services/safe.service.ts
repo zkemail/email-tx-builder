@@ -2,7 +2,7 @@ import prisma from '../config/database';
 import logger from '../utils/logger';
 import { getEmailSignature } from '../utils/emailSignature';
 import { createPublicClient, createWalletClient, http, parseAbiItem } from 'viem';
-import { RPC_URLS, SUPPORTED_CHAINS } from '@/config/chains';
+import { RPC_URLS, SUPPORTED_CHAINS, PRIVATE_KEYS } from '@/config/chains';
 import { privateKeyToAccount } from 'viem/accounts';
 import { DistributedLock } from '../utils/distributedLock';
 
@@ -48,7 +48,7 @@ export class SafeService {
         return createWalletClient({
             chain: SUPPORTED_CHAINS[chainId],
             transport: http(RPC_URLS[chainId]),
-            account: privateKeyToAccount(`0x${process.env.PRIVATE_KEY!}`)
+            account: privateKeyToAccount(`0x${PRIVATE_KEYS[chainId]}`)
         });
     }
 
