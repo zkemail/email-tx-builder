@@ -170,24 +170,24 @@ async function getCachedOrFreshEmailProof({
     txHashToSign,
     templateId
 }: EmailProofParams): Promise<EmailProofResponse> {
-    const prisma = new PrismaClient();
+    // const prisma = new PrismaClient();
 
     try {
-        const proofCacheKey = [
-            emailAddress.toLowerCase(), // Normalize email
-            accountCode,
-            txHashToSign.toString(),
-            templateId.toLowerCase() // Normalize hex
-        ].join('-');
+        // const proofCacheKey = [
+        //     emailAddress.toLowerCase(), // Normalize email
+        //     accountCode,
+        //     txHashToSign.toString(),
+        //     templateId.toLowerCase() // Normalize hex
+        // ].join('-');
 
-        const cachedProof = await prisma.responseCache.findUnique({
-            where: { cacheKey: proofCacheKey },
-            select: { response: true, expiresAt: true }
-        }) as { response: EmailProofResponse | null, expiresAt: Date };
+        // const cachedProof = await prisma.responseCache.findUnique({
+        //     where: { cacheKey: proofCacheKey },
+        //     select: { response: true, expiresAt: true }
+        // }) as { response: EmailProofResponse | null, expiresAt: Date };
 
-        if (cachedProof && cachedProof.response && cachedProof.expiresAt > new Date()) {
-            return cachedProof.response as EmailProofResponse;
-        }
+        // if (cachedProof && cachedProof.response && cachedProof.expiresAt > new Date()) {
+        //     return cachedProof.response as EmailProofResponse;
+        // }
 
         const emailProofResponse = await requestSignature(
             emailAddress,
@@ -196,22 +196,22 @@ async function getCachedOrFreshEmailProof({
             templateId
         );
 
-        const ONE_HOUR_MS = 60 * 60 * 1000;
-        await prisma.responseCache.upsert({
-            where: { cacheKey: proofCacheKey },
-            update: {
-                response: emailProofResponse,
-                expiresAt: new Date(Date.now() + ONE_HOUR_MS)
-            },
-            create: {
-                cacheKey: proofCacheKey,
-                response: emailProofResponse,
-                expiresAt: new Date(Date.now() + ONE_HOUR_MS)
-            }
-        });
+        // const ONE_HOUR_MS = 60 * 60 * 1000;
+        // await prisma.responseCache.upsert({
+        //     where: { cacheKey: proofCacheKey },
+        //     update: {
+        //         response: emailProofResponse,
+        //         expiresAt: new Date(Date.now() + ONE_HOUR_MS)
+        //     },
+        //     create: {
+        //         cacheKey: proofCacheKey,
+        //         response: emailProofResponse,
+        //         expiresAt: new Date(Date.now() + ONE_HOUR_MS)
+        //     }
+        // });
 
         return emailProofResponse;
     } finally {
-        await prisma.$disconnect();
+        // await prisma.$disconnect();
     }
-} 
+}   
