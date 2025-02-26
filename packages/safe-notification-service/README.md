@@ -60,3 +60,16 @@ DATABASE_URL="postgresql://user:password@localhost:5433/safe_monitor_test" bunx 
 ```bash
 bun test
 
+
+## sample request
+```bash
+curl --location 'http://localhost:3030/api/accounts/approve-hash' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "thezdev1@gmail.com",
+    "accountCode": "0x22a2d51a892f866cf3c6cc4e138ba87a8a5059a1d80dea5b8ee8232034a105b7",
+    "chainId": 11155111,
+    "safeAddress": "0x433AeBc31766A0462D7efFaC721A416b2B431096",
+    "hashToApprove": "0x323ec421fa9a985aa44400d2308bf0b706b7aff73b115d286dc887333a40a7e1"
+}'
+```

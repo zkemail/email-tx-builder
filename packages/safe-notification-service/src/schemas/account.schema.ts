@@ -27,9 +27,6 @@ export const ApproveHashSchema = z.object({
     }),
     hashToApprove: z.string().regex(/^0x[a-fA-F0-9]{64}$/, {
         message: "Hash must be a valid 32-byte hex string"
-    }),
-    ethAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, {
-        message: "ETH address must be a valid Ethereum address"
     })
 });
 

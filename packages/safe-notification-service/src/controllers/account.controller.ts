@@ -77,7 +77,7 @@ export const registerAccount = async (req: Request, res: Response) => {
 export const approveHashManually = async (req: Request, res: Response) => {
     try {
         // Validate input
-        const { email, accountCode, chainId, safeAddress, hashToApprove, ethAddress } = ApproveHashSchema.parse(req.body);
+        const { email, accountCode, chainId, safeAddress, hashToApprove } = ApproveHashSchema.parse(req.body);
 
         // Create SafeMonitorService instance and approve the hash
         const hashApprovalService = new HashApprovalService();
@@ -86,7 +86,7 @@ export const approveHashManually = async (req: Request, res: Response) => {
             email,
             accountCode,
             safeAddress,
-            ethAddress,
+            await calculateEthAddress(accountCode, email, chainId),
             chainId
         );
 
@@ -94,7 +94,7 @@ export const approveHashManually = async (req: Request, res: Response) => {
             message: 'Hash approval initiated',
             hashToApprove,
             safeAddress,
-            ethAddress
+            ethAddress: await calculateEthAddress(accountCode, email, chainId)
         });
 
     } catch (error) {
