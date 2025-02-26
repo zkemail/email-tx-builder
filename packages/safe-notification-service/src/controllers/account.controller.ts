@@ -4,7 +4,7 @@ import prisma from '../config/database';
 import { z } from 'zod';
 import { calculateEthAddress } from '../utils/addressCalculator';
 import { SUPPORTED_CHAINS } from '../config/chains';
-import { SafeService } from '../services/safe.service';
+import { HashApprovalService } from '@/services/hash-approval.service';
 
 export const registerAccount = async (req: Request, res: Response) => {
     try {
@@ -80,8 +80,8 @@ export const approveHashManually = async (req: Request, res: Response) => {
         const { email, accountCode, chainId, safeAddress, hashToApprove, ethAddress } = ApproveHashSchema.parse(req.body);
 
         // Create SafeMonitorService instance and approve the hash
-        const safeMonitor = new SafeService();
-        await safeMonitor.approveHash(
+        const hashApprovalService = new HashApprovalService();
+        await hashApprovalService.approveHash(
             hashToApprove,
             email,
             accountCode,

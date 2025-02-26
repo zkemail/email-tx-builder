@@ -24,7 +24,7 @@ app.listen(port, () => {
 
 // Start the Safe monitor
 const safeService = new SafeService();
-safeService.start(5000);
+// safeService.start(5000);
 
 // Handle graceful shutdown
 process.on('SIGTERM', async () => {
