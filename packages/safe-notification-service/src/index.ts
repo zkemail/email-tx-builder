@@ -5,6 +5,7 @@ import accountRoutes from './routes/account.routes';
 import { SafeNotificationService } from './services/safe-notification.service';
 import SafeApiKit from '@safe-global/api-kit';
 import { OnChainConfirmTransactionService } from './services/on-chain-confirm-transaction.service';
+import { SUPPORTED_CHAINS } from './config/chains';
 
 config();
 
@@ -34,14 +35,7 @@ app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
 
-const chainId = 11155111;
-const safeApiKit = new SafeApiKit({
-    chainId: BigInt(chainId),
-    txServiceUrl: process.env.SAFE_TX_SERVICE_URL,
-});
-
-const onchainConfirmTransactionService = new OnChainConfirmTransactionService(chainId);
-const safeNotificationService = new SafeNotificationService(safeApiKit, onchainConfirmTransactionService);
+const safeNotificationService = new SafeNotificationService();
 safeNotificationService.startPolling(5);
 
 // Handle graceful shutdown

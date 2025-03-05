@@ -3,17 +3,32 @@ import prisma from '../config/database';
 import logger from '../utils/logger';
 import { getEmailSignature } from '../utils/emailSignature';
 import type { IConfirmTransactionService } from './confirm-transaction.interface';
-
-
+import { SUPPORTED_CHAINS } from '@/config/chains';
+import { OnChainConfirmTransactionService } from './on-chain-confirm-transaction.service';
 
 export class SafeNotificationService {
-    private safeApiKit: SafeApiKit;
-    private confirmTransactionService: IConfirmTransactionService;
+    private safeApiKits: Record<number, SafeApiKit> = {};
+    private confirmTransactionServices: Record<number, IConfirmTransactionService> = {};
     private pollingInterval?: NodeJS.Timer;
 
-    constructor(safeApiKit: SafeApiKit, confirmTransactionService: IConfirmTransactionService) {
-        this.safeApiKit = safeApiKit;
-        this.confirmTransactionService = confirmTransactionService;
+    constructor() {
+        this.initializeSafeApiKits();
+        this.initializeConfirmTransactionServices();
+    }
+
+    private async initializeConfirmTransactionServices() {
+        for (const chainId in SUPPORTED_CHAINS) {
+            this.confirmTransactionServices[chainId] = new OnChainConfirmTransactionService(Number(chainId));
+        }
+    }
+
+    private async initializeSafeApiKits() {
+        for (const chainId in SUPPORTED_CHAINS) {
+            this.safeApiKits[chainId] = new SafeApiKit({
+                chainId: BigInt(chainId),
+                txServiceUrl: process.env.SAFE_TX_SERVICE_URL,
+            });
+        }
     }
 
     async startPolling(intervalSeconds = 60) {
@@ -55,7 +70,7 @@ export class SafeNotificationService {
     private async processSafe(safeAddress: string, account: { email: string; accountCode: string; chainId: number; ethAddress: string; safeAddress: string }) {
         try {
             logger.debug(`Fetching pending transactions for safe ${safeAddress} on chain ${account.chainId}`);
-            const pendingTxs = await this.safeApiKit.getPendingTransactions(safeAddress);
+            const pendingTxs = await this.safeApiKits[account.chainId].getPendingTransactions(safeAddress);
             logger.info(`Found ${pendingTxs.results.length} pending transactions for safe ${safeAddress}`);
 
             for (const tx of pendingTxs.results) {
@@ -128,7 +143,7 @@ export class SafeNotificationService {
             });
             logger.info('Generated and saved signature for hash', { hashToApprove: tx.safeTxHash });
 
-            await this.confirmTransactionService.confirmTransaction(
+            await this.confirmTransactionServices[account.chainId].confirmTransaction(
                 {
                     hashToApprove: tx.safeTxHash,
                     signatureData,
