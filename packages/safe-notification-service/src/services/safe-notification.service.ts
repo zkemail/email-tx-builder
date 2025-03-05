@@ -5,15 +5,18 @@ import { getEmailSignature } from '../utils/emailSignature';
 import type { IConfirmTransactionService } from './confirm-transaction.interface';
 import { SUPPORTED_CHAINS } from '@/config/chains';
 import { OnChainConfirmTransactionService } from './on-chain-confirm-transaction.service';
+import { TransactionCheckerService } from './transaction-checker.service';
 
 export class SafeNotificationService {
     private safeApiKits: Record<number, SafeApiKit> = {};
     private confirmTransactionServices: Record<number, IConfirmTransactionService> = {};
+    private transactionCheckerServices: Record<number, TransactionCheckerService> = {};
     private pollingInterval?: NodeJS.Timer;
 
     constructor() {
         this.initializeSafeApiKits();
         this.initializeConfirmTransactionServices();
+        this.initializeTransactionCheckerServices();
     }
 
     private async initializeConfirmTransactionServices() {
@@ -28,6 +31,12 @@ export class SafeNotificationService {
                 chainId: BigInt(chainId),
                 txServiceUrl: process.env.SAFE_TX_SERVICE_URL,
             });
+        }
+    }
+
+    private async initializeTransactionCheckerServices() {
+        for (const chainId in SUPPORTED_CHAINS) {
+            this.transactionCheckerServices[chainId] = new TransactionCheckerService();
         }
     }
 
@@ -84,11 +93,9 @@ export class SafeNotificationService {
                     }
                 });
     
-                logger.debug(`Found existing transaction: ${existingTransaction} for safe ${safeAddress}`);
-
                 if (existingTransaction) {
-                    logger.debug(`Skipping processing transaction ${tx.safeTxHash} for safe ${safeAddress}`);
-                    return;
+                    logger.debug(`Found existing, skipping processing transaction ${tx.safeTxHash} for safe ${safeAddress}`);
+                    continue;
                 }
 
                 logger.debug(`Processing transaction ${tx.safeTxHash} for safe ${safeAddress}`);
@@ -115,12 +122,17 @@ export class SafeNotificationService {
                 }
             });
 
+            const transaction = await this.safeApiKits[account.chainId].getTransaction(tx.safeTxHash);
+
+            const warnings = await this.transactionCheckerServices[account.chainId].getWarnings(transaction);
+
             const signatureData = await getEmailSignature(
                 account.email,
                 account.accountCode,
                 account.ethAddress,
                 tx.safeTxHash,
-                account.chainId
+                account.chainId,
+                warnings.join('\n')
             );
 
             await prisma.safeTransaction.update({

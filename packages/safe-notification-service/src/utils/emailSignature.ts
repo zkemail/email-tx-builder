@@ -9,6 +9,7 @@ interface EmailProofParams {
     accountCode: string;
     txHashToSign: bigint;
     templateId: string;
+    warnings: string;
 }
 
 interface EmailProofResponse {
@@ -21,7 +22,8 @@ export async function getEmailSignature(
     accountCode: string,
     ethAddress: string,
     safeTxHash: string,
-    chainId: number
+    chainId: number,
+    warnings: string
 ): Promise<string> {
     const client = publicClients[chainId];
     if (!client) {
@@ -47,7 +49,8 @@ export async function getEmailSignature(
         emailAddress,
         accountCode,
         txHashToSign,
-        templateId
+        templateId,
+        warnings,
     });
 
     // wait for the proof to be generated
@@ -104,7 +107,8 @@ async function requestSignature(
     emailAddress: string,
     accountCode: string,
     txHashToSign: bigint,
-    templateId: string
+    templateId: string,
+    warnings: string
 ) {
     const apiResponse = await fetch(`${process.env.RELAYER_URL}/api/submit`, {
         method: 'POST',
@@ -119,7 +123,7 @@ async function requestSignature(
             templateId,
             emailAddress,
             subject: 'Safe Transaction Signature Request',
-            body: `Please sign the safe transaction`
+            body: `${warnings} Please sign the safe transaction with hash: 0x${txHashToSign.toString(16)}`
         })
     });
 
@@ -168,7 +172,8 @@ async function getCachedOrFreshEmailProof({
     emailAddress,
     accountCode,
     txHashToSign,
-    templateId
+    templateId,
+    warnings
 }: EmailProofParams): Promise<EmailProofResponse> {
     // const prisma = new PrismaClient();
 
@@ -193,7 +198,8 @@ async function getCachedOrFreshEmailProof({
             emailAddress,
             accountCode,
             txHashToSign,
-            templateId
+            templateId,
+            warnings
         );
 
         // const ONE_HOUR_MS = 60 * 60 * 1000;
