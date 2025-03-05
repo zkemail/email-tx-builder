@@ -75,20 +75,20 @@ export class SafeNotificationService {
 
             for (const tx of pendingTxs.results) {
                 logger.debug(`Processing transaction ${tx.safeTxHash} for safe ${safeAddress}`);
-                const processedTx = await prisma.safeTransaction.findUnique({
+                const existingTransaction = await prisma.safeTransaction.findUnique({
                     where: {
                         safeTxHash_chainId: {
                             safeTxHash: tx.safeTxHash,
                             chainId: account.chainId
-                        },
-                        processed: true
+                        }
                     }
                 });
-                logger.debug(`Found processed transaction: ${processedTx} for safe ${safeAddress}`);
+    
+                logger.debug(`Found existing transaction: ${existingTransaction} for safe ${safeAddress}`);
 
-                if (processedTx) {
-                    logger.debug(`Skipping already processed transaction ${tx.safeTxHash} for safe ${safeAddress}`);
-                    continue;
+                if (existingTransaction) {
+                    logger.debug(`Skipping processing transaction ${tx.safeTxHash} for safe ${safeAddress}`);
+                    return;
                 }
 
                 logger.debug(`Processing transaction ${tx.safeTxHash} for safe ${safeAddress}`);
@@ -123,21 +123,14 @@ export class SafeNotificationService {
                 account.chainId
             );
 
-            await prisma.safeTransaction.upsert({
+            await prisma.safeTransaction.update({
                 where: {
                     safeTxHash_chainId: {
                         safeTxHash: tx.safeTxHash,
                         chainId: account.chainId
                     }
                 },
-                create: {
-                    safeTxHash: tx.safeTxHash,
-                    safeAddress,
-                    chainId: account.chainId,
-                    processed: false,
-                    signature: signatureData
-                },
-                update: {
+                data: {
                     signature: signatureData
                 }
             });
@@ -178,4 +171,4 @@ export class SafeNotificationService {
             });
         }
     }
-} 
+}
