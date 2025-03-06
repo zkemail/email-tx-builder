@@ -9,10 +9,6 @@ import { SUPPORTED_CHAINS } from './config/chains';
 
 config();
 
-if (!process.env.SAFE_TX_SERVICE_URL) {
-    throw new Error('SAFE_TX_SERVICE_URL is not set');
-}
-
 const app = express();
 app.use(express.json());
 app.use(cors({

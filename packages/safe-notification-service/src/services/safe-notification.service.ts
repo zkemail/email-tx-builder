@@ -28,8 +28,7 @@ export class SafeNotificationService {
     private async initializeSafeApiKits() {
         for (const chainId in SUPPORTED_CHAINS) {
             this.safeApiKits[chainId] = new SafeApiKit({
-                chainId: BigInt(chainId),
-                txServiceUrl: process.env.SAFE_TX_SERVICE_URL,
+                chainId: BigInt(chainId)
             });
         }
     }
@@ -92,7 +91,7 @@ export class SafeNotificationService {
                         }
                     }
                 });
-    
+
                 if (existingTransaction) {
                     logger.debug(`Found existing, skipping processing transaction ${tx.safeTxHash} for safe ${safeAddress}`);
                     continue;
