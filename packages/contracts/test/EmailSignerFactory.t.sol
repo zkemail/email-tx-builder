@@ -3,6 +3,7 @@ pragma solidity ^0.8.12;
 
 import "forge-std/Test.sol";
 import "../src/EmailSignerFactory.sol";
+import "@openzeppelin/contracts/proxy/Clones.sol";
 
 contract EmailSignerFactoryTest is Test {
     EmailSignerFactory factory;
@@ -52,9 +53,23 @@ contract EmailSignerFactoryTest is Test {
         );
     }
 
-    function testPredictAddress() public {
+    function testPredictAddress() public view {
+        // Get the predicted address from the factory
         address predicted = factory.predictAddress(TEST_ACCOUNT_SALT);
-        assertTrue(predicted != address(0));
+
+        // Use the OpenZeppelin Clones library directly to calculate the expected address
+        address expected = Clones.predictDeterministicAddress(
+            address(implementation),
+            TEST_ACCOUNT_SALT,
+            address(factory)
+        );
+
+        // Assert that the predicted address matches the expected address
+        assertEq(
+            predicted,
+            expected,
+            "Predicted address does not match expected address"
+        );
     }
 
     function testDeployMatchesPredicted() public {
