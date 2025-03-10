@@ -46,7 +46,7 @@ contract EmailSignerFactory {
     /// @param accountSalt The account salt used to generate the clone's salt
     /// @return The address of the deployed EmailSigner clone
     function deploy(bytes32 accountSalt) external returns (address) {
-        // @dev This salt is not strictly necessary to deploy the account with this given accountSalt,
+        // salt is not strictly necessary to deploy the account with this given accountSalt,
         // but it is nice to have for deterministic deployments. The accountSalt itself is ultimately
         // derived from a hash of a secret random code.
         bytes32 salt = keccak256(abi.encodePacked(accountSalt));
