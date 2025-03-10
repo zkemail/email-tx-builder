@@ -48,7 +48,7 @@ contract EmailSignerFactory {
     function deploy(bytes32 accountSalt) external returns (address) {
         // salt is not strictly necessary to deploy the account with this given accountSalt,
         // but it is nice to have for deterministic deployments. The accountSalt itself is ultimately
-        // derived from a hash of a secret random code.
+        // derived from a hash of a secret random code and an email address.
         bytes32 salt = keccak256(abi.encodePacked(accountSalt));
         address clone = Clones.cloneDeterministic(implementation, accountSalt);
 
