@@ -58,7 +58,7 @@ contract EmailSignerFactory {
         );
 
         EmailSigner(clone).initialize(
-            accountSalt, // secret identifier for the account owner
+            accountSalt,
             dkimRegistry,
             verifier,
             templateId
