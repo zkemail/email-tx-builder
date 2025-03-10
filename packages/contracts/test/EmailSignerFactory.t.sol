@@ -110,8 +110,8 @@ contract EmailSignerFactoryTest is Test {
     }
 
     function testSameAccountSaltGivesSameAddress() public {
-        address first = factory.deploy(TEST_ACCOUNT_SALT);
-        vm.expectRevert(); // Should revert on second deploy of same salt
-        address second = factory.deploy(TEST_ACCOUNT_SALT);
+        factory.deploy(TEST_ACCOUNT_SALT);
+        vm.expectRevert(abi.encodeWithSignature("FailedDeployment()"));
+        factory.deploy(TEST_ACCOUNT_SALT);
     }
 }
