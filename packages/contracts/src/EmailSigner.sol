@@ -70,13 +70,14 @@ contract EmailSigner is IERC1271, Initializable {
         address _verifierAddr,
         uint256 _templateId
     ) public initializer {
-        accountSalt = _accountSalt;
-        templateId = _templateId;
-
+        if (_accountSalt == bytes32(0)) revert InvalidAccountSalt();
+        if (_templateId == 0) revert InvalidTemplateId();
         if (_dkimRegistryAddr == address(0))
             revert InvalidDKIMRegistryAddress();
         if (_verifierAddr == address(0)) revert InvalidVerifierAddress();
 
+        accountSalt = _accountSalt;
+        templateId = _templateId;
         dkimRegistryAddr = _dkimRegistryAddr;
         verifierAddr = _verifierAddr;
     }
