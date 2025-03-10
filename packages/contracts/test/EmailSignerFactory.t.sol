@@ -30,12 +30,12 @@ contract EmailSignerFactoryTest is Test {
     }
 
     function testConstructorRevertInvalidImplementation() public {
-        vm.expectRevert("Invalid implementation");
+        vm.expectRevert(EmailSignerFactory.InvalidImplementation.selector);
         new EmailSignerFactory(address(0), address(dkim), address(verifier));
     }
 
     function testConstructorRevertInvalidDkimRegistry() public {
-        vm.expectRevert("Invalid DKIM registry");
+        vm.expectRevert(EmailSignerFactory.InvalidDKIMRegistry.selector);
         new EmailSignerFactory(
             address(implementation),
             address(0),
@@ -44,7 +44,7 @@ contract EmailSignerFactoryTest is Test {
     }
 
     function testConstructorRevertInvalidVerifier() public {
-        vm.expectRevert("Invalid verifier");
+        vm.expectRevert(EmailSignerFactory.InvalidVerifier.selector);
         new EmailSignerFactory(
             address(implementation),
             address(dkim),

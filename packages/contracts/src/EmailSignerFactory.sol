@@ -20,6 +20,10 @@ contract EmailSignerFactory {
         bytes32 indexed accountSalt
     );
 
+    error InvalidImplementation();
+    error InvalidDKIMRegistry();
+    error InvalidVerifier();
+
     /// @notice Constructor that sets the implementation contract and initialization parameters
     /// @param _implementation Address of the EmailSigner implementation contract
     /// @param _dkimRegistry Address of the DKIM registry contract
@@ -29,9 +33,9 @@ contract EmailSignerFactory {
         address _dkimRegistry,
         address _verifier
     ) {
-        if (_implementation == address(0)) revert("Invalid implementation");
-        if (_dkimRegistry == address(0)) revert("Invalid DKIM registry");
-        if (_verifier == address(0)) revert("Invalid verifier");
+        if (_implementation == address(0)) revert InvalidImplementation();
+        if (_dkimRegistry == address(0)) revert InvalidDKIMRegistry();
+        if (_verifier == address(0)) revert InvalidVerifier();
 
         implementation = _implementation;
         dkimRegistry = _dkimRegistry;
