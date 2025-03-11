@@ -21,7 +21,7 @@ contract DeployEmailSignerFactory is BaseDeployScript {
         // Deploy DKIM Registry with time delay
         address dkimRegistry = deployUserOverrideableDKIMRegistry(
             initialOwner,
-            initialOwner, // Using initialOwner as DKIM signer for now
+            vm.envAddress("DKIM_SIGNER"), // DKIM signer from environment variable
             DKIM_REGISTRY_TIME_DELAY
         );
 
