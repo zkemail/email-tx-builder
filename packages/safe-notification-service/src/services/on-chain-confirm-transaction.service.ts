@@ -1,10 +1,10 @@
 import logger from '../utils/logger';
 import type { IConfirmTransactionService } from './confirm-transaction.interface';
-import { PRIVATE_KEYS } from '@/config/chains';
+import { PRIVATE_KEYS } from '../config/chains';
 import { createWalletClient, http } from 'viem';
 import type { WalletClient } from 'viem';
-import { RPC_URLS } from '@/config/chains';
-import { SUPPORTED_CHAINS } from '@/config/chains';
+import { RPC_URLS } from '../config/chains';
+import { SUPPORTED_CHAINS } from '../config/chains';
 import { privateKeyToAccount } from 'viem/accounts';
 
 export class OnChainConfirmTransactionService implements IConfirmTransactionService {

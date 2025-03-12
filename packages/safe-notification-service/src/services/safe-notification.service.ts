@@ -3,7 +3,7 @@ import prisma from '../config/database';
 import logger from '../utils/logger';
 import { getEmailSignature } from '../utils/emailSignature';
 import type { IConfirmTransactionService } from './confirm-transaction.interface';
-import { SUPPORTED_CHAINS } from '@/config/chains';
+import { SUPPORTED_CHAINS } from '../config/chains';
 import { OnChainConfirmTransactionService } from './on-chain-confirm-transaction.service';
 import { TransactionCheckerService } from './transaction-checker.service';
 
