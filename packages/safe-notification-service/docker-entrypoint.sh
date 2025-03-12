@@ -11,4 +11,4 @@ bunx prisma db push
 
 # Start the application
 echo "Starting application..."
-bun run dev
+bun run start
