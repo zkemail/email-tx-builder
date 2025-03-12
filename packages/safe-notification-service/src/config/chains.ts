@@ -1,5 +1,4 @@
 import * as viemChains from 'viem/chains'
-import chainsConfig from './chains.json'
 import type { Chain } from 'viem/chains'
 
 interface ChainConfig {
@@ -9,8 +8,27 @@ interface ChainConfig {
     privateKey: `0x${string}`
 }
 
+if (!process.env.FACTORY_ADDRESS) {
+    throw new Error('FACTORY_ADDRESS environment variable is required')
+}
+
+if (!process.env.RPC_URL) {
+    throw new Error('RPC_URL environment variable is required')
+}
+
+if (!process.env.PRIVATE_KEY) {
+    throw new Error('PRIVATE_KEY environment variable is required')
+}
+
 // Type assertion for the imported JSON
-const chainConfigurations = chainsConfig as Record<string, ChainConfig>
+const chainConfigurations = {
+    11155111: {
+      viemChain: "sepolia",
+      factoryAddress: process.env.FACTORY_ADDRESS,
+      rpcUrl: process.env.RPC_URL,
+      privateKey: process.env.PRIVATE_KEY,
+    },
+  } as Record<string, ChainConfig>;
 
 // Map of supported chain IDs to their configurations
 export const SUPPORTED_CHAINS: Record<number, Chain> = Object.entries(chainConfigurations).reduce(

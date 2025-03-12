@@ -1,8 +1,0 @@
-{
-    "11155111": {
-        "viemChain": "sepolia",
-        "factoryAddress": "0x86227311CeDA2dbF64123854bcc359D6C4cDB8a3",
-        "rpcUrl": "https://ethereum-sepolia-rpc.publicnode.com",
-        "privateKey": "0000000000000000000000000000000000000000000000000000000000000000"
-    }
-}
