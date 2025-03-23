@@ -114,7 +114,7 @@ template EmailAuthLegacy(n, k, max_header_bytes, max_subject_bytes, recipient_en
     is_valid_timestamp_idx === 1;
     signal timestamp_str[timestamp_len];
     timestamp_str <== SelectRegexReveal(max_header_bytes, timestamp_len)(timestamp_regex_reveal, timestamp_idx);
-    signal raw_timestamp <== Digit2Int(timestamp_len)(timestamp_str);
+    signal raw_timestamp <== Digit2Int(timestamp_len)(timestamp_str, timestamp_regex_out);
     timestamp <== timestamp_regex_out * raw_timestamp;
     
     /// MASKED SUBJECT

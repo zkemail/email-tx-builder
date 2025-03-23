@@ -116,7 +116,7 @@ template EmailAuth(n, k, max_header_bytes, max_body_bytes, max_command_bytes, re
     signal is_valid_timestamp_idx <== LessThan(log2Ceil(max_header_bytes))([timestamp_idx, max_header_bytes]);
     is_valid_timestamp_idx === 1;
     timestamp_str <== SelectRegexReveal(max_header_bytes, timestamp_len)(timestamp_regex_reveal, timestamp_idx);
-    signal raw_timestamp <== Digit2Int(timestamp_len)(timestamp_str);
+    signal raw_timestamp <== Digit2Int(timestamp_len)(timestamp_str, timestamp_regex_out);
     timestamp <== timestamp_regex_out * raw_timestamp;
 
     // Extract the command from the body
