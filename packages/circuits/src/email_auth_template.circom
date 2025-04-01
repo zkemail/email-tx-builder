@@ -32,7 +32,8 @@ include "@zk-email/zk-regex-circom/circuits/common/timestamp_regex.circom";
 // * max_command_bytes - max number of bytes in the command
 // * recipient_enabled - whether the email address commitment of the recipient = email address in the subject is exposed
 // * is_qp_encoded - whether the email body is qp encoded
-template EmailAuth(n, k, max_header_bytes, max_body_bytes, max_command_bytes, recipient_enabled, is_qp_encoded) {
+// * timestamp_enabled - whether the timestamp is enabled
+template EmailAuth(n, k, max_header_bytes, max_body_bytes, max_command_bytes, recipient_enabled, is_qp_encoded, timestamp_enabled) {
     signal input padded_header[max_header_bytes]; // email data (only header part)
     signal input padded_header_len; // length of in email data including the padding
     signal input public_key[k]; // RSA public key (modulus), k parts of n bits each.
@@ -110,14 +111,16 @@ template EmailAuth(n, k, max_header_bytes, max_body_bytes, max_command_bytes, re
     email_nullifier <== EmailNullifier()(sign_hash);
 
     // Timestamp regex + convert to decimal format
-    signal timestamp_regex_out, timestamp_regex_reveal[max_header_bytes];
-    (timestamp_regex_out, timestamp_regex_reveal) <== TimestampRegex(max_header_bytes)(padded_header);
-    signal timestamp_str[timestamp_len];
-    signal is_valid_timestamp_idx <== LessThan(log2Ceil(max_header_bytes))([timestamp_idx, max_header_bytes]);
-    is_valid_timestamp_idx === 1;
-    timestamp_str <== SelectRegexReveal(max_header_bytes, timestamp_len)(timestamp_regex_reveal, timestamp_idx);
-    signal raw_timestamp <== Digit2Int(timestamp_len)(timestamp_str, timestamp_regex_out);
-    timestamp <== timestamp_regex_out * raw_timestamp;
+    if (timestamp_enabled == 1) {
+        signal timestamp_regex_out, timestamp_regex_reveal[max_header_bytes];
+        (timestamp_regex_out, timestamp_regex_reveal) <== TimestampRegex(max_header_bytes)(padded_header);
+        signal timestamp_str[timestamp_len];
+        signal is_valid_timestamp_idx <== LessThan(log2Ceil(max_header_bytes))([timestamp_idx, max_header_bytes]);
+        is_valid_timestamp_idx === 1;
+        timestamp_str <== SelectRegexReveal(max_header_bytes, timestamp_len)(timestamp_regex_reveal, timestamp_idx);
+        signal raw_timestamp <== Digit2Int(timestamp_len)(timestamp_str);
+        timestamp <== timestamp_regex_out * raw_timestamp;
+    }
 
     // Extract the command from the body
     signal command_regex_out, command_regex_reveal[max_body_bytes];
