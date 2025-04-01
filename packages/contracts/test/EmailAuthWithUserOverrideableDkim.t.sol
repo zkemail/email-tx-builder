@@ -145,7 +145,7 @@ contract EmailAuthWithUserOverrideableDkimTest is StructHelper {
         assertEq(emailAuth.lastTimestamp(), emailAuthMsg.proof.timestamp);
     }
 
-    function testFailAuthEmailBeforeEnabledWithoutUserApprove() public {
+    function testRevert_AuthEmailBeforeEnabledWithoutUserApprove() public {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
@@ -164,13 +164,8 @@ contract EmailAuthWithUserOverrideableDkimTest is StructHelper {
             deployer,
             new bytes(0)
         );
+        vm.expectRevert("invalid dkim public key hash");
         emailAuth.authEmail(emailAuthMsg);
         vm.stopPrank();
-
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            true
-        );
-        assertEq(emailAuth.lastTimestamp(), emailAuthMsg.proof.timestamp);
     }
 }
