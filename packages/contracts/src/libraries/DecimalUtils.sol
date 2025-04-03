@@ -38,7 +38,7 @@ library DecimalUtils {
         uint8 actualResultLen = 0;
 
         // In each iteration we fill one index of result array (starting from end)
-        for (uint8 i = resultLength - 1; i >= 0; i--) {
+        for (uint8 i = resultLength - 1; ; i--) {
             // Check if we have reached the index where we need to add decimal point
             if (i == resultLength - decimal - 1) {
                 // No need to add "." if there was no value in decimal places
