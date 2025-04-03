@@ -9,7 +9,9 @@ library DecimalUtils {
     /// @notice Convert uint256 to human readable string with decimal places
     /// @param value uint256 value to convert
     /// @return string representation of value with decimal places
-    function uintToDecimalString(uint256 value) public pure returns (string memory) {
+    function uintToDecimalString(
+        uint256 value
+    ) public pure returns (string memory) {
         return uintToDecimalString(value, 18);
     }
 
@@ -17,14 +19,19 @@ library DecimalUtils {
     /// @param value uint256 value to convert
     /// @param decimal number of decimal places
     /// @return string representation of value with decimal places
-    function uintToDecimalString(uint256 value, uint decimal) public pure returns (string memory) {
+    function uintToDecimalString(
+        uint256 value,
+        uint decimal
+    ) public pure returns (string memory) {
         // Convert value to string in wei format (no decimals)
         bytes memory valueBytes = bytes(Strings.toString(value));
         uint8 valueLength = uint8(valueBytes.length);
 
         // Create result array with max length
         // If less than 18 decimals, then 2 extra for "0.", otherwise one extra for "."
-        bytes memory result = new bytes(valueLength > decimal ? valueLength + 1 : decimal + 2);
+        bytes memory result = new bytes(
+            valueLength > decimal ? valueLength + 1 : decimal + 2
+        );
         uint8 resultLength = uint8(result.length);
 
         // We will be populating result array by copying from value array from last to first index
@@ -38,7 +45,7 @@ library DecimalUtils {
         uint8 actualResultLen = 0;
 
         // In each iteration we fill one index of result array (starting from end)
-        for (uint8 i = resultLength - 1; i >= 0; i--) {
+        for (uint8 i = resultLength - 1; ; i--) {
             // Check if we have reached the index where we need to add decimal point
             if (i == resultLength - decimal - 1) {
                 // No need to add "." if there was no value in decimal places
@@ -81,4 +88,3 @@ library DecimalUtils {
         return string(compactResult);
     }
 }
-
