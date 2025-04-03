@@ -1,0 +1,333 @@
+Delivered-To: thezdev1@gmail.com
+Received: by 2002:a05:7208:c253:b0:9b:b974:e0ce with SMTP id w19csp1503287rbd;
+        Sun, 23 Mar 2025 07:07:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFnF5Y6aCLY/J2xZrTRgN+kqlOTYonjY3vVzImu8jZ0G4+hEguzsBPkT68/LStZvUVwLPas
+X-Received: by 2002:a05:6e02:216f:b0:3d3:fbf9:194b with SMTP id e9e14a558f8ab-3d596055c48mr85807195ab.0.1742738861474;
+        Sun, 23 Mar 2025 07:07:41 -0700 (PDT)
+ARC-Seal: i=2; a=rsa-sha256; t=1742738861; cv=pass;
+        d=google.com; s=arc-20240605;
+        b=VSGSz5btwmT1yMTgsFl8B9d9p2+kkZIjD2ttg4k2qOl7VZY+lwIig+gS44AnwKOn9o
+         wSNo+VLGFamjEl1Z4xz4EQYXAu7DNrMQXpdPjbsYQi9RXzWk6GIP5fyraxwIA+1YT0pl
+         6dg5wdG/3Cu5xBj8YdcysTT3KyT04c8tfZZtdQ95ISIgqVWn9jH+zZcEyA7OT5kfk4fP
+         QqdLtRs1x2rvEFnDu1n7QpxUoczlSWqSCJU3NBRUCIzt2of84ErcVJ3ETPZn4DO9S6rY
+         DoDvYn2YMidk/DDsYbTrVxN2jntro9CAZE10Rq+ruL9ceAsoIb3ClgMBGMUCFVpBhJfg
+         eMLg==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=mime-version:msip_labels:content-language:accept-language
+         :in-reply-to:references:message-id:date:thread-index:thread-topic
+         :subject:to:from:dkim-signature;
+        bh=lL7f6X1fSVu71gtR1y/xqyvQgZluUy/G4TmqhOoWyJI=;
+        fh=fDYYgXivSc6zTOFPhUG2MdKnqwapTBkpVsOysAWOq8A=;
+        b=FUQPDUs/E3D9TM6exeIJDwnJzpBeVLjBzqSNA0BIpFTUMUJHu7cG7zx7fjLcjH6wqG
+         sE7+QWfP2AmtoEETO3s8a/YXMdio9cexTWV3NT7GjdzIihmBdfZEqwvkEqT+9RdYr9pK
+         03LlxJVkRtRMXqt2vEKw396UjZT1A+1eEC6KPftcqEcFVeU1nwZyubuuwogQVIZk2Wsw
+         FMgZIV0nQNDnxIXzQ/D4Cep8T1ZYo5TYwNGXFBJ+9ZzcgVAAqJoQuc9fQTAfUH4SX52i
+         H9tR3+ATZoEC2E9rLEdx2gPktiKqCB+mSpmxhHlr06gpqZAvOL/aNzFB1XutmwT/NgVH
+         bmBA==;
+        dara=google.com
+ARC-Authentication-Results: i=2; mx.google.com;
+       dkim=pass header.i=@outlook.com header.s=selector1 header.b=VDpMBC0t;
+       arc=pass (i=1);
+       spf=pass (google.com: domain of thezdev1@outlook.com designates 2a01:111:f403:2e07::82c as permitted sender) smtp.mailfrom=thezdev1@outlook.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=outlook.com
+Return-Path: <thezdev1@outlook.com>
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02olkn2082c.outbound.protection.outlook.com. [2a01:111:f403:2e07::82c])
+        by mx.google.com with ESMTPS id 8926c6da1cb9f-4f2cbe3973fsi6816815173.62.2025.03.23.07.07.41
+        for <thezdev1@gmail.com>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Mar 2025 07:07:41 -0700 (PDT)
+Received-SPF: pass (google.com: domain of thezdev1@outlook.com designates 2a01:111:f403:2e07::82c as permitted sender) client-ip=2a01:111:f403:2e07::82c;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@outlook.com header.s=selector1 header.b=VDpMBC0t;
+       arc=pass (i=1);
+       spf=pass (google.com: domain of thezdev1@outlook.com designates 2a01:111:f403:2e07::82c as permitted sender) smtp.mailfrom=thezdev1@outlook.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none; b=FY+2xk+AC8tPGR6HlVcgmiPaLiWQawt9EvnlB7mI6C/Ul8Jq8gX1QYDRccNjWBLkpd3y3G2uKtmBrTn85XUR7tdEGh3VEFZdLYeNtAcyMNLTkjvjcCVrorSaELOatQWhRvD47PlI3SP0akkxDEp8k691Gn6h6cn9UkTN2STeU2Zu7eiLniVtsxN9yZZmO/bYZaGZuxu7qNHz1sPj/1WbW4qEPXGTjVfS0ipSgAYpEcJkoOY3vSNaHIOcZ0Vv/QPNp5/qQs8Uj2AbSJHHG7CRptNeNaqnjuMFrPtiQqmesy/y8SEYB/nbwZTAlKxIhxt7Y71AxIEtgLHSlj1Az6MHbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; s=arcselector10001; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1; bh=lL7f6X1fSVu71gtR1y/xqyvQgZluUy/G4TmqhOoWyJI=; b=NBFKu9g2z1DbCsHQ3u+Ytpnpv/CuI0S96G5vqWBSg+LBFO7HSCl2oF4/oGjJyR00/TD/7TPKt4eMuiIONeaue7dssqT8Q85iXm63mwvU8ZWiBX2J3fbP3tcbcDpU61wm/tRQ6SvniVVp5kDRPCKj+Ms3LrLkOigGCl78xyFYMzgnFNcb+Vg3U7iaCEIqxSAzuOKpeun/K38QO+ct8LlynqL9EZp6+OXKoR2Up0BCxJ+1bGfwHtaPDQhE7N4y1LJMuJAAcOJBrqkJDzPjn/+dSJEx799P1dMguJgwF9dIqU2DWKMQVLsY1IbAzOi8G9M5Bu4AlFTDRL2U4lANGQZpIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none; dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com; s=selector1; h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck; bh=lL7f6X1fSVu71gtR1y/xqyvQgZluUy/G4TmqhOoWyJI=; b=VDpMBC0t382qK95qG6d05YDtIKtIElBUC4PM19rR7Hi+XFYdsDRzjYDJ1mNTTb7jfDPIuugs9HkW6/Nwv0RpMtm664fBsTHdE6Sv7HIGJDIRIGwR6QBq/ICpzEAXC4aebuD/kUFF7LHBI0xHdvRZfbityYQkbk82DvYI9pqpBLj3OmGC5EHj3ci+AbW0ng2B8D7XSzcEaTJ3Viyf+sJoBHb7Q0wVmKkmGtVE46aaRYiYH+H63vUHbvO75T/PTHMgEpbOhiexhlh65AN8LaBRhDiLjzu86UeyBbCuuIbE7VP+oRbYtjH9ClNoKQjug4ogtWTQPFDhetWrmbWznvQ/uA==
+Received: from GVXP193MB2551.EURP193.PROD.OUTLOOK.COM (2603:10a6:150:1ff::9) by AM0P193MB0755.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:14b::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8583.24; Sun, 23 Mar 2025 14:07:39 +0000
+Received: from GVXP193MB2551.EURP193.PROD.OUTLOOK.COM ([fe80::b8f1:31b9:4c81:d626]) by GVXP193MB2551.EURP193.PROD.OUTLOOK.COM ([fe80::b8f1:31b9:4c81:d626%7]) with mapi id 15.20.8583.023; Sun, 23 Mar 2025 14:07:39 +0000
+From: z dev <thezdev1@outlook.com>
+To: zdev <thezdev1@gmail.com>
+Subject: Re: [Reply Needed] Recovery: Acceptance Request
+Thread-Topic: [Reply Needed] Recovery: Acceptance Request
+Thread-Index: AQHbm/zTbavmZA7xXEGHp/AXy/3Uz7OAwdqO
+Date: Sun, 23 Mar 2025 14:07:39 +0000
+Message-ID: <GVXP193MB2551FAF3880D659D31FFC37799A52@GVXP193MB2551.EURP193.PROD.OUTLOOK.COM>
+References: <101914c4-d17e-4457-a8b7-ffb1a55926c4@mail.gmail.com> <CAPxFdS6WECO16u8BWWCLyc7CyauMMb93C1hvTFAhaJ4byzeJjQ@mail.gmail.com>
+In-Reply-To: <CAPxFdS6WECO16u8BWWCLyc7CyauMMb93C1hvTFAhaJ4byzeJjQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: GVXP193MB2551:EE_|AM0P193MB0755:EE_
+x-ms-office365-filtering-correlation-id: 4da8130f-c281-48dc-4a4a-08dd6a14121d
+x-microsoft-antispam: BCL:0;ARA:14566002|7072599006|9112599006|8060799006|19110799003|15030799003|9000799050|15080799006|12050799009|461199028|9400799030|12121999004|8062599003|1680799057|102099032|1602099012|10035399004|440099028|3412199025|4302099013|3430499032|3420499032|41001999003|19111999003;
+x-microsoft-antispam-message-info: jkI/MLOpZ8PfBbTMXCEgjT72SE4HFJAhMvH+l1JZcTKB5xRz5u2UVq/YoPlaMnLIE3vPiuYwO1gXQfOt3Vog5PbrqAFwcHYPOicoTTKu4Keaurxxr7UgoKCZKF1FqJXL0wgJOTtpfZdcDGciACtfWQdQjtJ6geOJbE8HLtYWTuZj0KFEOWBPh2IvrWjAy89kFGzPHZgMeU1cyLhCb6DhSXjwgfBqwG45HUfbsVcFqStLA4WGyUVBUGT1Bjmpwfi2iPjTzfpLsS9e9v9g4SRUcbMmKjqTo8ZhRFHXHoVcAe/y90FbGR6K4387HzZNvKcHyqILfwK8pse1GkKgmqnIPkZxUCstyZHXJHw2e0v3rOywnxhoRTdlloVQbEGrRL7n9QyqwhOVPPyiuqwxGuyzat9XX1CT96mPqi1qmOj8sl/1beyp41M77RrVbegUj14UCX0cN9syBzJ4i1BGKgUAzaK5yWx8sLoARkoTWpEQzzdOjymnRIWRCojBh79CjDISuCuzUOqx2GatSG/ymbVJsD/WFj7NI5MKkuPUtKEphA7VP+r2P8WguCaoRNdydeHNVwkurJ1QSVfDcbfpn9dAngRH84eKz8YQhpJP+eR3hiCzviwR7wK1jxJmpzMlnomYpSdDdsp1vyGZ0ujxoJU5JTptw9nXzExBQRp49/Sd5LhMnYHRZTRaLR2B0maNaNeeV8iy/iX/7BcBYIhCxaCODSamX3oVsqMFIHQh6j1KMdYrV6JTNPZIx8bVVZBkp1s0E2Zuz67rOpMsnE2Tpmmr/Vn053lNcbTVDQHPpaTVNuPZmeBcYjN1aPsZOiwUbH/OXFd37sSXnmGaEMAiDZMhVLKaznPXgjjhs9Z8Za29h4ncFt/KqzN34mPHj5t8EBy4lwibKiPkMwUoMMRSGDpZHFm/Ocsi/Hjkryu3ldojCf4B3AQ6FrLrirA/u0c6YqwM3krlTngMl4BO4jkdk17Nz4cKx3RcSX3apQawF4b5RIgehQpuLbghzkYalb/xPfwULVJY4arfgkiFgVghUJ25m6SjUyATz8/W7gyYCYOL9JOzlq8wXkBcUqtZmwM5YJqlw3lffycCi2tH9DAmLyPc0kGfOYfaf5i7nLN5IgQmn/BExFqoBm5cUj/U2ORULKc2s12kE7eBrISSZy6Ocp3Cdjh6nVIdcVFRgHpTzerTzuje5IcRUSY2IsR8o9waM3NNRBDRQlFz6R1iQuOaAllx6Sy5X6NkBcL9P0yt5u96XwuD7Hi7LwH7bvsv++G7r7Ru38Bvf1VKlpq+A0KhhPI8v+oOta8d7fWAfgM7o3nFhpQcpXcES0A69FK5ziR7OyaKQ9qc0h9UREGfdQWkFAAdP/7mAxyI2JJ1dN/uif2+NJYLXS5qm+NP1oWAs0cRZ7UKX2L1YnwOV+MRCJhxbwwIKkqg+RQcaxn8OlMTQ6X2MeBmV/eCZin4V0r/7/q4NSRew3IUHVqGItxCQH5FwIcocgo7f6DW8Q0H8g3FExlSM+c6l+Q6nKcxEuw8hdXHOJAh
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 1jcO8jiA+7Y/jryx2MmqkyCspQ3EFg3ayAWYr2zmnWMBd4bi16HBTWCcC99El/K4Ua/0sIr2dnH0d2gznaMh9cDsQ4sJFuzdy+I7Kcv1KMHaSkH7WOjNPtIVxM6z0jaDp/OvPdFq8ytDl9dsKP8JlqhrCuSgn8it8fOU636hllyajbZxQ4JWg+6/ezWeQRkdcUgKkwLTLNEw/c5oKcifgX1W005ief5Q7Bl+3Ox7L+xJRhoDHMtYfIoOY91iXPvPAgaBahL8IUk3AGuas4/KcDOYGJKRGw0DnmsCjepv+d8pAzMzL+/laNaHx6jtO4ziBrm7sDP/T/UPPnI198qMNBlHedsFxF6j8Avp3rt7no3rkrIsDLOvg8uBE4nbrqC/bKToyvEOLtZQqVtvTo/tz+X1kca5EnFiyOA+h9ACI+WWUffQn1uzXUhyUUkbjW8nJ04hHlE6FEsRwvFwh0br/TmgPW6LRinSOk0gPm7hky0uekdlaWrTIYU+wz6xMEo2wSe7fl3s2yJajz8e/5iTYA0zZyEkYv7+OF4qz0CCVuwzA4eQSLwhFOI1oeQFTy2Xh9hLF8dkkSzVVLA0cv8x0ovIkRdO0liEOyIFl84TYwLz5dBgN45LjvMf6JiTiddUfy62VNxveAH9S7WRuOb+DsTLn8H/PNjDQn31bLeeDR8tfR5ePE4Jet6hFPdNCupSbpr0qe6qawnuCW6/CJimoW1wPJYf81z91vlyxIBrh2NO3guZ4v1djUFsu+uvDlRq+jakFywHDAcNdryGAsPM/PDm660gMyMRYrmgFhNfIAMJoAyrlQN9aRdYDLI7ISHVXraecM6QPVUK9aSrIRPESbT6iOtii+Ax0pBwcnzRJ8dI42PMlA/U06Tu+tiFYOZODOoNzuG2cDa9mh7mxXsPt9kePiwgo9LLhtgKv6D96PFXkZ1+S1VnGfRGDo5w3qATa5gjJMNDiNXVzwjTD5Rn3kYGfdR6DruK063R4SwbMZ7OLEH9MH6juewH8mE4Wk0c4tzi16UxukuC02iYEamLXMD+e5Vbdhe1n7o3/Kg9tzB3Vcd2h9aAreLWYv2etGpaKuk+/iLvHmZimTkHiXRHXKqo25HPGlXAcWkJiC2QKuy9kmP1hMXKEe8aKNlm2bI31gcEC1qmhzcb/GLLYWZICY5H6+jZ/JWoze8q51H09YSWY8tccGBQh/jcGNB6PIn2+nNXn+k2j4/sFTHuJk9IUw==
+Content-Type: multipart/alternative; boundary="_000_GVXP193MB2551FAF3880D659D31FFC37799A52GVXP193MB2551EURP_"
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: GVXP193MB2551.EURP193.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4da8130f-c281-48dc-4a4a-08dd6a14121d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2025 14:07:39.1975 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0P193MB0755
+
+--_000_GVXP193MB2551FAF3880D659D31FFC37799A52GVXP193MB2551EURP_
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+
+confirm
+________________________________
+From: zdev <thezdev1@gmail.com>
+Sent: Sunday, March 23, 2025 2:06 PM
+To: thezdev1@outlook.com <thezdev1@outlook.com>
+Subject: Fwd: [Reply Needed] Recovery: Acceptance Request
+
+
+
+Acceptance Request
+
+[Logo of Clave]
+
+Clave
+
+Hi, thezdev1@gmail.com<mailto:thezdev1@gmail.com>!
+
+You have received a request to add this email as a backup option for Zdev1,=
+ wallet address 0xee8df3ba718c0cc420698259ee58a83295c353dc.
+
+By confirming, this email will be securely linked to your account as a reco=
+very method. In case you lose access to your phone, you can use this email =
+to regain access to your wallet.
+
+To confirm this request, reply to this email with the word "Confirm" to ver=
+ify the request.
+
+Important Notes:
+  =B7  This is part of Clave=92s Email Backup (Beta) feature, developed wit=
+h the Ethereum Foundation to provide an innovative and secure recovery solu=
+tion.
+  =B7  If you did not make this request, you can safely ignore this email=
+=97no changes will be made to your account.
+
+Your request ID is #2242428100.
+
+If you are not aware of this request, please disregard this email.
+
+________________________________
+
+Stay Secure,
+
+Clave Team
+
+Connect with us:
+
+[https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/twitt=
+er.png]<https://twitter.com/getclave>        [https://raw.githubusercontent=
+.com/aalimsahin/image_base/master/clave/linkedin.png] <https://www.linkedin=
+.com/company/getclave>         [https://raw.githubusercontent.com/aalimsahi=
+n/image_base/master/clave/web.png] <https://getclave.io/>   [https://raw.gi=
+thubusercontent.com/aalimsahin/image_base/master/clave/reactout.png] <https=
+://blog.getclave.io/>
+[https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/cardL=
+ogo.png]
+
+Accept guardian request for 0xEE8Df3BA718C0cC420698259Ee58A83295C353DC Code=
+ 2caf991aa705cbc3fcdba1e42353c8245464394706444c57bf221eab44864ab2
+
+--_000_GVXP193MB2551FAF3880D659D31FFC37799A52GVXP193MB2551EURP_
+Content-Type: text/html; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DWindows-1=
+252">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
+olor: rgb(0, 0, 0);">
+confirm</div>
+<div id=3D"appendonsend"></div>
+<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
+yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> zdev &lt;thezdev1@gma=
+il.com&gt;<br>
+<b>Sent:</b> Sunday, March 23, 2025 2:06 PM<br>
+<b>To:</b> thezdev1@outlook.com &lt;thezdev1@outlook.com&gt;<br>
+<b>Subject:</b> Fwd: [Reply Needed] Recovery: Acceptance Request</font>
+<div>&nbsp;</div>
+</div>
+<div>
+<div dir=3D"ltr">
+<div class=3D"x_gmail_quote x_gmail_quote_container"><br>
+<br>
+<div class=3D"x_msg3083673763012667876"><u></u>
+<div style=3D"background-color:#ffffff; font-size:14px; line-height:1.4; ma=
+rgin:0; padding:0">
+<span style=3D"color:transparent; display:none; height:0; max-height:0; max=
+-width:0; opacity:0; overflow:hidden; width:0">Acceptance Request</span>
+<table role=3D"presentation" border=3D"0" cellpadding=3D"0" cellspacing=3D"=
+0" style=3D"border-collapse:separate; width:100%">
+<tbody>
+<tr>
+<td style=3D"font-size:14px; vertical-align:top">&nbsp;</td>
+<td style=3D"font-size:14px; display:block; max-width:580px; padding:10px; =
+width:580px; margin:0 auto!important">
+<div style=3D"box-sizing:border-box; display:block; margin:0 auto; max-widt=
+h:580px; padding:20px; background-color:rgba(244,244,244,1); border-radius:=
+16px">
+<table cellpadding=3D"0" cellspacing=3D"0" border=3D"0">
+<tbody>
+<tr>
+<td><img alt=3D"Logo of Clave" style=3D"width:38px; height:38px" src=3D"htt=
+ps://raw.githubusercontent.com/aalimsahin/image_base/master/clave/onlylogo.=
+png">
+</td>
+<td>
+<p style=3D"font-size:32px; margin-left:3px; font-weight:400">Clave </p>
+</td>
+</tr>
+</tbody>
+</table>
+<table role=3D"presentation" style=3D"border-collapse:separate; width:100%;=
+ background-color:rgba(244,244,244,1); border-radius:3px">
+<tbody>
+<tr>
+<td style=3D"font-size:14px; vertical-align:top; box-sizing:border-box">
+<table role=3D"presentation" border=3D"0" cellpadding=3D"0" cellspacing=3D"=
+0" style=3D"border-collapse:separate; width:100%">
+<tbody>
+<tr>
+<td style=3D"font-size:14px; vertical-align:top">
+<p style=3D"font-size:14px; font-weight:normal; margin:0; margin-bottom:15p=
+x">Hi, <a href=3D"mailto:thezdev1@gmail.com" target=3D"_blank">
+thezdev1@gmail.com</a>! </p>
+<p style=3D"font-size:14px; font-weight:normal; margin:0">You have received=
+ a request to add this email as a backup option for
+<strong>Zdev1,</strong> wallet address <strong>0xee8df3ba718c0cc420698259ee=
+58a83295c353dc</strong>.
+<br>
+<br>
+By confirming, this email will be securely linked to your account as a reco=
+very method. In case you lose access to your phone, you can use this email =
+to regain access to your wallet.
+<br>
+<br>
+To confirm this request, reply to this email with the word <strong>&quot;Co=
+nfirm&quot;</strong> to verify the request.
+<br>
+<br>
+<strong>Important Notes:</strong><br>
+&nbsp;&nbsp;=B7&nbsp;&nbsp;This is part of Clave=92s Email Backup (Beta) fe=
+ature, developed with the Ethereum Foundation to provide an innovative and =
+secure recovery solution.<br>
+&nbsp;&nbsp;=B7&nbsp;&nbsp;If you did not make this request, you can safely=
+ ignore this email=97no changes will be made to your account.<br>
+<br>
+Your request ID is #2242428100. <br>
+<br>
+If you are not aware of this request, please disregard this email. </p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<hr style=3D"width:100%; border:none; border-top:1px solid #eaeaea; border-=
+color:#b9b9b9; margin:16px 0">
+<p style=3D"font-size:16px; line-height:24px; margin-top:16px; color:rgba(0=
+,0,0,0.64); font-weight:500; margin-bottom:0px">
+Stay Secure, </p>
+<p style=3D"font-size:20px; line-height:24px; color:rgba(0,0,0); font-weigh=
+t:500; margin-top:0px">
+Clave Team </p>
+<div class=3D"x_m_3083673763012667876black_bg" style=3D"border-radius:8px; =
+padding-left:15px; display:block">
+<table width=3D"100%" border=3D"0" cellspacing=3D"0" cellpadding=3D"0">
+<tbody>
+<tr>
+<td style=3D"vertical-align:bottom">
+<p class=3D"x_m_3083673763012667876black_bg" style=3D"font-size:24px; line-=
+height:20px; margin:16px 0; color:#fff; font-weight:500">
+Connect with us: </p>
+<table border=3D"0" cellspacing=3D"0" class=3D"x_m_3083673763012667876black=
+_bg" cellpadding=3D"0" style=3D"height:30px; margin-bottom:16px">
+<tbody>
+<tr style=3D"height:30px">
+<td style=3D"padding-right:5px; height:30px"><a href=3D"https://twitter.com=
+/getclave" class=3D"x_m_3083673763012667876black_bg" target=3D"_blank" styl=
+e=3D"color:#067df7; text-decoration:none; margin-right:5px"><img class=3D"x=
+_m_3083673763012667876black_bg" style=3D"display:block; outline:none; borde=
+r:none; text-decoration:none; width:30px; height:30px" src=3D"https://raw.g=
+ithubusercontent.com/aalimsahin/image_base/master/clave/twitter.png"></a>
+</td>
+<td style=3D"padding-right:5px; height:30px"><a href=3D"https://www.linkedi=
+n.com/company/getclave" class=3D"x_m_3083673763012667876black_bg" target=3D=
+"_blank" style=3D"color:#067df7; text-decoration:none; margin-right:5px"><i=
+mg width=3D"30" height=3D"30" class=3D"x_m_3083673763012667876black_bg" sty=
+le=3D"display:block; outline:none; border:none; text-decoration:none" src=
+=3D"https://raw.githubusercontent.com/aalimsahin/image_base/master/clave/li=
+nkedin.png"></a>
+</td>
+<td style=3D"padding-right:5px; height:30px"><a href=3D"https://getclave.io=
+/" class=3D"x_m_3083673763012667876black_bg" target=3D"_blank" style=3D"col=
+or:#067df7; text-decoration:none; margin-right:5px"><img width=3D"30" heigh=
+t=3D"30" class=3D"x_m_3083673763012667876black_bg" style=3D"display:block; =
+outline:none; border:none; text-decoration:none" src=3D"https://raw.githubu=
+sercontent.com/aalimsahin/image_base/master/clave/web.png"></a>
+</td>
+<td style=3D"padding-right:5px; height:30px"><a href=3D"https://blog.getcla=
+ve.io/" class=3D"x_m_3083673763012667876black_bg" target=3D"_blank" style=
+=3D"color:#067df7; text-decoration:none; margin-right:5px"><img width=3D"30=
+" height=3D"30" class=3D"x_m_3083673763012667876black_bg" style=3D"display:=
+block; outline:none; border:none; text-decoration:none" src=3D"https://raw.=
+githubusercontent.com/aalimsahin/image_base/master/clave/reactout.png"></a>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td align=3D"right"><img style=3D"max-height:150px; display:block" src=3D"h=
+ttps://raw.githubusercontent.com/aalimsahin/image_base/master/clave/cardLog=
+o.png">
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</td>
+<td style=3D"font-size:14px; vertical-align:top">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<div style=3D"display:none">
+<div id=3D"x_m_3083673763012667876zkemail">Accept guardian request for 0xEE=
+8Df3BA718C0cC420698259Ee58A83295C353DC Code 2caf991aa705cbc3fcdba1e42353c82=
+45464394706444c57bf221eab44864ab2</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
+
+--_000_GVXP193MB2551FAF3880D659D31FFC37799A52GVXP193MB2551EURP_--
