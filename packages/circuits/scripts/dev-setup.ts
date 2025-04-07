@@ -20,6 +20,10 @@ program
     "--output <string>",
     "Path to the directory storing output files"
   )
+  .requiredOption(
+    "--circuit <string>",
+    "Name of the circuit"
+  )
   .option("--silent", "No console logs")
   .option("--legacy", "Use a legacy circuit");
 
@@ -47,37 +51,10 @@ if (args.legacy) {
   phase1Url =
     "https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_22.ptau";
 }
-// const buildDir = path.join(__dirname, "../build");
-// const phase1Path = path.join(buildDir, "powersOfTau28_hez_final_21.ptau");
-// const r1cPath = path.join(buildDir, "wallet.r1cs");
 const solidityTemplate = path.join(
   require.resolve("snarkjs"),
   "../../templates/verifier_groth16.sol.ejs"
 );
-
-// Output paths
-// const zKeyPath = path.join(buildDir, "wallet.zkey");
-// const vKeyPath = path.join(buildDir, "vkey.json");
-// const solidityVerifierPath = path.join(buildDir, "verifier.sol");
-
-
-// async function askBeacon() {
-//   if (!ZKEY_BEACON) {
-//     ZKEY_BEACON = await new Promise((resolve) => {
-//       const readline = require("readline").createInterface({
-//         input: process.stdin,
-//         output: process.stdout,
-//       });
-//       readline.question(
-//         "Enter Beacon (hex string) to apply: ",
-//         (entropy: string) => {
-//           readline.close();
-//           resolve(entropy);
-//         }
-//       );
-//     });
-//   }
-// }
 
 async function downloadPhase1(phase1Path: string) {
   if (!fs.existsSync(phase1Path)) {
@@ -117,7 +94,6 @@ async function generateKeys(
   await zKey.contribute(zKeyPath + ".step1", zKeyPath + ".step2", "Contributer 1", ZKEY_ENTROPY, console);
   log("✓ First contribution completed");
 
-  // await askBeacon();
   await zKey.beacon(zKeyPath + ".step2", zKeyPath, "Final Beacon", ZKEY_BEACON, 10, console);
   log("✓ Beacon applied");
 
@@ -140,36 +116,20 @@ async function generateKeys(
 
 async function exec() {
   const buildDir = args.output;
+  const circuitName = args.circuit;
 
+  const phase1Path = path.join("./build", args.legacy ? "powersOfTau28_hez_final_22.ptau" : "powersOfTau28_hez_final_23.ptau");
 
-  if (args.legacy) {
-    const phase1Path = path.join(buildDir, "powersOfTau28_hez_final_22.ptau");
+  await downloadPhase1(phase1Path);
+  log("✓ Phase 1:", phase1Path);
 
-    await downloadPhase1(phase1Path);
-    log("✓ Phase 1:", phase1Path);
-
-    const emailAuthR1csPath = path.join(buildDir, "email_auth_legacy.r1cs");
-    if (!fs.existsSync(emailAuthR1csPath)) {
-      throw new Error(`${emailAuthR1csPath} does not exist.`);
-    }
-    await generateKeys(phase1Path, emailAuthR1csPath, path.join(buildDir, "email_auth_legacy.zkey"), path.join(buildDir, "email_auth_legacy.vkey"), path.join(buildDir, "Groth16LegacyVerifier.sol"));
-    log("✓ Keys for email auth legacy circuit generated");
-  } else {
-    const phase1Path = path.join(buildDir, "powersOfTau28_hez_final_23.ptau");
-
-    await downloadPhase1(phase1Path);
-    log("✓ Phase 1:", phase1Path);
-
-    const emailAuthR1csPath = path.join(buildDir, "email_auth.r1cs");
-    if (!fs.existsSync(emailAuthR1csPath)) {
-      throw new Error(`${emailAuthR1csPath} does not exist.`);
-    }
-    await generateKeys(phase1Path, emailAuthR1csPath, path.join(buildDir, "email_auth.zkey"), path.join(buildDir, "email_auth.vkey"), path.join(buildDir, "Groth16Verifier.sol"));
-    log("✓ Keys for email auth circuit generated");
+  const emailAuthR1csPath = path.join(buildDir, `${circuitName}.r1cs`);
+  if (!fs.existsSync(emailAuthR1csPath)) {
+    throw new Error(`${emailAuthR1csPath} does not exist.`);
   }
-
+  await generateKeys(phase1Path, emailAuthR1csPath, path.join(buildDir, `${circuitName}.zkey`), path.join(buildDir, `${circuitName}.vkey`), path.join(buildDir, "Groth16Verifier.sol"));
+  log(`✓ Keys for ${circuitName} circuit generated`);
 }
-
 
 exec()
   .then(() => {
