@@ -85,6 +85,9 @@ This is basically the same as the `email_auth.circom` described above except for
 
 ## How to Build the Container Image for Unit Tests in GitHub Actions
 
+To speed up unit testing in GitHub Actions, we run the tests on our Kubernetes cluster. 
+We create a container image and execute jobs on the cluster from GitHub Actions using the job configuration file `kubernetes/circuit-test-job.yml`.
+
 Follow these steps to build and push the container image for unit tests.
 
 ### Steps
