@@ -120,6 +120,8 @@ template EmailAuth(n, k, max_header_bytes, max_body_bytes, max_command_bytes, re
         timestamp_str <== SelectRegexReveal(max_header_bytes, timestamp_len)(timestamp_regex_reveal, timestamp_idx);
         signal raw_timestamp <== Digit2Int(timestamp_len)(timestamp_str);
         timestamp <== timestamp_regex_out * raw_timestamp;
+    } else {
+        timestamp <== 0;
     }
 
     // Extract the command from the body
