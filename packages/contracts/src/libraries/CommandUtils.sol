@@ -89,7 +89,7 @@ library CommandUtils {
     /// @param data bytes to convert
     function bytesToHexString(
         bytes memory data
-    ) public pure returns (string memory) {
+    ) internal pure returns (string memory) {
         bytes memory hexChars = "0123456789abcdef";
         bytes memory hexString = new bytes(2 * data.length);
 
@@ -110,7 +110,7 @@ library CommandUtils {
         bytes[] memory commandParams,
         string[] memory template,
         uint stringCase
-    ) public pure returns (string memory expectedCommand) {
+    ) internal pure returns (string memory expectedCommand) {
         // Construct an expectedCommand from template and the values of commandParams.
         uint8 nextParamIndex = 0;
         string memory stringParam;
