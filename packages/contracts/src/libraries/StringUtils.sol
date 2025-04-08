@@ -2,6 +2,7 @@
 pragma solidity ^0.8.25;
 
 import {strings} from "solidity-stringutils/src/strings.sol";
+import {CommandUtils} from "./CommandUtils.sol";
 
 /**
  * @title StringUtils
@@ -10,6 +11,7 @@ import {strings} from "solidity-stringutils/src/strings.sol";
  */
 library StringUtils {
     using strings for *;
+    using CommandUtils for string;
 
     /**
      * @dev Converts a hexadecimal string to bytes.
@@ -17,13 +19,13 @@ library StringUtils {
      * @return bytes A bytes array representing the converted hexadecimal string.
      */
     function hexToBytes(
-        string calldata hexStr
-    ) public pure returns (bytes memory) {
+        string memory hexStr
+    ) internal pure returns (bytes memory) {
         require(
             hexStr.toSlice().startsWith("0x".toSlice()),
             "invalid hex prefix"
         );
-        string memory hexStrNoPrefix = hexStr[2:];
+        string memory hexStrNoPrefix = hexStr.removePrefix(2);
         bytes memory hexBytes = bytes(hexStrNoPrefix);
         require(
             hexBytes.length != 0 && hexBytes.length % 2 == 0,
@@ -46,8 +48,8 @@ library StringUtils {
      * @return bytes32 A bytes32 value representing the converted hexadecimal string.
      */
     function hexToBytes32(
-        string calldata hexStr
-    ) public pure returns (bytes32) {
+        string memory hexStr
+    ) internal pure returns (bytes32) {
         bytes memory result = hexToBytes(hexStr);
         require(result.length == 32, "bytes length is not 32");
         return bytes32(result);
