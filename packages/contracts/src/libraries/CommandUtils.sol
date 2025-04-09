@@ -9,11 +9,11 @@ import {DecimalUtils} from "./DecimalUtils.sol";
 library CommandUtils {
     bytes16 private constant LOWER_HEX_DIGITS = "0123456789abcdef";
     bytes16 private constant UPPER_HEX_DIGITS = "0123456789ABCDEF";
-    string public constant STRING_MATCHER = "{string}";
-    string public constant UINT_MATCHER = "{uint}";
-    string public constant INT_MATCHER = "{int}";
-    string public constant DECIMALS_MATCHER = "{decimals}";
-    string public constant ETH_ADDR_MATCHER = "{ethAddr}";
+    string internal constant STRING_MATCHER = "{string}";
+    string internal constant UINT_MATCHER = "{uint}";
+    string internal constant INT_MATCHER = "{int}";
+    string internal constant DECIMALS_MATCHER = "{decimals}";
+    string internal constant ETH_ADDR_MATCHER = "{ethAddr}";
 
     function addressToHexString(
         address addr,
@@ -89,7 +89,7 @@ library CommandUtils {
     /// @param data bytes to convert
     function bytesToHexString(
         bytes memory data
-    ) public pure returns (string memory) {
+    ) internal pure returns (string memory) {
         bytes memory hexChars = "0123456789abcdef";
         bytes memory hexString = new bytes(2 * data.length);
 
@@ -110,7 +110,7 @@ library CommandUtils {
         bytes[] memory commandParams,
         string[] memory template,
         uint stringCase
-    ) public pure returns (string memory expectedCommand) {
+    ) internal pure returns (string memory expectedCommand) {
         // Construct an expectedCommand from template and the values of commandParams.
         uint8 nextParamIndex = 0;
         string memory stringParam;
@@ -174,7 +174,7 @@ library CommandUtils {
     function removePrefix(
         string memory str,
         uint numBytes
-    ) external pure returns (string memory) {
+    ) internal pure returns (string memory) {
         require(
             numBytes <= bytes(str).length,
             "Invalid skipped command prefix size"
