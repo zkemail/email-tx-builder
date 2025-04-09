@@ -1,0 +1,45 @@
+{
+  "name": "safe_notification_service",
+  "license": "MIT",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/supertest": "^6.0.2",
+    "@types/uuid": "^10.0.0",
+    "supertest": "^6.3.4",
+    "vitest": "^1.3.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.4.0",
+    "@safe-global/api-kit": "^2.5.11",
+    "@safe-global/safe-core-sdk": "^3.3.5",
+    "@safe-global/safe-core-sdk-types": "^5.1.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/nodemailer": "^6.4.17",
+    "bullmq": "^5.41.5",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "nodemailer": "^6.10.0",
+    "prisma": "^6.4.0",
+    "uuid": "^11.1.0",
+    "viem": "^2.23.5",
+    "winston": "^3.11.0",
+    "zod": "^3.24.2"
+  },
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "dev": "bun --watch run src/index.ts",
+    "test": "NODE_ENV=test vitest"
+  },
+  "vitest": {
+    "setupFiles": [
+      "src/__tests__/setup.ts"
+    ]
+  }
+}
