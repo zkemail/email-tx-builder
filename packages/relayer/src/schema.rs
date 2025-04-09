@@ -9,7 +9,6 @@ use serde::{Deserialize, Serialize};
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct EmailTxAuthSchema {
-    pub dkim_contract_address: Address,
     /// The account code associated with the transaction.
     pub account_code: AccountCode,
     /// Indicates whether the code exists in the email.
@@ -25,7 +24,9 @@ pub struct EmailTxAuthSchema {
     /// The body content of the email.
     pub body: String,
     /// The blockchain chain on which the transaction is to be executed.
-    pub chain: String,
+    pub chain: Option<String>,
+    /// The address of the DKIM contract.
+    pub dkim_contract_address: Option<Address>,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
