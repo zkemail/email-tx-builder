@@ -10,7 +10,7 @@ spec:
         cloud.google.com/machine-family: c3
       containers:
         - name: circuits-runner
-          image: wshino/circuits-runner:email-recovery
+          image: wshino/circuits-runner:email-recovery2
           imagePullPolicy: Always  # Always pull the latest image
           env:
             - name: REPO_URL

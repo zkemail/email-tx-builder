@@ -11,8 +11,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs
 
 # Install Bun
-RUN curl -fsSL https://bun.sh/install | bash && \
-    echo 'export PATH="$HOME/.bun/bin:$PATH"' >> ~/.bashrc
+RUN curl -fsSL https://bun.sh/install | bash
+ENV BUN_INSTALL="/root/.bun"
+ENV PATH="/root/.bun/bin:$PATH"
 
 # Install Rust
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
@@ -35,6 +36,9 @@ RUN apt-get update && apt-get install -y git
 # Add entrypoint script
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+# Verify Bun installation
+RUN bun --version
 
 # Entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
