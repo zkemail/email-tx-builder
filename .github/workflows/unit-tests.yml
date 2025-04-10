@@ -42,7 +42,7 @@ jobs:
 
       - name: Wait for Job to Complete
         run: |
-          kubectl wait --for=condition=complete --timeout=1800s job/circuits-job
+          kubectl wait --for=condition=complete --timeout=3600s job/circuits-job
 
       - name: Stream Logs from GKE
         run: |
