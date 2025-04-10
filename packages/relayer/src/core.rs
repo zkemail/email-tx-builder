@@ -105,10 +105,7 @@ pub async fn handle_email(email: String) -> Result<EmailAuthEvent, EmailError> {
     .await
     .map_err(|e| EmailError::Dkim(e.to_string()))?;
 
-    let invitation_code = match parsed_email.get_invitation_code(false) {
-        Ok(code) => Some(code),
-        Err(_) => None,
-    };
+    let invitation_code = parsed_email.get_invitation_code(false).ok();
     trace!(LOG, "Invitation code: {:?}", invitation_code);
 
     let params = EmailRequestContext {
@@ -407,12 +404,12 @@ async fn generate_email_proof(
     // Generate the proof and public signals using the circuit input
     let (proof, public_signals) = generate_proof_gpu(
         &circuit_input,
-        &PROVER_BLUEPRINT_ID.get().unwrap(),
+        PROVER_BLUEPRINT_ID.get().unwrap(),
         &uuid::Uuid::new_v4().to_string(),
-        &PROVER_ZKEY_DOWNLOAD_URL.get().unwrap(),
-        &PROVER_CIRCUIT_CPP_DOWNLOAD_URL.get().unwrap(),
-        &PROVER_API_KEY.get().unwrap(),
-        &PROVER_URL.get().unwrap(),
+        PROVER_ZKEY_DOWNLOAD_URL.get().unwrap(),
+        PROVER_CIRCUIT_CPP_DOWNLOAD_URL.get().unwrap(),
+        PROVER_API_KEY.get().unwrap(),
+        PROVER_URL.get().unwrap(),
     )
     .await?;
 
