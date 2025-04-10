@@ -41,7 +41,7 @@ pub async fn request_status_api(
         status,
         is_success: row
             .as_ref()
-            .map_or(false, |r| r.is_success.unwrap_or(false)),
+            .is_some_and(|r| r.is_success.unwrap_or(false)),
         email_nullifier: row.clone().and_then(|r| r.email_nullifier),
         account_salt: row.clone().and_then(|r| r.account_salt),
     }))
