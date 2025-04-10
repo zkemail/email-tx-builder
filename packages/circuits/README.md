@@ -71,3 +71,39 @@ This is basically the same as the `email_auth.circom` described above except for
 - Instead of `subject_idx`, it additionally takes as a private input a padded email body `padded_cleaned_body` and an index of the command in the email body `command_idx`.
 - It extracts a substring `command` between a prefix `(<div id=3D\"[^\"]*zkemail[^\"]*\"[^>]*>)"` and a suffix `</div>` from `padded_cleaned_body`.
 - It outputs `masked_command` instead of `masked_subject`, which removes the invitation code with the prefix and one email address from `command`.
+
+## How to Build the Container Image for Unit Tests in GitHub Actions
+
+Follow these steps to build and push the container image for unit tests.
+
+### Steps
+
+1. **Navigate to the Directory**
+
+   ```bash
+   cd .github/circuits-runner
+   ```
+
+2. **Create and Use a Buildx Builder**
+
+   ```bash
+   docker buildx create --use
+   ```
+
+3. **Log in to Docker Hub**
+
+   ```bash
+   docker login
+   ```
+
+4. **Build and Push the Image**
+
+   Build the image for multiple platforms and push it to Docker Hub.
+
+   ```bash
+   docker buildx build --platform linux/amd64,linux/arm64 \
+       -t YOUR_DOCKERHUB_USERNAME/circuits-runner:latest \
+       --push .
+   ```
+
+Replace `YOUR_DOCKERHUB_USERNAME` with your actual Docker Hub username.
