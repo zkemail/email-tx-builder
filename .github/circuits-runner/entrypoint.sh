@@ -15,4 +15,4 @@ yarn install --frozen-lockfile
 
 echo "Running tests"
 cd packages/circuits
-yarn test-large --no-cache
+yarn test --no-cache
