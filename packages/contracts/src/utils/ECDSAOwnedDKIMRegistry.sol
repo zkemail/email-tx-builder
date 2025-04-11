@@ -68,11 +68,11 @@ contract ECDSAOwnedDKIMRegistry is
         require(bytes(domainName).length != 0, "Invalid domain name");
         require(publicKeyHash != bytes32(0), "Invalid public key hash");
         require(
-            isDKIMPublicKeyHashValid(domainName, publicKeyHash) == false,
+            !isDKIMPublicKeyHashValid(domainName, publicKeyHash),
             "publicKeyHash is already set"
         );
         require(
-            dkimRegistry.revokedDKIMPublicKeyHashes(publicKeyHash) == false,
+            !dkimRegistry.revokedDKIMPublicKeyHashes(publicKeyHash),
             "publicKeyHash is revoked"
         );
 
@@ -106,11 +106,11 @@ contract ECDSAOwnedDKIMRegistry is
         require(bytes(domainName).length != 0, "Invalid domain name");
         require(publicKeyHash != bytes32(0), "Invalid public key hash");
         require(
-            isDKIMPublicKeyHashValid(domainName, publicKeyHash) == true,
+            isDKIMPublicKeyHashValid(domainName, publicKeyHash),
             "publicKeyHash is not set"
         );
         require(
-            dkimRegistry.revokedDKIMPublicKeyHashes(publicKeyHash) == false,
+            !dkimRegistry.revokedDKIMPublicKeyHashes(publicKeyHash),
             "publicKeyHash is already revoked"
         );
 
