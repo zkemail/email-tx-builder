@@ -1,0 +1,425 @@
+Delivered-To: thezdev1@gmail.com
+Received: by 2002:a05:7208:c408:b0:9b:b974:e0ce with SMTP id bf8csp288735rbb;
+        Fri, 11 Apr 2025 02:36:21 -0700 (PDT)
+X-Received: by 2002:a05:6e02:1f87:b0:3ce:4b12:fa17 with SMTP id e9e14a558f8ab-3d7ec287d8cmr19846575ab.19.1744364181684;
+        Fri, 11 Apr 2025 02:36:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1744364181; cv=none;
+        d=google.com; s=arc-20240605;
+        b=LpddAmrAlsvwT9GcqdFxcfgCJENsBh5drjs8HDr4d0nUXKqkcUqlIPSskW+yK/D8Z4
+         p0OLHszQgjH7p8+IJni/KjSNHBlwNGgwpC8VvHEkTp17QGKgaMgvKih6gWBY3fNEFX09
+         pn0n70rBxgQc/uRkLT+yVVbrxdF/hXcW33do0Fm43pfsHTSF2PARXNCnWX2e7OF643jV
+         mjTjJw5efkBC4WE2jion1h326wZBwWfFkCqk/Jl0FOKCCTBddeNA/5HjMjkW9+g3f2Jv
+         63qZ4DJPS/O2H5RMgS3Pp7TdNqdRoOdRdhrOnhIwdcpfmj9qQaDqqiI/IMG70TyYliI/
+         bffw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=date:mime-version:to:message-id:subject:from:dkim-signature;
+        bh=CLFkfQVv3i3wJafpDlniST7wVjK82/rFEdhKiW2whh0=;
+        fh=zIMJH576eY7g1xzszTCx2DspqFX7Ogf3vAyigEoc5Q4=;
+        b=E8cJyLa3T3j8mSkiOwcji/DTJCMfdZSGEcSPMdIEL9C1JaTn/YY+tklaer4/Aocri5
+         3RvRocjV0mtNoZx02rujzavoLTYrDkc3Dq8SYp7kUXVB+chJxEC8e/Suz4CdCrfI5FpC
+         ya3GM7WbwcIondzPxaMaakpIiFx66v7lquKsiYPD94cj0iCRQJeiz4+fZR3j1iIK3b+a
+         E5rE2oNpB32Od2NrQz2iVjscheVWzrVerGHvZ9NllPlHqYUi9Rj2L8wQfBmW9Hc5AkXX
+         gYoG7B1FbFeL5kN+DTOXsSYp3K5NK+9cocdnTMZuE9hVI1poAayMGYzoNO2t4z4pBQwb
+         c83g==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20230601 header.b=YzL01Wgl;
+       spf=pass (google.com: domain of safefarelayer@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=safefarelayer@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;
+       dara=pass header.i=@gmail.com
+Return-Path: <safefarelayer@gmail.com>
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41])
+        by mx.google.com with SMTPS id e9e14a558f8ab-3d7da490501sor15660305ab.0.2025.04.11.02.36.21
+        for <thezdev1@gmail.com>
+        (Google Transport Security);
+        Fri, 11 Apr 2025 02:36:21 -0700 (PDT)
+Received-SPF: pass (google.com: domain of safefarelayer@gmail.com designates 209.85.220.41 as permitted sender) client-ip=209.85.220.41;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20230601 header.b=YzL01Wgl;
+       spf=pass (google.com: domain of safefarelayer@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=safefarelayer@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com;
+       dara=pass header.i=@gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744364181; x=1744968981; dara=google.com;
+        h=date:mime-version:to:message-id:subject:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CLFkfQVv3i3wJafpDlniST7wVjK82/rFEdhKiW2whh0=;
+        b=YzL01WglUrTKkDVzjU78aHSpjwYcx+67s1Mm1Fm3SdV6LOsFoaS4cR9xEF4B/FSNEC
+         5qld54csQ+lGYEDAwuevtaSe47T3WN6o1p6/z4+TLbnGigNahJn3Kq2GclM2u9Zdlwq/
+         cJ6D2ERVUsreWs3q8KaelFQnZSm7WnZhOG+j7lJmSMxFITz7RZMkJt62pLdBIM/i7zwd
+         ebXsNJPK2zFYeu/1cIYLtuKJU6jIb2okuhNFPil5hDVl1N+rchqh32xq5Q0Bpcr8RWzS
+         ADWF1M2zPReQ5yalIr+oPyvA52cfFoG9EFpTYLm+rlKQOmY01JAAtQxwMf4i5nUOHn0x
+         4IlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744364181; x=1744968981;
+        h=date:mime-version:to:message-id:subject:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CLFkfQVv3i3wJafpDlniST7wVjK82/rFEdhKiW2whh0=;
+        b=Imv08JSApcjx93lArIae8ZoUBHcIrCA8zOLn727ZN9qewlzoaZlg10K8KV4AUP+33m
+         OBwoNxtFAWmNUWQbUXaxDRucgFsNh0v8NwrmGSrR9YyxKlII25+xu2IwXHoCZb8aXGtE
+         keRPpv5Rl7dOLqrvM+FPF/KBnx4efqlr5ZI5YF2yaNDjn8YyKFmRd9c2q6a4kqbI6qRI
+         mGdtHfvx+8ZhPImShJk1g2jTPZwPtk0s3+qEIrPIjE5usNLaV8awib1RUt7u2hSK3gXL
+         BWX8wD7hj2oInupNOEqvqLJoDrddYrRB0QgrU4qzrThRY2HF98AftMsdUrU2l+r/+6Bj
+         0XwA==
+X-Gm-Message-State: AOJu0YzPOfiMaFDzgS5QrbaFbys+10e5Q9Cn8jxGTGXkLhJyUwTF/DkS
+	kSANmXj3fX2CnugioTc9H7zMsZitMOpymEF4VAnj9G1MbsmoR+9U8gVjcw==
+X-Gm-Gg: ASbGnctqYVXCwmBQJlEPJrzOoNBoEM30zmzF9ZZS3Wr0inMwJvnSbSXnKNlWUa6JE7s
+	0rpOoepNhy7keD0i6GaCW2aD5tYNhGmH9DsRBmKsbWcKNmMnVV1JLXUGWwhQ3ay1jGHafo35VbG
+	++jI+8TWO2B6ZmgcdB2ugLTL9OUNarowldbgtlV9OXsBQL+wYa4Xd/A4SdyQONfN4Rh/FVdXh0B
+	g4nHmH3AFwjpl9AoEDeGUVQgOqGETpGhBe/QOV+HcsqlTgpwDrR1eoz9rEFfc8kkqxFABVaI0JO
+	l3+DhkVJJN0na0kziGSNmh9RBMqdHTet2drAv03SgMuqNAYDrBB8OJrVOMU4dcXH+Gbga65PvU4
+	cdoVQcrLQN4HcsKIGZna0pL54j8D0CqjqoA==
+X-Google-Smtp-Source: AGHT+IHCYZj99AYtIF/P2r4PafTPLbikvLn9ifwT6rEckP3KdjQ7KvmeP08n84ShB+ucuLDHa0ojqw==
+X-Received: by 2002:a05:6e02:338b:b0:3d5:bdac:c927 with SMTP id e9e14a558f8ab-3d7ec27c9eemr24821775ab.18.1744364181101;
+        Fri, 11 Apr 2025 02:36:21 -0700 (PDT)
+Return-Path: <safefarelayer@gmail.com>
+Received: from relayer-smtp-786b97f5f4-8j5lv (211.200.45.34.bc.googleusercontent.com. [34.45.200.211])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d7dc5828c3sm11911205ab.48.2025.04.11.02.36.20
+        for <thezdev1@gmail.com>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Apr 2025 02:36:20 -0700 (PDT)
+From: safefarelayer@gmail.com
+Subject: [Reply Needed] Safe Transaction Signature Request
+Message-ID: <fa30db3c-4e04-44a0-a2a6-bbb213ca4dfe@mail.gmail.com>
+To: thezdev1@gmail.com
+MIME-Version: 1.0
+Date: Fri, 11 Apr 2025 09:36:20 +0000
+Content-Type: multipart/alternative;
+ boundary="tZdX67jZJLIOKVh3DBZgUsrukkgfTMaAfFyy9cjM"
+
+--tZdX67jZJLIOKVh3DBZgUsrukkgfTMaAfFyy9cjM
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+ZK Email request. Your request ID is 4c3e14b0-c903-44a3-9f68-a079606420d2
+--tZdX67jZJLIOKVh3DBZgUsrukkgfTMaAfFyy9cjM
+Content-Type: multipart/related;
+ boundary="70SpVEDbB3MTRKnCkJdMxo4y03TNI0PRnf46WwzK"
+
+--70SpVEDbB3MTRKnCkJdMxo4y03TNI0PRnf46WwzK
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!doctype html>
+<html>
+  <style>
+    @font-face {
+      font-family: "Fustat";
+      src: url("https://storage.googleapis.com/email-templates-artifacts/Fu=
+stat/Fustat-Regular.ttf") format('truetype');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: "Fustat";
+      src: url("https://storage.googleapis.com/email-templates-artifacts/Fu=
+stat/Fustat-Medium.ttf") format('truetype');
+      font-weight: 500;
+    }
+    @font-face {
+      font-family: "Fustat";
+      src: url("https://storage.googleapis.com/email-templates-artifacts/Fu=
+stat/Fustat-SemiBold.ttf") format('truetype');
+      font-weight: 600;
+    }
+    @font-face {
+      font-family: "Fustat";
+      src: url("https://storage.googleapis.com/email-templates-artifacts/Fu=
+stat/Fustat-Bold.ttf") format('truetype');
+      font-weight: 700;
+    }
+
+    *,
+    *:before,
+    *:after {
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      line-height: 1.4;
+      padding: 0;
+      margin: 0;
+      font-family: "Fustat", sans-serif;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      -webkit-font-smoothing: antialiased;
+    }
+    a {
+      color: #5e6ad2;
+      text-decoration: underline;
+      line-height: 20px;
+    }
+    .primary-button {
+      border: none;
+      background-color: #5e6ad2;
+      color: white;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-weight: 500;
+    }
+    .secondary-button {
+      border: none;
+      background-color: #26272e;
+      color: white;
+      stroke: #2d2f31;
+      border-radius: 8px;
+      font-weight: 500;
+      padding: 10px 24px;
+    }
+
+    .social-links-logo {
+      border-radius: 50%;
+      background: #ffffff18;
+      border: 1px solid #bfbfbf20;
+      height: 24px;
+      width: 24px;
+      display: inline-block;
+      text-align: center;
+    }
+  </style>
+  <head>
+    <meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=
+=3D1.0" />
+    <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DUTF-8=
+" />
+    <link href=3D"https://fonts.googleapis.com/css?family=3DFustat&display=
+=3Dswap" rel=3D"stylesheet" />
+  </head>
+  <body
+    style=3D"
+      margin: 0;
+      padding: 0;
+      font-size: 16px;
+      font-family: 'Fustat', sans-serif;
+    "
+  >
+    <table
+      align=3D"center"
+      width=3D"100%"
+      style=3D"
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 0;
+      "
+      cellspacing=3D"0"
+      cellpadding=3D"0"
+    >
+      <tr>
+        <td align=3D"center" style=3D"padding: 0; margin: 0">
+          <!-- Header -->
+          <table
+            width=3D"100%"
+            style=3D"
+              background-image: url(https://storage.googleapis.com/email-te=
+mplates-artifacts/Header.png);
+              background-size: cover;
+              background-position: center;
+              height: 4.5rem;
+              border-radius: 8px 8px 0 0;
+              padding: 0;
+              margin: 0;
+            "
+            cellspacing=3D"0"
+            cellpadding=3D"0"
+          >
+            <tr>
+              <td style=3D"padding: 0; margin: 0">
+                <table width=3D"100%" cellspacing=3D"0" cellpadding=3D"0">
+                  <tr>
+                    <td align=3D"left" style=3D"padding: 0; margin: 0">
+                      <img
+                        src=3D"https://storage.googleapis.com/email-templat=
+es-artifacts/Z.png?ignoreCache=3D1"
+                        style=3D"display: block; width: 70px; height: 70px;=
+ margin: 0"
+                        alt=3D"Z logo"
+                      />
+                    </td>
+                    <td align=3D"right" style=3D"padding: 0; margin: 0">
+                      <img
+                        src=3D"https://storage.googleapis.com/email-templat=
+es-artifacts/K.png"
+                        style=3D"display: block; width: 70px; height: 70px;=
+ margin: 0"
+                        alt=3D"K logo"
+                      />
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Content -->
+          <table
+            width=3D"100%"
+            style=3D"
+              background-color: white;
+              z-index: 100;
+              padding: 2rem 1rem;
+              border: 1px solid #dddddd;
+            "
+          >
+            <tr>
+              <td style=3D"padding: 0; font-size: 16px; color: #000;">
+                Hi,
+              </td>
+            </tr>
+            <tr>
+              <td style=3D"padding-top: 15px; font-family: 'Fustat', sans-s=
+erif;">
+                 Please sign the safe transaction with hash: 0x75c746871252=
+67514d6a06e91f2576108332d24714814f943235f030f8d2c5d
+                <br />
+                <br />
+                Reply "<strong>Confirm</strong>" to this email to accept th=
+e request.
+                Your request ID is 4c3e14b0-c903-44a3-9f68-a079606420d2.
+
+                <br /><br />
+                If you did not initiate this request, please contact us imm=
+ediately.
+
+
+              </td>
+            </tr>
+            <tr>
+              <td style=3D"padding-top: 20px">
+                <p style=3D"margin: 0">
+                  Cheers,<br /><strong>The ZK Email Team</strong>
+                </p>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Footer -->
+          <table
+            width=3D"100%"
+            style=3D"
+              background-image: url(https://storage.googleapis.com/email-te=
+mplates-artifacts/Footer.png?ignoreCache=3D1);
+              background-size: cover;
+              height: 4.5rem;
+              border-radius: 0 0 8px 8px;
+              padding: 0;
+              margin: 0;
+            "
+            cellspacing=3D"0"
+            cellpadding=3D"0"
+          >
+            <tr>
+              <td align=3D"center" style=3D"padding: 5px">
+                <p style=3D"color: #D4D4D4; font-weight: 500; font-size: 14=
+px; margin: 0; margin-bottom: 4px;">
+                  Powered by
+                  <a
+                    href=3D"#"
+                    style=3D"color: white; font-size: 14px; text-decoration=
+: underline;"
+                    >ZK Email</a
+                  >
+                </p>
+                <table>
+                  <tr>
+                    <td>
+                      <a
+                        href=3D"https://github.com/zkemail"
+                        class=3D"social-links-logo"
+                        style=3D" border-radius: 50%;
+                            background: #161819;
+                            border: 1px solid #3B3B3B;
+                            backdrop-filter: blur(8px);
+                            margin-left: 4px;
+                            margin-right: 4px;
+                            height: 24px;
+                            width: 24px;
+                            text-align: center;
+                            line-height: 24px;
+                            display: block"
+                        ><img
+                          src=3D"https://storage.googleapis.com/email-templ=
+ates-artifacts/GithubLogo.png?ignoreCache=3D1"
+                          alt=3D"GitHub Logo"
+                          style=3D"height: 12px; width: 12px;"
+                      /></a>
+                    </td>
+                    <td>
+                      <a
+                        href=3D"https://twitter.com/zkemail"
+                        class=3D"social-links-logo"
+                        style=3D" border-radius: 50%;
+                            background: #161819;
+                            border: 1px solid #3B3B3B;
+                            backdrop-filter: blur(8px);
+                            margin-left: 4px;
+                            margin-right: 4px;
+                            height: 24px;
+                            width: 24px;
+                            text-align: center;
+                            line-height: 24px;
+                            display: block"
+                        ><img
+                          src=3D"https://storage.googleapis.com/email-templ=
+ates-artifacts/XLogo.png?ignoreCache=3D1"
+                          alt=3D"Twitter Logo"
+                          style=3D"height: 12px; width: 12px;"
+                      /></a>
+                    </td>
+                    <td>
+                      <a href=3D"https://t.me/zkemail/1" class=3D"social-li=
+nks-logo"
+                        style=3D" border-radius: 50%;
+                            background: #161819;
+                            border: 1px solid #3B3B3B;
+                            backdrop-filter: blur(8px);
+                            margin-left: 4px;
+                            margin-right: 4px;
+                            height: 24px;
+                            width: 24px;
+                            text-align: center;
+                            line-height: 24px;
+                            display: block"
+                        ><img
+                          src=3D"https://storage.googleapis.com/email-templ=
+ates-artifacts/TelegramLogo.png?ignoreCache=3D1"
+                          alt=3D"Telegram Logo"
+                          style=3D"height: 12px; width: 12px;"
+                      /></a>
+                    </td>
+                    <td>
+                      <a
+                        href=3D"https://discord.gg/XgAUbX3F4T"
+                        class=3D"social-links-logo"
+                        style=3D" border-radius: 50%;
+                            background: #161819;
+                            border: 1px solid #3B3B3B;
+                            backdrop-filter: blur(8px);
+                            margin-left: 4px;
+                            margin-right: 4px;
+                            height: 24px;
+                            width: 24px;
+                            text-align: center;
+                            line-height: 24px;
+                            display: block"
+                        ><img
+                          src=3D"https://storage.googleapis.com/email-templ=
+ates-artifacts/DiscordLogo.png?ignoreCache=3D1"
+                          alt=3D"Discord Logo"
+                          style=3D"height: 12px; width: 12px;"
+                      /></a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <div style=3D"display: none;"><div id=3D"zkemail">signHash 332954328836=
+8728840280537428717661157586070780800190706876551788024138902621 Code 14f11=
+bf0d1877bd8106d095a02f90878f77c1ec4092ddc118b467457c7f44ce7</div></div>
+  </body>
+</html>
+
+--70SpVEDbB3MTRKnCkJdMxo4y03TNI0PRnf46WwzK--
+--tZdX67jZJLIOKVh3DBZgUsrukkgfTMaAfFyy9cjM--
+
