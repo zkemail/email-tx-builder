@@ -2,7 +2,7 @@
 pragma solidity ^0.8.12;
 
 /**
- * @title Email Authentication Fixture Tests
+ * @title EmailAuthMsg Fixture Tests - To make sure fixture data are correct
  * @notice Test suite for verifying fixture data and basic functionality using test cases
  * @dev Tests email authentication message fixtures through EmailSigner and Verifier.
  *      The fixtures are used to test different command types:
@@ -12,14 +12,14 @@ pragma solidity ^0.8.12;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import {Verifier} from "../src/utils/Verifier.sol";
-import {ECDSAOwnedDKIMRegistry} from "../src/utils/ECDSAOwnedDKIMRegistry.sol";
-import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import {EmailSigner} from "../src/EmailSigner.sol";
-import {EmailAuthMsg} from "../src/interfaces/IEmailTypes.sol";
-import {EmailAuthMsgFixtures} from "./fixtures/EmailAuthMsgFixtures.sol";
-import {Groth16Verifier} from "./fixtures/Groth16Verifier.sol";
 import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
+import {Verifier} from "../../src/utils/Verifier.sol";
+import {ECDSAOwnedDKIMRegistry} from "../../src/utils/ECDSAOwnedDKIMRegistry.sol";
+import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {EmailSigner} from "../../src/EmailSigner.sol";
+import {EmailAuthMsg} from "../../src/interfaces/IEmailTypes.sol";
+import {EmailAuthMsgFixtures} from "./EmailAuthMsgFixtures.sol";
+import {Groth16Verifier} from "./Groth16Verifier.sol";
 
 contract FixturesTest is Test {
     // ============ Test Environment ============
