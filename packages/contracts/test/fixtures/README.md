@@ -9,14 +9,14 @@ The `Groth16Verifier.sol` file has been auto-generated using snarkjs and can be 
 
 
 Each subdirectory represents a test case with:
-- `email.eml`: The original email file
-- `input.json`: Generated input from the email
-- `public.json`: Public inputs for the proof
-- `proof.json`: The actual proof data
+- `raw.eml`: The original email file
+- `EmailAuthMsg.json`: proof generated from the raw email file that can be verified in solidity contracts
 
-## Note
+For convenience, there is also an `EmailAuthMsgFixtures.sol` file that wraps all the cases in a Solidity library. This library provides functions to retrieve the `EmailAuthMsg` for each test case:
 
-Only `proof.json` and `public.json` are needed for the final verification of the proof. The `email.eml` and `input.json` files are provided just for reference and to understand the context of the test case.
+- `getCase1()`: Sign Hash with a specific hash value
+- `getCase2()`: Sign Hash with a different hash value
+- `getCase3()`: Send ETH Transaction
+- `getCase4()`: Accept Guardian Request
 
-
-## Usage
+You can use these functions to easily access the test cases in your Solidity tests.
