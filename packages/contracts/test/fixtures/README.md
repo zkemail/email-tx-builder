@@ -73,4 +73,4 @@ The fixtures are verified using two different contracts based on the command typ
 
 The `Groth16Verifier.sol` is an auto-generated contract using snarkjs that handles the zero-knowledge proof verification. It's used internally by the EmailSigner and Verifier contracts to validate the proofs contained in the test fixtures.
 
-For examples of how these fixtures are used in tests, refer to `test/Fixtures.t.sol`.
+For examples of how these fixtures are used in tests, refer to `Fixtures.t.sol`.
