@@ -37,6 +37,9 @@ jobs:
           # Output the processed job file for verification
           cat kubernetes/circuit-test-job-processed.yml
           
+          # Delete the old job if it exists
+          kubectl delete job circuits-job --ignore-not-found=true
+          
           # Apply the job to GKE
           kubectl apply -f kubernetes/circuit-test-job-processed.yml
 
