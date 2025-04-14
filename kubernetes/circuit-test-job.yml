@@ -5,6 +5,7 @@ metadata:
 spec:
   ttlSecondsAfterFinished: 60  # Delete automatically 1 minute after completion
   template:
+    metadata: {}  # Add empty metadata section
     spec:
       nodeSelector:
         cloud.google.com/machine-family: c3
