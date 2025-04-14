@@ -7,10 +7,6 @@
     {
       "is_public": true,
       "regex_def": "[^<>/]+"
-    },
-    {
-      "is_public": false,
-      "regex_def": "</div>"
     }
   ]
 }

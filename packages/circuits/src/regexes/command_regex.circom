@@ -2,7 +2,7 @@ pragma circom 2.1.5;
 
 include "@zk-email/zk-regex-circom/circuits/regex_helpers.circom";
 
-// regex: (<div id=3D"[^"]*zkemail[^"]*"[^>]*>)[^<>/]+</div>
+// regex: (<div id=3D"[^"]*zkemail[^"]*"[^>]*>)[^<>/]+
 template CommandRegex(msg_bytes) {
 	signal input msg[msg_bytes];
 	signal output out;
@@ -17,22 +17,22 @@ template CommandRegex(msg_bytes) {
 		in[i+1] <== msg[i];
 	}
 
-	component eq[82][num_bytes];
+	component eq[81][num_bytes];
 	component lt[38][num_bytes];
-	component and[167][num_bytes];
+	component and[161][num_bytes];
 	component multi_or[36][num_bytes];
-	signal states[num_bytes+1][56];
-	signal states_tmp[num_bytes+1][56];
+	signal states[num_bytes+1][50];
+	signal states_tmp[num_bytes+1][50];
 	signal from_zero_enabled[num_bytes+1];
 	from_zero_enabled[num_bytes] <== 0;
 	component state_changed[num_bytes];
 
-	for (var i = 1; i < 56; i++) {
+	for (var i = 1; i < 50; i++) {
 		states[0][i] <== 0;
 	}
 
 	for (var i = 0; i < num_bytes; i++) {
-		state_changed[i] = MultiOR(55);
+		state_changed[i] = MultiOR(49);
 		states[i][0] <== 1;
 		eq[0][i] = IsEqual();
 		eq[0][i].in[0] <== in[i];
@@ -1233,34 +1233,7 @@ template CommandRegex(msg_bytes) {
 		multi_or[35][i].in[0] <== and[159][i].out;
 		multi_or[35][i].in[1] <== and[160][i].out;
 		states[i+1][49] <== multi_or[35][i].out;
-		and[161][i] = AND();
-		and[161][i].a <== states[i][42];
-		and[161][i].b <== eq[0][i].out;
-		states[i+1][50] <== and[161][i].out;
-		eq[81][i] = IsEqual();
-		eq[81][i].in[0] <== in[i];
-		eq[81][i].in[1] <== 47;
-		and[162][i] = AND();
-		and[162][i].a <== states[i][50];
-		and[162][i].b <== eq[81][i].out;
-		states[i+1][51] <== and[162][i].out;
-		and[163][i] = AND();
-		and[163][i].a <== states[i][51];
-		and[163][i].b <== eq[1][i].out;
-		states[i+1][52] <== and[163][i].out;
-		and[164][i] = AND();
-		and[164][i].a <== states[i][52];
-		and[164][i].b <== eq[2][i].out;
-		states[i+1][53] <== and[164][i].out;
-		and[165][i] = AND();
-		and[165][i].a <== states[i][53];
-		and[165][i].b <== eq[3][i].out;
-		states[i+1][54] <== and[165][i].out;
-		and[166][i] = AND();
-		and[166][i].a <== states[i][54];
-		and[166][i].b <== eq[69][i].out;
-		states[i+1][55] <== and[166][i].out;
-		from_zero_enabled[i] <== MultiNOR(55)([states_tmp[i+1][1], states[i+1][2], states[i+1][3], states[i+1][4], states[i+1][5], states[i+1][6], states[i+1][7], states[i+1][8], states[i+1][9], states[i+1][10], states[i+1][11], states[i+1][12], states[i+1][13], states[i+1][14], states[i+1][15], states[i+1][16], states[i+1][17], states[i+1][18], states[i+1][19], states[i+1][20], states[i+1][21], states[i+1][22], states[i+1][23], states[i+1][24], states[i+1][25], states[i+1][26], states[i+1][27], states[i+1][28], states[i+1][29], states[i+1][30], states[i+1][31], states[i+1][32], states[i+1][33], states[i+1][34], states[i+1][35], states[i+1][36], states[i+1][37], states[i+1][38], states[i+1][39], states[i+1][40], states[i+1][41], states[i+1][42], states[i+1][43], states[i+1][44], states[i+1][45], states[i+1][46], states[i+1][47], states[i+1][48], states[i+1][49], states[i+1][50], states[i+1][51], states[i+1][52], states[i+1][53], states[i+1][54], states[i+1][55]]);
+		from_zero_enabled[i] <== MultiNOR(49)([states_tmp[i+1][1], states[i+1][2], states[i+1][3], states[i+1][4], states[i+1][5], states[i+1][6], states[i+1][7], states[i+1][8], states[i+1][9], states[i+1][10], states[i+1][11], states[i+1][12], states[i+1][13], states[i+1][14], states[i+1][15], states[i+1][16], states[i+1][17], states[i+1][18], states[i+1][19], states[i+1][20], states[i+1][21], states[i+1][22], states[i+1][23], states[i+1][24], states[i+1][25], states[i+1][26], states[i+1][27], states[i+1][28], states[i+1][29], states[i+1][30], states[i+1][31], states[i+1][32], states[i+1][33], states[i+1][34], states[i+1][35], states[i+1][36], states[i+1][37], states[i+1][38], states[i+1][39], states[i+1][40], states[i+1][41], states[i+1][42], states[i+1][43], states[i+1][44], states[i+1][45], states[i+1][46], states[i+1][47], states[i+1][48], states[i+1][49]]);
 		states[i+1][1] <== MultiOR(2)([states_tmp[i+1][1], from_zero_enabled[i] * and[0][i].out]);
 		state_changed[i].in[0] <== states[i+1][1];
 		state_changed[i].in[1] <== states[i+1][2];
@@ -1311,25 +1284,19 @@ template CommandRegex(msg_bytes) {
 		state_changed[i].in[46] <== states[i+1][47];
 		state_changed[i].in[47] <== states[i+1][48];
 		state_changed[i].in[48] <== states[i+1][49];
-		state_changed[i].in[49] <== states[i+1][50];
-		state_changed[i].in[50] <== states[i+1][51];
-		state_changed[i].in[51] <== states[i+1][52];
-		state_changed[i].in[52] <== states[i+1][53];
-		state_changed[i].in[53] <== states[i+1][54];
-		state_changed[i].in[54] <== states[i+1][55];
 	}
 
 	component is_accepted = MultiOR(num_bytes+1);
 	for (var i = 0; i <= num_bytes; i++) {
-		is_accepted.in[i] <== states[i][55];
+		is_accepted.in[i] <== states[i][42];
 	}
 	out <== is_accepted.out;
 	signal is_consecutive[msg_bytes+1][3];
 	is_consecutive[msg_bytes][2] <== 0;
 	for (var i = 0; i < msg_bytes; i++) {
-		is_consecutive[msg_bytes-1-i][0] <== states[num_bytes-i][55] * (1 - is_consecutive[msg_bytes-i][2]) + is_consecutive[msg_bytes-i][2];
+		is_consecutive[msg_bytes-1-i][0] <== states[num_bytes-i][42] * (1 - is_consecutive[msg_bytes-i][2]) + is_consecutive[msg_bytes-i][2];
 		is_consecutive[msg_bytes-1-i][1] <== state_changed[msg_bytes-i].out * is_consecutive[msg_bytes-1-i][0];
-		is_consecutive[msg_bytes-1-i][2] <== ORAnd()([(1 - from_zero_enabled[msg_bytes-i+1]), states[num_bytes-i][55], is_consecutive[msg_bytes-1-i][1]]);
+		is_consecutive[msg_bytes-1-i][2] <== ORAnd()([(1 - from_zero_enabled[msg_bytes-i+1]), states[num_bytes-i][42], is_consecutive[msg_bytes-1-i][1]]);
 	}
 	// substrings calculated: [{(34, 42), (34, 43), (34, 44), (34, 45), (34, 46), (34, 47), (34, 48), (34, 49), (42, 42), (42, 43), (42, 44), (42, 45), (42, 46), (42, 47), (42, 48), (42, 49), (43, 42), (44, 43), (45, 43), (46, 43), (47, 45), (48, 45), (49, 45)}]
 	signal prev_states0[23][msg_bytes];

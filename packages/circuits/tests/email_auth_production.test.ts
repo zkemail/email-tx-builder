@@ -46,7 +46,7 @@ describe("Email Auth Production", () => {
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector: '(<(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)? (=\r\n)?i(=\r\n)?d(=\r\n)?=3D(=\r\n)?"(=\r\n)?[^"]*(=\r\n)?z(=\r\n)?k(=\r\n)?e(=\r\n)?m(=\r\n)?a(=\r\n)?i(=\r\n)?l(=\r\n)?[^"]*(=\r\n)?"(=\r\n)?[^>]*(=\r\n)?>(=\r\n)?)(=\r\n)?([^<>/]+)(<(=\r\n)?/(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)?>(=\r\n)?)',
             });
-        console.log(circuitInputs);
+
         const witness = await circuit.calculateWitness(circuitInputs);
         await circuit.checkConstraints(witness);
 
@@ -116,7 +116,7 @@ describe("Email Auth Production", () => {
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector: '(<(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)? (=\r\n)?i(=\r\n)?d(=\r\n)?=3D(=\r\n)?"(=\r\n)?[^"]*(=\r\n)?z(=\r\n)?k(=\r\n)?e(=\r\n)?m(=\r\n)?a(=\r\n)?i(=\r\n)?l(=\r\n)?[^"]*(=\r\n)?"(=\r\n)?[^>]*(=\r\n)?>(=\r\n)?)(=\r\n)?([^<>/]+)(<(=\r\n)?/(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)?>(=\r\n)?)',
             });
-        console.log(circuitInputs);
+
         const witness = await circuit.calculateWitness(circuitInputs);
         await circuit.checkConstraints(witness);
 
@@ -185,7 +185,7 @@ describe("Email Auth Production", () => {
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector: '(<(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)? (=\r\n)?i(=\r\n)?d(=\r\n)?=3D(=\r\n)?"(=\r\n)?[^"]*(=\r\n)?z(=\r\n)?k(=\r\n)?e(=\r\n)?m(=\r\n)?a(=\r\n)?i(=\r\n)?l(=\r\n)?[^"]*(=\r\n)?"(=\r\n)?[^>]*(=\r\n)?>(=\r\n)?)(=\r\n)?([^<>/]+)(<(=\r\n)?/(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)?>(=\r\n)?)',
             });
-        console.log(circuitInputs);
+
         const witness = await circuit.calculateWitness(circuitInputs);
         await circuit.checkConstraints(witness);
 
@@ -254,7 +254,7 @@ describe("Email Auth Production", () => {
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector: '(<(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)? (=\r\n)?i(=\r\n)?d(=\r\n)?=3D(=\r\n)?"(=\r\n)?[^"]*(=\r\n)?z(=\r\n)?k(=\r\n)?e(=\r\n)?m(=\r\n)?a(=\r\n)?i(=\r\n)?l(=\r\n)?[^"]*(=\r\n)?"(=\r\n)?[^>]*(=\r\n)?>(=\r\n)?)(=\r\n)?([^<>/]+)(<(=\r\n)?/(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)?>(=\r\n)?)',
             });
-        console.log(circuitInputs);
+
         const witness = await circuit.calculateWitness(circuitInputs);
         await circuit.checkConstraints(witness);
 
@@ -323,7 +323,7 @@ describe("Email Auth Production", () => {
                 ignoreBodyHashCheck: false,
                 shaPrecomputeSelector
             });
-        console.log(circuitInputs);
+
 
         const witness = await circuit.calculateWitness(circuitInputs);
         await circuit.checkConstraints(witness);
@@ -374,79 +374,4 @@ describe("Email Auth Production", () => {
             ]
         );
     });
-
-    // it("Verify a production email for recovery sent from outlook pc with the English setting", async () => {
-    //     const emailFilePath = path.join(
-    //         __dirname,
-    //         "./emails/recovery_outlook_english_pc.eml"
-    //     );
-
-    //     const emailRaw = readFileSync(emailFilePath, "utf8");
-    //     const parsedEmail = await relayerUtils.parseEmail(emailRaw);
-    //     console.log(parsedEmail);
-    //     const accountCode =
-    //         "0x1162ebff40918afe5305e68396f0283eb675901d0387f97d21928d423aaa0b20";
-
-    //     const circuitInputs =
-    //         await genEmailCircuitInput(emailFilePath, accountCode, {
-    //             maxHeaderLength: 1024,
-    //             maxBodyLength: 1024,
-    //             ignoreBodyHashCheck: false,
-    //             shaPrecomputeSelector: '(<(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)? (=\r\n)?i(=\r\n)?d(=\r\n)?=3D(=\r\n)?"(=\r\n)?[^"]*(=\r\n)?z(=\r\n)?k(=\r\n)?e(=\r\n)?m(=\r\n)?a(=\r\n)?i(=\r\n)?l(=\r\n)?[^"]*(=\r\n)?"(=\r\n)?[^>]*(=\r\n)?>(=\r\n)?)(=\r\n)?([^<>/]+)(<(=\r\n)?/(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)?>(=\r\n)?)',
-    //         });
-    //     console.log(circuitInputs);
-    //     const witness = await circuit.calculateWitness(circuitInputs);
-    //     await circuit.checkConstraints(witness);
-    //     console.log("checkConstraints done");
-
-    //     const domainName = "outlook.com";
-    //     const paddedDomain = relayerUtils.padString(domainName, 255);
-    //     const domainFields = await relayerUtils.bytesToFields(paddedDomain);
-    //     for (let idx = 0; idx < domainFields.length; ++idx) {
-    //         expect(BigInt(domainFields[idx])).toEqual(witness[1 + idx]);
-    //     }
-    //     console.log("domainFields done");
-
-    //     const expectedPubKeyHash = await relayerUtils.publicKeyHash(
-    //         parsedEmail.public_key
-    //     );
-    //     expect(BigInt(expectedPubKeyHash)).toEqual(
-    //         witness[1 + domainFields.length]
-    //     );
-    //     console.log("expectedPubKeyHash done");
-
-    //     const expectedEmailNullifier = await relayerUtils.emailNullifier(
-    //         parsedEmail.signature
-    //     );
-    //     expect(BigInt(expectedEmailNullifier)).toEqual(
-    //         witness[1 + domainFields.length + 1]
-    //     );
-    //     console.log("expectedEmailNullifier done");
-
-    //     const timestamp = BigInt(0);
-    //     expect(timestamp).toEqual(witness[1 + domainFields.length + 2]);
-    //     console.log("timestamp done");
-
-    //     const maskedCommand = "Accept guardian request for 0x4AB749201F0D9b4c19624e0e7820ACBfD80eD992";
-    //     const paddedMaskedCommand = relayerUtils.padString(maskedCommand, 605);
-    //     const maskedCommandFields =
-    //         await relayerUtils.bytesToFields(paddedMaskedCommand);
-    //     for (let idx = 0; idx < maskedCommandFields.length; ++idx) {
-    //         expect(BigInt(maskedCommandFields[idx])).toEqual(
-    //             witness[1 + domainFields.length + 3 + idx]
-    //         );
-    //     }
-
-    //     const fromAddr = "suegamisora@outlook.com";
-    //     const accountSalt = await relayerUtils.generateAccountSalt(fromAddr, accountCode);
-    //     expect(BigInt(accountSalt)).toEqual(
-    //         witness[1 + domainFields.length + 3 + maskedCommandFields.length]
-    //     );
-
-    //     expect(BigInt(0)).toEqual(
-    //         witness[
-    //         1 + domainFields.length + 3 + maskedCommandFields.length + 1
-    //         ]
-    //     );
-    // });
 });
