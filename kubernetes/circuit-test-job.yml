@@ -2,12 +2,15 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: circuits-job
+  labels:
+    app: circuits-test
 spec:
   ttlSecondsAfterFinished: 60  # Delete automatically 1 minute after completion
+  backoffLimit: 0  # No retries if the job fails
   template:
     metadata:
       labels:
-        job-name: circuits-job  # Explicitly add labels that K8s would normally add automatically
+        app: circuits-test
     spec:
       nodeSelector:
         cloud.google.com/machine-family: c3
