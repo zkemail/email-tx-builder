@@ -5,7 +5,9 @@ metadata:
 spec:
   ttlSecondsAfterFinished: 60  # Delete automatically 1 minute after completion
   template:
-    metadata: {}  # Add empty metadata section
+    metadata:
+      labels:
+        job-name: circuits-job  # Explicitly add labels that K8s would normally add automatically
     spec:
       nodeSelector:
         cloud.google.com/machine-family: c3
