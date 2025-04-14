@@ -16,7 +16,7 @@ const shaPrecomputeSelector = '<div id=3D\"[^"]*zkemail[^"]*\"[^>]*>[^<>/]+</div
 
 jest.setTimeout(1440000);
 describe("Email Auth Production - No Timestamp", () => {
-    let circuit;
+    let circuit: any;
     beforeAll(async () => {
         circuit = await wasm_tester(
             path.join(
