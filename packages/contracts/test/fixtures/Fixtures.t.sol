@@ -4,7 +4,7 @@ pragma solidity ^0.8.12;
 /**
  * @title EmailAuthMsg Fixture Tests - To make sure fixture data are correct
  * @notice Test suite for verifying fixture data and basic functionality using test cases
- * @dev Tests email authentication message fixtures through EmailSigner and Verifier.
+ * @dev Tests `EamilAuthMsg` fixtures through EmailSigner and Verifier.
  *      The fixtures are used to test different command types:
  *      - Sign hash commands are tested via EmailSigner
  *      - Send ETH and guardian commands are tested via Verifier
@@ -22,14 +22,11 @@ import {EmailAuthMsgFixtures} from "./EmailAuthMsgFixtures.sol";
 import {Groth16Verifier} from "./Groth16Verifier.sol";
 
 contract FixturesTest is Test {
-    // ============ Test Environment ============
-
-    /// @dev Contract instances needed for fixture testing
     ECDSAOwnedDKIMRegistry dkimRegistry;
     Verifier verifier;
     address signerImpl;
 
-    /// @dev Test account for signing operations
+    /// @dev Test account for dkim signing operations
     address testSigner;
     uint256 testSignerPrivateKey;
 
@@ -44,10 +41,10 @@ contract FixturesTest is Test {
         );
         testSigner = vm.addr(testSignerPrivateKey);
 
-        // Deploy minimal contract setup for fixture testing
+        // used to clone different email signer instances later
         signerImpl = address(new EmailSigner());
 
-        // Setup verifier with test configuration
+        // Setup verifier with a compatible Groth16Verifier
         verifier = Verifier(
             address(
                 new ERC1967Proxy(
@@ -55,7 +52,7 @@ contract FixturesTest is Test {
                     abi.encodeWithSelector(
                         Verifier.initialize.selector,
                         testSigner,
-                        address(new Groth16Verifier())
+                        address(new Groth16Verifier()) // needs to match proofs
                     )
                 )
             )
@@ -109,14 +106,14 @@ contract FixturesTest is Test {
     // ============ Helper Functions ============
 
     /// @notice Helper to test sign hash command fixtures
-    /// @param emailAuthMsg The fixture email authentication message to test
+    /// @param emailAuthMsg data to verify
     function _testSignHashCommand(EmailAuthMsg memory emailAuthMsg) internal {
         EmailSigner(_deployEmailSignerProxyBasedOnEmailAuthMsg(emailAuthMsg))
             .verifyEmail(emailAuthMsg);
     }
 
-    /// @notice Sets up an EmailSigner instance for testing a fixture
-    /// @param emailAuthMsg The fixture email authentication message
+    /// @notice Sets up an EmailSigner instance compatible for verifying the given `emailAuthMsg`
+    /// @param emailAuthMsg data to verify
     /// @return emailSignerProxyAddr The address of the configured EmailSigner
     function _deployEmailSignerProxyBasedOnEmailAuthMsg(
         EmailAuthMsg memory emailAuthMsg
