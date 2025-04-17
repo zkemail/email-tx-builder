@@ -1,0 +1,250 @@
+Delivered-To: thezdev3@gmail.com
+Received: by 2002:a98:ca8a:0:b0:226:392a:b96a with SMTP id a10csp3612035eim;
+        Thu, 17 Apr 2025 02:02:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFQWxFCWUSvysQnPB51/n7czg4A6YQ8LRapzNkO0hGjgbGXtwi+fDrnGDSMI00bqzInjQEZ
+X-Received: by 2002:a17:90b:3a90:b0:2ff:7b67:2358 with SMTP id 98e67ed59e1d1-3086d3da535mr1558647a91.2.1744880541176;
+        Thu, 17 Apr 2025 02:02:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1744880541; cv=none;
+        d=google.com; s=arc-20240605;
+        b=eG9Xjtci1Y1IREhlia261JUIsEWdDM9527cdL4GdjHNp03W2oqrR0aIHTJGAWqFT3h
+         93YcC+IK5uk+s6zFRrDRvhQBe7N3qyXpw4b6ZftMtaamynbAEE6HH7/dltcYw2qR656T
+         dDUbpWpNQ9nt3yxwcgU4ZmTU7PKl+qfAqzW9lWWMCM9fWe+l+ewG0GhJ1UM3mJaD0DeY
+         MUG7DCVe5S7FS4yuesjDK1Q0PqC4a3i2qI+3UYa/1HsyXA0LfQEV3LGx8uwGIDYak192
+         jpn0R1UVS85A2noOmovzWq0AQJc5mc+IXo202qYABcxrZmIisPGYuMqsrkVmh1T0XOHQ
+         3JFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=mime-version:date:message-id:subject:to:from:sender:dkim-signature
+         :dkim-signature;
+        bh=7rBIZG5aXIYMClGaW3uX69y5DdIpHcry+0wVLh/v8uY=;
+        fh=LAfN7dCHn4HNuU36ZASr225mpoevEUIrjXgm6WXIbb4=;
+        b=cQPwICnlgl/7Pz1VdJ7se1xnV6zKb3swo133chRqkYu5i+1s0gF4n0XOQnrYyYJljH
+         LuZRKSt6yj6JX0tPjJzjcO+vtS/IRgwjr9YgsenbbA3HT022S1rt8oRYhs2ZU8be+s3i
+         3vKV1uxv0iPVXUMOnMuAAV7HX8C8yuUEP5zeYsneX4rlrwV7rAlZ6Z4fnbgSnLYb0n+B
+         Q6ndMLReL3EdJJz2uGeGo0GqWzN2CVCBtEdd2UGvclFf/TwKfolmq39S+EeFGepfTIMQ
+         /GNsT6SfSrffDgBMIDQhSsvmR09TEUnHJ/v0ahThaywwWkxbQO3ps9/FeKrmqhYjp41O
+         sgJQ==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@sms.clicksend.com header.s=pic header.b=hHJKWTXc;
+       dkim=pass header.i=@mailgun.org header.s=mg header.b=e6ueQpdd;
+       spf=pass (google.com: domain of bounce+124ddd.8e15e7-thezdev3=gmail.com@sms.clicksend.com designates 209.61.151.245 as permitted sender) smtp.mailfrom="bounce+124ddd.8e15e7-thezdev3=gmail.com@sms.clicksend.com";
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=sms.clicksend.com
+Return-Path: <bounce+124ddd.8e15e7-thezdev3=gmail.com@sms.clicksend.com>
+Received: from rs245.mailgun.us (rs245.mailgun.us. [209.61.151.245])
+        by mx.google.com with UTF8SMTPS id d9443c01a7336-22c33fccab7si46368015ad.359.2025.04.17.02.02.20
+        for <thezdev3@gmail.com>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Apr 2025 02:02:21 -0700 (PDT)
+Received-SPF: pass (google.com: domain of bounce+124ddd.8e15e7-thezdev3=gmail.com@sms.clicksend.com designates 209.61.151.245 as permitted sender) client-ip=209.61.151.245;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@sms.clicksend.com header.s=pic header.b=hHJKWTXc;
+       dkim=pass header.i=@mailgun.org header.s=mg header.b=e6ueQpdd;
+       spf=pass (google.com: domain of bounce+124ddd.8e15e7-thezdev3=gmail.com@sms.clicksend.com designates 209.61.151.245 as permitted sender) smtp.mailfrom="bounce+124ddd.8e15e7-thezdev3=gmail.com@sms.clicksend.com";
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=sms.clicksend.com
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=sms.clicksend.com; q=dns/txt; s=pic; t=1744880540; x=1744887740;
+ h=MIME-Version: Date: Message-ID: Subject: Subject: To: To: From: From: Content-Type: Sender: Sender: X-Feedback-Id;
+ bh=7rBIZG5aXIYMClGaW3uX69y5DdIpHcry+0wVLh/v8uY=;
+ b=hHJKWTXcHcBAooqgiP93e+LAFDXgPWaH2H2f0D631TRrr+5OYFJG2pU07dr2snj7APRf+QHI7DuYxpQU7ec0sLOEXlGppdPCN38znLxncRDjS76dkU6zXmp4f6jyz5sGa7GjvggM+i/KIX1JChAX2v6wl4ZTlfGwFJOmN8o0POw=
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mailgun.org; q=dns/txt; s=mg; t=1744880540; x=1744887740;
+ h=MIME-Version: Date: Message-ID: Subject: Subject: To: To: From: From: Content-Type: Sender: Sender: X-Feedback-Id;
+ bh=7rBIZG5aXIYMClGaW3uX69y5DdIpHcry+0wVLh/v8uY=;
+ b=e6ueQpddwsZ1el759V1FZqauv0YOIplPCo89xXFR6J7/XGsDJiMYRq9sxv5FR6owWf1MH69HvlBs90QK+NgRKbwWBYaYsE0+w/sJim33CVdOWRIsZr1JmfJx9Acl9pBQkb1V4T4kThjU5FzwOAOVSAY3QYu/dq3/GtAeKjxRs5g=
+X-Feedback-Id: +4917663326278@sms.clicksend.com::56b4843d63badc5928c00e37:mailgun
+X-Mailgun-Sending-Ip: 209.61.151.245
+X-Mailgun-Sending-Ip-Pool-Name: 
+X-Mailgun-Sending-Ip-Pool: 
+X-Mailgun-Sid: WyIwM2RmNCIsInRoZXpkZXYzQGdtYWlsLmNvbSIsIjhlMTVlNyJd
+Received: from ip-172-31-149-156.ap-southeast-2.compute.internal
+ (ec2-52-64-95-203.ap-southeast-2.compute.amazonaws.com [52.64.95.203]) by
+ 9ca5709a0cea with SMTP id 6800c39c1c1a856a3b568a8c (version=TLS1.3,
+ cipher=TLS_AES_128_GCM_SHA256); Thu, 17 Apr 2025 09:02:20 GMT
+Sender: +4917663326278@sms.clicksend.com
+Content-Type: multipart/alternative;
+ boundary="--_NmP-28ffcbf69b21a413-Part_1"
+From: Ali Parvizi <+4917663326278@sms.clicksend.com>
+To: "thezdev3@gmail.com" <thezdev3@gmail.com>
+Subject: SMS reply from Ali Parvizi
+Message-ID: <54f6a489-01b8-13c7-c2e4-84d656e69ddd@sms.clicksend.com>
+Date: Thu, 17 Apr 2025 09:02:18 +0000
+MIME-Version: 1.0
+
+----_NmP-28ffcbf69b21a413-Part_1
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+ You've received a reply from Ali Parvizi:
+Confirm
+
+
+---------------------------------------------------------------------------=
+-----
+
+
+Original Message on Thu, Apr 17, 2025 11:02 AM:
+[Reply Needed] Signature request: #COMMAND#signHash
+342218753793246696602406303555560200779630803939279989778434133963329887464=
+0
+Code 22a2d51a892f866cf3c6cc4e138ba87a8a5059a1d80dea5b8ee8232034a105b7#COM=
+MAND# =E2=80=94
+ClickSend.com
+----_NmP-28ffcbf69b21a413-Part_1
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.=
+w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns=3D"http://www.w3=
+.org/1999/xhtml" style=3D"font-family: 'Helvetica Neue', Helvetica, Arial, =
+sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
+<head>
+    <meta name=3D"viewport" content=3D"width=3Ddevice-width" />
+    <meta http-equiv=3D"Content-Type" content=3D"text/html; =
+charset=3DUTF-8" />
+    <title></title>
+    <style type=3D"text/css">
+        img {
+            max-width: 100%;
+        }
+        body {
+            -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: =
+none; width: 100% !important; height: 100%; line-height: 1.6em;
+        }
+        body {
+            background-color: #f6f6f6;
+        }
+        @media only screen and (max-width: 640px) {
+            body {
+                padding: 0 !important;
+            }
+            h1 {
+                font-weight: 800 !important; margin: 20px 0 5px !important;
+            }
+            h2 {
+                font-weight: 800 !important;=
+ margin: 20px 0 5px !important;
+            }
+            h3 {
+                font-weight: 800 !important; margin: 20px 0 5px !important;
+            }
+            h4 {
+                font-weight: 800 !important;=
+ margin: 20px 0 5px !important;
+            }
+            h1 {
+                font-size: 22px !important;
+            }
+            h2 {
+                font-size: 18px !important;
+            }
+            h3 {
+                font-size: 16px !important;
+            }
+            .container {
+                padding: 0 !important; width: 100%=
+ !important;
+            }
+            .content {
+                padding: =
+0 !important;
+            }
+            .content-wrap {
+                padding: 10px !important;
+            }
+        }
+    </style>
+</head>
+<body itemscope itemtype=3D"http://schema.=
+org/EmailMessage" style=3D"font-family: 'Helvetica Neue',Helvetica,Arial,=
+sans-serif; box-sizing: border-box; font-size: 14px; =
+-webkit-font-smoothing: antialiased; -webkit-text-size-adjust: none; width:=
+ 100% !important; height: 100%; line-height: 1.6em; background-color: =
+#f6f6f6; margin: 0;" bgcolor=3D"#f6f6f6">
+<table class=3D"body-wrap" =
+style=3D"font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; =
+box-sizing: border-box; font-size: 14px; width: 100%; background-color: =
+#f6f6f6; margin: 0;" bgcolor=3D"#f6f6f6">
+    <tr style=3D"font-family: =
+'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; =
+font-size: 14px; margin: 0;">
+        <td style=3D"font-family: 'Helvetica =
+Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; =
+vertical-align: top; margin: 0;" valign=3D"top"></td>
+        <td class=3D"container" width=3D"600" style=3D"font-family: =
+'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; =
+font-size: 14px; vertical-align: top; display: block !important; max-width:=
+ 600px !important; clear: both !important; margin: 0 auto;" valign=3D"top">
+            <div class=3D"content" style=3D"font-family: 'Helvetica Neue',=
+Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; =
+max-width: 600px; display: block; margin: 0 auto; padding: 20px;">
+                <table class=3D"main" width=3D"100%" cellpadding=3D"0" =
+cellspacing=3D"0" itemprop=3D"action" itemscope itemtype=3D"http://schema.=
+org/ConfirmAction" style=3D"font-family: 'Helvetica Neue',Helvetica,Arial,=
+sans-serif; box-sizing: border-box; font-size: 14px; border-radius: 3px; =
+background-color: #fff; margin: 0; border: 1px solid #e9e9e9;" =
+bgcolor=3D"#fff">
+                    <tr style=3D"font-family: 'Helvetica =
+Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; =
+margin: 0;">
+                        <td class=3D"content-wrap" =
+style=3D"font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; =
+box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; =
+padding: 20px;" valign=3D"top">
+                            <meta =
+itemprop=3D"name" content=3D"Confirm Email" style=3D"font-family: =
+'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; =
+font-size: 14px; margin: 0;" />
+                            <table =
+width=3D"100%" cellpadding=3D"0" cellspacing=3D"0" style=3D"font-family: =
+'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; =
+font-size: 14px; margin: 0;">
+                                <tr =
+style=3D"font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; =
+box-sizing: border-box; font-size: 14px; margin: 0;">
+                                    <td class=3D"content-block" =
+style=3D"font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; =
+box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; =
+padding: 0 0 20px;" valign=3D"top">
+                                       =
+ You've received a reply from Ali Parvizi:<br/>Confirm<br/><br/><hr/><br/>O=
+riginal Message on Thu, Apr 17, 2025 11:02 AM:<br/>[Reply Needed] Signature=
+ request: #COMMAND#signHash 34221875379324669660240630355556020077963080393=
+92799897784341339633298874640 Code 22a2d51a892f866cf3c6cc4e138ba87a8a5059a1=
+d80dea5b8ee8232034a105b7#COMMAND#
+                                    </td>
+                                </tr>
+                                <tr =
+style=3D"font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; =
+box-sizing: border-box; font-size: 14px; margin: 0;">
+                                    <td class=3D"content-block" =
+itemprop=3D"handler" itemscope itemtype=3D"http://schema.=
+org/HttpActionHandler" style=3D"font-family: 'Helvetica Neue',Helvetica,=
+Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: =
+top; margin: 0; padding: 0 0 20px;" valign=3D"top">
+                                    </td>
+                                =
+</tr>
+                                <tr style=3D"font-family: 'Helvetica =
+Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; =
+margin: 0;">
+                                    <td =
+class=3D"content-block" style=3D"font-family: 'Helvetica Neue',Helvetica,=
+Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: =
+top; margin: 0; padding: 0 0 20px;" valign=3D"top">
+                                        &mdash; ClickSend.com
+                                    </td>
+                                =
+</tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </td>
+        <td style=3D"font-family: 'Helvetica Neue',Helvetica,=
+Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: =
+top; margin: 0;" valign=3D"top"></td>
+    </tr>
+</table>
+</body>
+</html>
+----_NmP-28ffcbf69b21a413-Part_1--
