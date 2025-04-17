@@ -91,3 +91,6 @@ book
 # For zksync
 zkout
 .cache
+
+# lock files
+bun.lock
