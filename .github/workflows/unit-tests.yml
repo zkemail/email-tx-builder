@@ -37,16 +37,96 @@ jobs:
           # Output the processed job file for verification
           cat kubernetes/circuit-test-job-processed.yml
           
+          # Delete the old job if it exists
+          kubectl delete job circuits-job --ignore-not-found=true
+          
           # Apply the job to GKE
           kubectl apply -f kubernetes/circuit-test-job-processed.yml
 
-      - name: Wait for Job to Complete
+      - name: Follow Job Logs in Real-time
         run: |
-          kubectl wait --for=condition=complete --timeout=1800s job/circuits-job
+          echo "Waiting for circuits-job pod to start..."
+          
+          # Wait for pod to be created and reach Running state
+          POD_NAME=""
+          TIMEOUT=300  # 5 minutes timeout
+          ELAPSED=0
+          
+          while [ $ELAPSED -lt $TIMEOUT ]; do
+            # First check if pod exists in any state
+            POD_NAME=$(kubectl get pods -l job-name=circuits-job -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || true)
+            
+            if [ -n "$POD_NAME" ]; then
+              # Pod exists, check its status
+              POD_STATUS=$(kubectl get pod $POD_NAME -o jsonpath='{.status.phase}' 2>/dev/null || true)
+              echo "Pod $POD_NAME status: $POD_STATUS"
+              
+              if [ "$POD_STATUS" = "Pending" ]; then
+                # Show detailed scheduling information
+                echo "\nPod scheduling status:"
+                kubectl describe pod $POD_NAME | grep -A 5 "Events:"
 
-      - name: Stream Logs from GKE
+                echo "\nNode resource usage:"
+                kubectl describe nodes | grep -A 5 "Allocated resources"
+                
+                # Check if there are any scheduling errors
+                SCHEDULE_ERR=$(kubectl get pod $POD_NAME -o jsonpath='{.status.conditions[?(@.type=="PodScheduled")].message}' 2>/dev/null || true)
+                if [ -n "$SCHEDULE_ERR" ]; then
+                  echo "\nScheduling error: $SCHEDULE_ERR"
+                fi
+              elif [ "$POD_STATUS" = "Running" ]; then
+                break
+              elif [ "$POD_STATUS" = "Failed" ]; then
+                echo "Pod failed to start"
+                kubectl describe pod $POD_NAME
+                exit 1
+              fi
+            else
+              echo "Waiting for pod to be created..."
+            fi
+            
+            sleep 10
+            ELAPSED=$((ELAPSED + 10))
+          done
+          
+          if [ $ELAPSED -ge $TIMEOUT ]; then
+            echo "Timeout waiting for pod to start"
+            echo "Final pod status and events:"
+            kubectl describe pod $POD_NAME
+            exit 1
+          fi
+          
+          echo "Pod $POD_NAME is running. Following logs..."
+          
+          # Follow logs until job completes or fails
+          kubectl logs -f $POD_NAME &
+          LOGS_PID=$!
+          
+          # Wait for job completion
+          while true; do
+            STATUS=$(kubectl get job circuits-job -o jsonpath='{.status.conditions[?(@.type=="Complete" || @.type=="Failed")].type}' 2>/dev/null || true)
+            if [ "$STATUS" = "Complete" ]; then
+              echo "Job completed successfully!"
+              kill $LOGS_PID 2>/dev/null || true
+              exit 0
+            elif [ "$STATUS" = "Failed" ]; then
+              echo "Job failed!"
+              kubectl describe pod $POD_NAME
+              kill $LOGS_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 5
+          done
+
+      - name: Check Job Status
         run: |
-          kubectl logs job/circuits-job
+          # Check if the job was successful
+          JOB_SUCCEEDED=$(kubectl get job circuits-job -o jsonpath='{.status.succeeded}')
+          if [ "$JOB_SUCCEEDED" != "1" ]; then
+            echo "Job failed!"
+            exit 1
+          fi
+          echo "Job completed successfully!"
 
   contracts:
     name: contracts
