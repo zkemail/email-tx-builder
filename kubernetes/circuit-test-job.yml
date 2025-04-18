@@ -8,6 +8,15 @@ spec:
     spec:
       nodeSelector:
         cloud.google.com/machine-family: c3
+      tolerations:
+        - key: "cloud.google.com/machine-family"
+          operator: "Equal"
+          value: "c3"
+          effect: "NoSchedule"
+        - key: "cloud.google.com/pods-per-node"
+          operator: "Equal"
+          value: "any"
+          effect: "NoSchedule"
       containers:
         - name: circuits-runner
           image: wshino/circuits-runner:test5
@@ -25,8 +34,3 @@ spec:
               cpu: "16"
               memory: "64Gi"
       restartPolicy: Never
-  tolerations:
-    - key: "cloud.google.com/machine-family"
-      operator: "Equal"
-      value: "c3"
-      effect: "NoSchedule"
