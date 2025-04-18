@@ -47,12 +47,39 @@ jobs:
         run: |
           echo "Waiting for circuits-job pod to start..."
           
-          # Wait for pod to be ready and follow logs
+          # Wait for pod to be created and reach Running state
           POD_NAME=""
-          while [ -z "$POD_NAME" ]; do
-            POD_NAME=$(kubectl get pods -l job-name=circuits-job --field-selector status.phase=Running -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
-            sleep 2
+          TIMEOUT=300  # 5 minutes timeout
+          ELAPSED=0
+          
+          while [ $ELAPSED -lt $TIMEOUT ]; do
+            # First check if pod exists in any state
+            POD_NAME=$(kubectl get pods -l job-name=circuits-job -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || true)
+            
+            if [ -n "$POD_NAME" ]; then
+              # Pod exists, check its status
+              POD_STATUS=$(kubectl get pod $POD_NAME -o jsonpath='{.status.phase}' 2>/dev/null || true)
+              echo "Pod $POD_NAME status: $POD_STATUS"
+              
+              if [ "$POD_STATUS" = "Running" ]; then
+                break
+              elif [ "$POD_STATUS" = "Failed" ]; then
+                echo "Pod failed to start"
+                kubectl logs $POD_NAME
+                exit 1
+              fi
+            else
+              echo "Waiting for pod to be created..."
+            fi
+            
+            sleep 5
+            ELAPSED=$((ELAPSED + 5))
           done
+          
+          if [ $ELAPSED -ge $TIMEOUT ]; then
+            echo "Timeout waiting for pod to start"
+            exit 1
+          fi
           
           echo "Pod $POD_NAME is running. Following logs..."
           
@@ -62,14 +89,15 @@ jobs:
           
           # Wait for job completion
           while true; do
-            STATUS=$(kubectl get job circuits-job -o jsonpath='{.status.conditions[0].type}' 2>/dev/null)
+            STATUS=$(kubectl get job circuits-job -o jsonpath='{.status.conditions[?(@.type=="Complete" || @.type=="Failed")].type}' 2>/dev/null || true)
             if [ "$STATUS" = "Complete" ]; then
               echo "Job completed successfully!"
-              kill $LOGS_PID 2>/dev/null
+              kill $LOGS_PID 2>/dev/null || true
               exit 0
             elif [ "$STATUS" = "Failed" ]; then
               echo "Job failed!"
-              kill $LOGS_PID 2>/dev/null
+              kubectl logs $POD_NAME
+              kill $LOGS_PID 2>/dev/null || true
               exit 1
             fi
             sleep 5
