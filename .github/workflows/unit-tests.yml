@@ -62,15 +62,21 @@ jobs:
               echo "Pod $POD_NAME status: $POD_STATUS"
               
               if [ "$POD_STATUS" = "Pending" ]; then
-                # Show pod conditions and events for debugging
-                echo "Pod conditions:"
-                kubectl get pod $POD_NAME -o jsonpath='{range .status.conditions[*]}{.type}{" = "}{.status}{" ("}{.reason}{")\n"}{end}'
+                # Show detailed scheduling information
+                echo "\nPod scheduling status:"
+                kubectl describe pod $POD_NAME | grep -A 5 "Events:"
                 
-                echo "Pod events:"
-                kubectl describe pod $POD_NAME | grep -A 10 "Events:"
+                echo "\nAvailable nodes matching selector (cloud.google.com/machine-family=c3):"
+                kubectl get nodes -l cloud.google.com/machine-family=c3 -o custom-columns=NAME:.metadata.name,CPU:.status.capacity.cpu,MEMORY:.status.capacity.memory
                 
-                echo "Node availability:"
-                kubectl get nodes -o wide
+                echo "\nNode resource usage:"
+                kubectl describe nodes | grep -A 5 "Allocated resources"
+                
+                # Check if there are any scheduling errors
+                SCHEDULE_ERR=$(kubectl get pod $POD_NAME -o jsonpath='{.status.conditions[?(@.type=="PodScheduled")].message}' 2>/dev/null || true)
+                if [ -n "$SCHEDULE_ERR" ]; then
+                  echo "\nScheduling error: $SCHEDULE_ERR"
+                fi
               elif [ "$POD_STATUS" = "Running" ]; then
                 break
               elif [ "$POD_STATUS" = "Failed" ]; then
@@ -88,7 +94,7 @@ jobs:
           
           if [ $ELAPSED -ge $TIMEOUT ]; then
             echo "Timeout waiting for pod to start"
-            echo "Final pod status:"
+            echo "Final pod status and events:"
             kubectl describe pod $POD_NAME
             exit 1
           fi
