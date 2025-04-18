@@ -17,6 +17,10 @@ spec:
               value: "${REPO_URL}"
             - name: COMMIT_HASH
               value: "${COMMIT_HASH}"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 10"]  # Add a delay before container termination to allow log collection
           resources:
             requests:
               cpu: "8"
@@ -25,3 +29,4 @@ spec:
               cpu: "16"
               memory: "64Gi"
       restartPolicy: Never
+      terminationGracePeriodSeconds: 30  # Ensure adequate time for graceful shutdown
