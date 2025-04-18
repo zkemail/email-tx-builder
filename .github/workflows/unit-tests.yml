@@ -61,23 +61,35 @@ jobs:
               POD_STATUS=$(kubectl get pod $POD_NAME -o jsonpath='{.status.phase}' 2>/dev/null || true)
               echo "Pod $POD_NAME status: $POD_STATUS"
               
-              if [ "$POD_STATUS" = "Running" ]; then
+              if [ "$POD_STATUS" = "Pending" ]; then
+                # Show pod conditions and events for debugging
+                echo "Pod conditions:"
+                kubectl get pod $POD_NAME -o jsonpath='{range .status.conditions[*]}{.type}{" = "}{.status}{" ("}{.reason}{")\n"}{end}'
+                
+                echo "Pod events:"
+                kubectl describe pod $POD_NAME | grep -A 10 "Events:"
+                
+                echo "Node availability:"
+                kubectl get nodes -o wide
+              elif [ "$POD_STATUS" = "Running" ]; then
                 break
               elif [ "$POD_STATUS" = "Failed" ]; then
                 echo "Pod failed to start"
-                kubectl logs $POD_NAME
+                kubectl describe pod $POD_NAME
                 exit 1
               fi
             else
               echo "Waiting for pod to be created..."
             fi
             
-            sleep 5
-            ELAPSED=$((ELAPSED + 5))
+            sleep 10
+            ELAPSED=$((ELAPSED + 10))
           done
           
           if [ $ELAPSED -ge $TIMEOUT ]; then
             echo "Timeout waiting for pod to start"
+            echo "Final pod status:"
+            kubectl describe pod $POD_NAME
             exit 1
           fi
           
@@ -96,7 +108,7 @@ jobs:
               exit 0
             elif [ "$STATUS" = "Failed" ]; then
               echo "Job failed!"
-              kubectl logs $POD_NAME
+              kubectl describe pod $POD_NAME
               kill $LOGS_PID 2>/dev/null || true
               exit 1
             fi
