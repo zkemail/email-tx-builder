@@ -1,0 +1,17 @@
+{
+    "commandParams": [
+        "0x000000000000000000000000afbd210c60dd651892a61804a989eef7bd63cba0"
+    ],
+    "proof": {
+        "accountSalt": "0x03ae56d1cac90dc5febde08736e6ce7f7e5d9db03239bff41f4ac929446f5f83",
+        "domainName": "gmail.com",
+        "emailNullifier": "0x2d40a9b0e331940f1b3df6f79833f591b4cbe88bcd6fab3d2033c8f0256d6a94",
+        "isCodeExist": true,
+        "maskedCommand": "Accept guardian request for 0xafBD210c60dD651892a61804A989eEF7bD63CBA0",
+        "proof": "0x256ba69feff9fbf8567081e16e97d5e6a1e08582c2091c338cd7db713aa06baf1cd76c9f756fcee010af5c105f3dac267fd7c913e988309dc830b023b890856e0306c6f1a097f40c7d2207e0f08e2f12141e8a58c9dc0aeb44dea7a64aef7f092222e924a089c363d53a80c46ec7373a38e724c2c17fe90388a0f8fbc0274c6e29afdd61a8aa790014506233793f11955fab2a5ac233e15fcea7722b162d3927007f89769cdbcbb401ba7aeaa4e642e81c3ae0df3bc8e14dba1cbd8660d947d91f23af06fac604ab75090e1bec608478c9990b5832800d3bbfd0657b2b3ae53d230e90f3b30f5cbdbc725e00b2336594cc37172301b083644dc44eb10e60874a",
+        "publicKeyHash": "0x0ea9c777dc7110e5a9e89b13f0cfc540e3845ba120b2b6dc24024d61488d4788",
+        "timestamp": 1744556534
+    },
+    "skippedCommandPrefix": 0,
+    "templateId": "0x462ab7844474673315f0e17f86abf5dd680a9086a372a8b8c8c0a3c7fae198f3"
+}
