@@ -45,51 +45,35 @@ jobs:
 
       - name: Follow Job Logs in Real-time
         run: |
-          echo "Following job logs in real-time..."
-          # Start following logs as soon as the pod is running
+          echo "Waiting for circuits-job pod to start..."
+          
+          # Wait for pod to be ready and follow logs
           POD_NAME=""
           while [ -z "$POD_NAME" ]; do
-            echo "Waiting for circuits-job pod to start..."
-            POD_NAME=$(kubectl get pods -l job-name=circuits-job -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || echo "")
-            if [ -n "$POD_NAME" ]; then
-              echo "Pod $POD_NAME is starting. Following logs..."
-              kubectl logs -f $POD_NAME &
-              LOGS_PID=$!
-              break
+            POD_NAME=$(kubectl get pods -l job-name=circuits-job --field-selector status.phase=Running -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
+            sleep 2
+          done
+          
+          echo "Pod $POD_NAME is running. Following logs..."
+          
+          # Follow logs until job completes or fails
+          kubectl logs -f $POD_NAME &
+          LOGS_PID=$!
+          
+          # Wait for job completion
+          while true; do
+            STATUS=$(kubectl get job circuits-job -o jsonpath='{.status.conditions[0].type}' 2>/dev/null)
+            if [ "$STATUS" = "Complete" ]; then
+              echo "Job completed successfully!"
+              kill $LOGS_PID 2>/dev/null
+              exit 0
+            elif [ "$STATUS" = "Failed" ]; then
+              echo "Job failed!"
+              kill $LOGS_PID 2>/dev/null
+              exit 1
             fi
             sleep 5
           done
-          
-          # Monitor job status while displaying logs
-          while true; do
-            JOB_STATUS=$(kubectl get job circuits-job -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' 2>/dev/null || echo "")
-            if [ "$JOB_STATUS" == "True" ]; then
-              echo "Job completed successfully!"
-              kill $LOGS_PID 2>/dev/null || true
-              break
-            fi
-            
-            JOB_FAILED=$(kubectl get job circuits-job -o jsonpath='{.status.conditions[?(@.type=="Failed")].status}' 2>/dev/null || echo "")
-            if [ "$JOB_FAILED" == "True" ]; then
-              echo "Job failed!"
-              kill $LOGS_PID 2>/dev/null || true
-              break
-            fi
-            
-            # Check if pod exists and is still running
-            POD_STATUS=$(kubectl get pod $POD_NAME --no-headers 2>/dev/null | awk '{print $3}' || echo "")
-            if [ "$POD_STATUS" == "Completed" ] || [ "$POD_STATUS" == "Failed" ] || [ -z "$POD_STATUS" ]; then
-              echo "Pod $POD_NAME is no longer running (status: $POD_STATUS)"
-              kill $LOGS_PID 2>/dev/null || true
-              break
-            fi
-            
-            sleep 10
-          done
-          
-          # Final log capture to ensure we get everything
-          echo "Fetching complete job logs:"
-          kubectl logs job/circuits-job
 
       - name: Check Job Status
         run: |
