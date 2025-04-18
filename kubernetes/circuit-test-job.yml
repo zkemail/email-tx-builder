@@ -6,11 +6,8 @@ spec:
   ttlSecondsAfterFinished: 60  # Delete automatically 1 minute after completion
   template:
     spec:
-      # Add tolerations for GPU nodes since they have more memory
-      tolerations:
-      - key: "nvidia.com/gpu"
-        operator: "Exists"
-        effect: "NoSchedule"
+      nodeSelector:
+        cloud.google.com/machine-family: c3
       containers:
         - name: circuits-runner
           image: wshino/circuits-runner:test5
@@ -23,19 +20,8 @@ spec:
           resources:
             requests:
               cpu: "8"
-              memory: "32Gi"  # Increase initial request to match actual usage
+              memory: "16Gi"
             limits:
               cpu: "16"
               memory: "64Gi"
-          # Add memory optimization settings
-          env:
-            - name: NODE_OPTIONS
-              value: "--max-old-space-size=32768"  # Limit Node.js memory to 32GB
-            - name: MALLOC_ARENA_MAX
-              value: "2"  # Limit number of memory arenas to reduce fragmentation
-          # Add resource monitoring
-          lifecycle:
-            postStart:
-              exec:
-                command: ["/bin/sh", "-c", "while true; do ps aux; free -h; sleep 30; done &"]
       restartPolicy: Never
