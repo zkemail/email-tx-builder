@@ -25,3 +25,8 @@ spec:
               cpu: "16"
               memory: "64Gi"
       restartPolicy: Never
+  tolerations:
+    - key: "cloud.google.com/machine-family"
+      operator: "Equal"
+      value: "c3"
+      effect: "NoSchedule"
