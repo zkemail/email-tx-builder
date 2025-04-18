@@ -65,10 +65,7 @@ jobs:
                 # Show detailed scheduling information
                 echo "\nPod scheduling status:"
                 kubectl describe pod $POD_NAME | grep -A 5 "Events:"
-                
-                echo "\nAvailable nodes matching selector (cloud.google.com/machine-family=c3):"
-                kubectl get nodes -l cloud.google.com/machine-family=c3 -o custom-columns=NAME:.metadata.name,CPU:.status.capacity.cpu,MEMORY:.status.capacity.memory
-                
+
                 echo "\nNode resource usage:"
                 kubectl describe nodes | grep -A 5 "Allocated resources"
                 
