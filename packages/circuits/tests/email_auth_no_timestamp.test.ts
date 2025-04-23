@@ -46,7 +46,6 @@ describe("Email Auth Production - No Timestamp", () => {
                 shaPrecomputeSelector
             });
 
-        return;
         const witness = await circuit.calculateWitness(circuitInputs);
         await circuit.checkConstraints(witness);
         console.log("checkConstraints done");

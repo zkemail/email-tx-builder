@@ -6,8 +6,5 @@ module.exports = {
         }]
     },
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-    testMatch: ['**/tests/**/*.test.ts'],
-    moduleNameMapper: {
-        '^@zk-email/relayer-utils$': '<rootDir>/../../../relayer-utils/pkg',
-    },
+    testMatch: ['**/tests/**/*.test.ts']
 }; 
