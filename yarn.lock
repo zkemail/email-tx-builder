@@ -2692,9 +2692,9 @@ for-each@^0.3.5:
   dependencies:
     is-callable "^1.2.7"
 
-"forge-std@https://github.com/foundry-rs/forge-std":
+"forge-std@https://github.com/foundry-rs/forge-std.git":
   version "1.9.6"
-  resolved "git+ssh://git@github.com/foundry-rs/forge-std.git#9530d9ec702df1b27b7f8f50c0a63a11b1b5fba9"
+  resolved "https://github.com/foundry-rs/forge-std.git#9530d9ec702df1b27b7f8f50c0a63a11b1b5fba9"
 
 fs.realpath@^1.0.0:
   version "1.0.0"
