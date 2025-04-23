@@ -51,7 +51,6 @@ jobs:
       - name: Stream Logs from GKE
         run: |
           kubectl logs job/circuits-job
-
   contracts:
     name: contracts
     runs-on: ubuntu-latest
@@ -77,7 +76,7 @@ jobs:
       - name: Run tests
         working-directory: packages/contracts
         run: yarn test
-
+        
   relayer:
     name: relayer
     runs-on: ubuntu-latest
