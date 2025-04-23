@@ -19,8 +19,8 @@ spec:
               value: "${COMMIT_HASH}"
           resources:
             requests:
-              cpu: "8"
-              memory: "16Gi"
+              cpu: "16"
+              memory: "64Gi"
             limits:
               cpu: "16"
               memory: "64Gi"
