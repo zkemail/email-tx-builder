@@ -4181,9 +4181,9 @@ solhint@^3.6.1:
   optionalDependencies:
     prettier "^2.8.3"
 
-"solidity-stringutils@github:LayerZero-Labs/solidity-stringutils":
+"solidity-stringutils@https://github.com/LayerZero-Labs/solidity-stringutils.git":
   version "0.0.1"
-  resolved "git+ssh://git@github.com/LayerZero-Labs/solidity-stringutils.git#eb21d6b502c2741145ab2a90f5f5b4fda9dfb218"
+  resolved "https://github.com/LayerZero-Labs/solidity-stringutils.git#eb21d6b502c2741145ab2a90f5f5b4fda9dfb218"
 
 source-map-support@0.5.13:
   version "0.5.13"
