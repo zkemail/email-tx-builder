@@ -65,6 +65,11 @@ jobs:
       - name: Install yarn
         run: npm install -g yarn
 
+      - name: Configure Git to use HTTPS
+        run: |
+          git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
@@ -77,10 +82,6 @@ jobs:
         working-directory: packages/contracts
         run: yarn test
 
-      - name: Configure Git to use HTTPS
-        run: |
-          git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
-          git config --global url."https://github.com/".insteadOf "git@github.com:"
   relayer:
     name: relayer
     runs-on: ubuntu-latest
@@ -94,6 +95,11 @@ jobs:
 
       - name: Install yarn
         run: npm install -g yarn
+
+      - name: Configure Git to use HTTPS
+        run: |
+          git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -110,8 +116,3 @@ jobs:
       - name: Run tests
         working-directory: packages/relayer
         run: cargo test
-
-      - name: Configure Git to use HTTPS
-        run: |
-          git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
-          git config --global url."https://github.com/".insteadOf "git@github.com:"
