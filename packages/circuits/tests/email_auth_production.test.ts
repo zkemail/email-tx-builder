@@ -5,7 +5,6 @@ import * as path from "path";
 import * as relayerUtils from "@zk-email/relayer-utils";
 import { genEmailCircuitInput } from "../helpers/email_auth";
 import { readFileSync } from "fs";
-import { init } from "./wasm_init";
 
 const option = {
     include: path.join(__dirname, "../../../node_modules"),
@@ -16,7 +15,7 @@ const shaPrecomputeSelector = '<div id=3D\"[^"]*zkemail[^"]*\"[^>]*>[^<>/]+</div
 
 jest.setTimeout(1440000);
 describe("Email Auth Production", () => {
-    let circuit;
+    let circuit: any;
     beforeAll(async () => {
         circuit = await wasm_tester(
             path.join(
@@ -25,7 +24,6 @@ describe("Email Auth Production", () => {
             ),
             option
         );
-        await init();
     });
 
     it("Verify a production email for recovery sent from mobile with the English setting", async () => {
