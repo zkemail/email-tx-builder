@@ -41,7 +41,7 @@ The fixtures cover four main test scenarios:
 
 4. **Send ETH (Case 3)** - Tests ETH transfer command
    - Verified through Verifier contract
-   - Command Template: `Send {decimals} to {ethAddr}`
+   - Command Template: `Send {decimals} ETH to {ethAddr}`
    - Command: `Send 0.1 ETH to 0xafBD210c60dD651892a61804A989eEF7bD63CBA0`
 
 5. **Accept Guardian (Case 4)** - Tests guardian acceptance
