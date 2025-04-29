@@ -9,6 +9,7 @@ contract StringUtils_HexToBytes_Test is StructHelper {
         super.setUp();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes_RevertWhen_InvalidHexPrefix() public {
         string memory bytesStringNoHexPrefix = "509d286573e85f37b51f178c1";
 
@@ -16,6 +17,7 @@ contract StringUtils_HexToBytes_Test is StructHelper {
         StringUtils.hexToBytes(bytesStringNoHexPrefix);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes_RevertWhen_InvalidHexPrefix_EmptyString() public {
         string memory emptyString = "";
 
@@ -23,6 +25,7 @@ contract StringUtils_HexToBytes_Test is StructHelper {
         StringUtils.hexToBytes(emptyString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes_RevertWhen_InvalidHexPrefix_Zero() public {
         string memory shortBytesString = "0";
 
@@ -30,6 +33,7 @@ contract StringUtils_HexToBytes_Test is StructHelper {
         StringUtils.hexToBytes(shortBytesString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes_RevertWhen_IncorrectPrefix_CapitalLetter() public {
         string
             memory invalidPrefixBytesString = "0X509d376452ba746b093a149f9d733c145539771d";
@@ -38,6 +42,7 @@ contract StringUtils_HexToBytes_Test is StructHelper {
         StringUtils.hexToBytes(invalidPrefixBytesString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes_RevertWhen_InvalidHexPrefix_LeadingWhitespace()
         public
     {
@@ -48,6 +53,7 @@ contract StringUtils_HexToBytes_Test is StructHelper {
         StringUtils.hexToBytes(bytesString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes_RevertWhen_InvalidHexStringLength_TrailingWhitespace()
         public
     {
@@ -58,6 +64,7 @@ contract StringUtils_HexToBytes_Test is StructHelper {
         StringUtils.hexToBytes(bytesString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes_RevertWhen_InvalidHexStringLength_ZeroShortBytes()
         public
     {
@@ -66,6 +73,7 @@ contract StringUtils_HexToBytes_Test is StructHelper {
         StringUtils.hexToBytes(shortBytesString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes_RevertWhen_InvalidHexStringLength_TooHigh()
         public
     {
@@ -76,6 +84,7 @@ contract StringUtils_HexToBytes_Test is StructHelper {
         StringUtils.hexToBytes(invalidBytesString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes_RevertWhen_InvalidHexStringLength_TooLow() public {
         // hardcoded bytes memory value with final character removed
         string
@@ -85,6 +94,7 @@ contract StringUtils_HexToBytes_Test is StructHelper {
         StringUtils.hexToBytes(shortBytesString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes_RevertWhen_InvalidHexChar_SingleNonHexChar()
         public
     {
@@ -95,6 +105,7 @@ contract StringUtils_HexToBytes_Test is StructHelper {
         StringUtils.hexToBytes(invalidContentBytesString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes_RevertWhen_InvalidHexChar() public {
         string
             memory invalidBytesString = "0x509d2865zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";

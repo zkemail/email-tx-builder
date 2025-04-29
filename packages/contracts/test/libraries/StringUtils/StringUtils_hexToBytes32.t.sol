@@ -9,6 +9,7 @@ contract StringUtils_HexToBytes32_Test is StructHelper {
         super.setUp();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes32_RevertWhen_InvalidHexPrefix() public {
         string
             memory invalidPrefixHashString = "509d286573e85f37b51f178c1cf8376452ba746b093a149f9d733c145539771d";
@@ -17,6 +18,7 @@ contract StringUtils_HexToBytes32_Test is StructHelper {
         StringUtils.hexToBytes32(invalidPrefixHashString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes32_RevertWhen_InvalidHexPrefix_EmptyString()
         public
     {
@@ -26,6 +28,7 @@ contract StringUtils_HexToBytes32_Test is StructHelper {
         StringUtils.hexToBytes32(emptyString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes32_RevertWhen_InvalidHexPrefix_Zero() public {
         string memory shortHashString = "0";
 
@@ -33,6 +36,7 @@ contract StringUtils_HexToBytes32_Test is StructHelper {
         StringUtils.hexToBytes32(shortHashString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes32_RevertWhen_IncorrectPrefix_CapitalLetter()
         public
     {
@@ -43,6 +47,7 @@ contract StringUtils_HexToBytes32_Test is StructHelper {
         StringUtils.hexToBytes32(invalidPrefixHashString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes32_RevertWhen_InvalidHexPrefix_LeadingWhitespace()
         public
     {
@@ -53,6 +58,7 @@ contract StringUtils_HexToBytes32_Test is StructHelper {
         StringUtils.hexToBytes32(hashString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes32_RevertWhen_InvalidHexStringLength_TrailingWhitespace()
         public
     {
@@ -63,6 +69,7 @@ contract StringUtils_HexToBytes32_Test is StructHelper {
         StringUtils.hexToBytes32(hashString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes32_RevertWhen_InvalidHexStringLength_ZeroBytes()
         public
     {
@@ -72,6 +79,7 @@ contract StringUtils_HexToBytes32_Test is StructHelper {
         StringUtils.hexToBytes32(shortHashString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes32_RevertWhen_InvalidHexStringLength_ZeroShortBytes()
         public
     {
@@ -81,6 +89,7 @@ contract StringUtils_HexToBytes32_Test is StructHelper {
         StringUtils.hexToBytes32(shortHashString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes32_RevertWhen_InvalidHexStringLength_TooHigh()
         public
     {
@@ -93,6 +102,7 @@ contract StringUtils_HexToBytes32_Test is StructHelper {
         StringUtils.hexToBytes32(invalidHashString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes32_RevertWhen_InvalidHexStringLength_VeryLongInput()
         public
     {
@@ -103,6 +113,7 @@ contract StringUtils_HexToBytes32_Test is StructHelper {
         StringUtils.hexToBytes32(longHashString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes32_RevertWhen_InvalidHexStringLength_TooLow()
         public
     {
@@ -114,6 +125,7 @@ contract StringUtils_HexToBytes32_Test is StructHelper {
         StringUtils.hexToBytes32(shortHashString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes32_RevertWhen_InvalidHexChar_SingleNonHexChar()
         public
     {
@@ -124,6 +136,7 @@ contract StringUtils_HexToBytes32_Test is StructHelper {
         StringUtils.hexToBytes32(invalidContentHashString);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function test_HexToBytes32_RevertWhen_InvalidHexChar() public {
         string
             memory invalidHashString = "0x509d2865zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";

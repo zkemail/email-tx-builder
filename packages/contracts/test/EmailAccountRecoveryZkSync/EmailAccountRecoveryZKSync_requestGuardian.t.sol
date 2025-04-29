@@ -35,6 +35,7 @@ contract EmailAccountRecoveryZKSyncTest_requestGuardian is StructHelper {
         );
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertRequestGuardianInvalidGuardian() public {
         skipIfNotZkSync();
 
@@ -51,6 +52,7 @@ contract EmailAccountRecoveryZKSyncTest_requestGuardian is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertRequestGuardianGuardianStatusMustBeNone() public {
         skipIfNotZkSync();
 

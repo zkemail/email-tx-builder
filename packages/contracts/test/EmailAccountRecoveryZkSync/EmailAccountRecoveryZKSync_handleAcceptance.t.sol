@@ -78,6 +78,7 @@ contract EmailAccountRecoveryZKSyncTest_handleAcceptance is StructHelper {
     // Can not test recovery in progress using handleAcceptance
     // Can not test invalid guardian using handleAcceptance
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertHandleAcceptanceGuardianStatusMustBeRequested()
         public
     {
@@ -114,6 +115,7 @@ contract EmailAccountRecoveryZKSyncTest_handleAcceptance is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertHandleAcceptanceInvalidTemplateIndex() public {
         skipIfNotZkSync();
 
@@ -147,6 +149,7 @@ contract EmailAccountRecoveryZKSyncTest_handleAcceptance is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertHandleAcceptanceInvalidcommandParams() public {
         skipIfNotZkSync();
 
@@ -181,6 +184,7 @@ contract EmailAccountRecoveryZKSyncTest_handleAcceptance is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertHandleAcceptanceInvalidWalletAddressInEmail()
         public
     {
