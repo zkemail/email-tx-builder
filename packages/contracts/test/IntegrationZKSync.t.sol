@@ -46,8 +46,6 @@ contract IntegrationZKSyncTest is Test {
         vm.envOr("PROXY_BYTECODE_HASH", bytes32(0));
 
     function setUp() public {
-        vm.createSelectFork("http://127.0.0.1:8011");
-
         vm.startPrank(deployer);
         address signer = deployer;
 
