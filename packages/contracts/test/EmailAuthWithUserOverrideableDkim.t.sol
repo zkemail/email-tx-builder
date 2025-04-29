@@ -15,6 +15,7 @@ import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/Own
 contract EmailAuthWithUserOverrideableDkimTest is StructHelper {
     UserOverrideableDKIMRegistry overrideableDkim;
     address emailAuthOwner = vm.addr(77);
+
     function setUp() public override {
         super.setUp();
         vm.startPrank(deployer);
@@ -145,7 +146,7 @@ contract EmailAuthWithUserOverrideableDkimTest is StructHelper {
         assertEq(emailAuth.lastTimestamp(), emailAuthMsg.proof.timestamp);
     }
 
-    function testFailAuthEmailBeforeEnabledWithoutUserApprove() public {
+    function test_RevertWhen_AuthEmailBeforeEnabledWithoutUserApprove() public {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
@@ -164,13 +165,14 @@ contract EmailAuthWithUserOverrideableDkimTest is StructHelper {
             deployer,
             new bytes(0)
         );
+        vm.expectRevert("invalid dkim public key hash");
         emailAuth.authEmail(emailAuthMsg);
         vm.stopPrank();
 
         assertEq(
             emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            true
+            false
         );
-        assertEq(emailAuth.lastTimestamp(), emailAuthMsg.proof.timestamp);
+        assertEq(emailAuth.lastTimestamp(), 0);
     }
 }

@@ -4,12 +4,12 @@ pragma solidity ^0.8.13;
 import {console} from "forge-std/console.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import {SimpleWallet} from "../test/helpers/SimpleWallet.sol";
-import {RecoveryControllerZKSync} from "../test/helpers/RecoveryControllerZKSync.sol";
+import {RecoveryController} from "../test/helpers/RecoveryController.sol";
 import {Verifier} from "../src/utils/Verifier.sol";
 import {Groth16Verifier} from "../src/utils/Groth16Verifier.sol";
+import {ECDSAOwnedDKIMRegistry} from "../src/utils/ECDSAOwnedDKIMRegistry.sol";
 import {EmailAuth} from "../src/EmailAuth.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import {ZKSyncCreate2Factory} from "../src/utils/ZKSyncCreate2Factory.sol";
 import {UserOverrideableDKIMRegistry} from "@zk-email/contracts/UserOverrideableDKIMRegistry.sol";
 import {BaseDeployScript} from "./BaseDeployScript.sol";
 
@@ -20,20 +20,13 @@ contract Deploy is BaseDeployScript {
     address verifier;
     address emailAuthImpl;
     address simpleWallet;
-    address recoveryControllerZKSync;
-    address factory;
+    address recoveryController;
 
     function run() public override {
         super.run();
-
-        bytes32 proxyBytecodeHash = vm.envBytes32("PROXY_BYTECODE_HASH");
-        if (proxyBytecodeHash == bytes32(0)) {
-            revert("PROXY_BYTECODE_HASH env var not set or invalid");
-        }
-
         vm.startBroadcast(deployerPrivateKey);
 
-        // Deploy Useroverrideable DKIM registry
+        // Deploy User-overrideable DKIM registry
         dkim = vm.envOr("DKIM", address(0));
         if (address(dkim) == address(0)) {
             address dkimSigner = vm.envAddress("DKIM_SIGNER");
@@ -44,7 +37,11 @@ contract Deploy is BaseDeployScript {
             uint256 timeDelay = vm.envOr("DKIM_DELAY", uint256(0));
             console.log("DKIM_DELAY: %s", timeDelay);
 
-            dkim = deployUserOverrideableDKIMRegistry(initialOwner, dkimSigner, timeDelay);
+            dkim = deployUserOverrideableDKIMRegistry(
+                initialOwner,
+                dkimSigner,
+                timeDelay
+            );
         }
 
         // Deploy Verifier
@@ -55,23 +52,10 @@ contract Deploy is BaseDeployScript {
 
         // Deploy EmailAuth Implementation
         emailAuthImpl = vm.envOr("EMAIL_AUTH_IMPL", address(0));
-        if (address(emailAuthImpl) == address(0)) {
+        if (emailAuthImpl == address(0)) {
             emailAuthImpl = deployEmailAuthImplementation();
         }
 
-        // Deploy Factory
-        factory = vm.envOr("ZKSYNC_CREATE2_FACTORY", address(0));
-        if (address(factory) == address(0)) {
-            factory = deployZKSyncCreate2Factory();
-        }
-
-        // Create RecoveryControllerZKSync as EmailAccountRecovery implementation
-        recoveryControllerZKSync = deployRecoveryControllerZKSync(
-            initialOwner, address(verifier), address(dkim), address(emailAuthImpl), address(factory), proxyBytecodeHash
-        );
-
-        // Deploy SimpleWallet Implementation
-        simpleWallet = deploySimpleWallet(initialOwner, address(recoveryControllerZKSync));
         vm.stopBroadcast();
     }
 }
