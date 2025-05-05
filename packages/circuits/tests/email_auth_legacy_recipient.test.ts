@@ -6,11 +6,10 @@ import * as relayerUtils from "@zk-email/relayer-utils";
 import { genEmailCircuitInput } from "../helpers/email_auth";
 import { genRecipientInputLegacy } from "../helpers/recipient";
 import { readFileSync } from "fs";
-import { init } from "./wasm_init";
 
 jest.setTimeout(1440000);
 describe("Email Auth Legacy with Recipient", () => {
-    let circuit;
+    let circuit: any;
     beforeAll(async () => {
         const option = {
             include: path.join(__dirname, "../../../node_modules"),
@@ -19,7 +18,6 @@ describe("Email Auth Legacy with Recipient", () => {
             path.join(__dirname, "./circuits/email_auth_with_recipient.circom"),
             option
         );
-        await init();
     });
 
     it("Verify a sent email whose subject has an email address", async () => {

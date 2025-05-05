@@ -6,7 +6,6 @@ import * as relayerUtils from "@zk-email/relayer-utils";
 import { genEmailCircuitInput } from "../helpers/email_auth";
 import { readFileSync } from "fs";
 import { genRecipientInput } from "../helpers/recipient";
-import { init } from "./wasm_init";
 
 const option = {
     include: path.join(__dirname, "../../../node_modules"),
@@ -16,7 +15,7 @@ const option = {
 
 jest.setTimeout(1440000);
 describe("Email Auth with Recipient", () => {
-    let circuit;
+    let circuit: any;
     beforeAll(async () => {
         circuit = await wasm_tester(
             path.join(
@@ -25,7 +24,6 @@ describe("Email Auth with Recipient", () => {
             ),
             option
         );
-        await init();
     });
 
     it("Verify a sent email whose body has an email address with the recipient's email address commitment", async () => {

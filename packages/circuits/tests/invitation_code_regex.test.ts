@@ -3,7 +3,6 @@ const wasm_tester = circom_tester.wasm;
 import * as path from "path";
 // const relayerUtils = require("@zk-email/relayer-utils");
 import * as relayerUtils from "@zk-email/relayer-utils";
-import { init } from "./wasm_init";
 const option = {
     include: path.join(__dirname, "../../../node_modules"),
 };
@@ -11,9 +10,6 @@ const option = {
 // const grumpkin = require("circom-grumpkin");
 jest.setTimeout(120000);
 describe("Invitation Code Regex", () => {
-    beforeAll(async () => {
-        await init();
-    });
 
     it("invitation code", async () => {
         const codeStr = " Code 123abc";
