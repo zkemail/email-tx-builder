@@ -10,7 +10,7 @@ import { readFileSync } from 'fs';
 const option = {
     include: path.join(__dirname, "../../../node_modules"),
     output: path.join(__dirname, "../build"),
-    recompile: false,
+    recompile: true,
 };
 const shaPrecomputeSelector = '(<div id=3D\"[^\"]*zkemail[^\"]*\"[^>]*>)';
 
