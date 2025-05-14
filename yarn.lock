@@ -1731,10 +1731,10 @@
     "@openzeppelin/contracts-upgradeable" "^5.0.0"
     dotenv "^16.3.1"
 
-"@zk-email/relayer-utils@0.4.60-2":
-  version "0.4.60-2"
-  resolved "https://registry.yarnpkg.com/@zk-email/relayer-utils/-/relayer-utils-0.4.60-2.tgz#576eb94e75ef0e2c8dfaec7529c400bc0af5a9fb"
-  integrity sha512-/Agch659L3urBpiAa3R6DAO9WI3ewJSqFihTaf/io+0OCV3hG7+IouhbEh2/WWPSjurComuU3qt9xiCsBwWoaw==
+"@zk-email/relayer-utils@=0.4.60-2-phone-number":
+  version "0.4.60-2-phone-number"
+  resolved "https://registry.yarnpkg.com/@zk-email/relayer-utils/-/relayer-utils-0.4.60-2-phone-number.tgz#f65093ec24f1dcbf02b4151ac505a880c51aebac"
+  integrity sha512-siK/YQpfi/04gocfr/gkTRlnu29SqtWWJymt/wvSDQrw5dQO+pJEp3FZXeuqOpLnSNLF74qFd5aUg6iC38gpfw==
 
 "@zk-email/zk-regex-circom@=2.3.1":
   version "2.3.1"

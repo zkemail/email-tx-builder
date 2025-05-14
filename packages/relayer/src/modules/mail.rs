@@ -108,14 +108,7 @@ pub async fn handle_email_event(event: EmailAuthEvent) -> Result<(), EmailError>
             let command = format!("{} Code {}", command, account_code);
 
             // Create the plain text body
-            let body_plain = format!(
-                "You have received an guardian request from the wallet address {}. \
-                {} Code {}. \
-                Reply \"Confirm\" to this email to accept the request. \
-                Your request ID is #{}. \
-                If you did not initiate this request, please contact us immediately.",
-                account_eth_addr, command, account_code, request_id
-            );
+            let body_plain: String = format!("#COMMAND#{}#COMMAND#", command);
 
             let subject = "[Reply Needed] Recovery: Acceptance Request".to_string();
 
