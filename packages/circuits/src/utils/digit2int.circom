@@ -20,4 +20,3 @@ template Digit2Int(n) {
     }
     out <== DigitBytesToInt(n)(in);
 }
-

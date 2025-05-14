@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: circuits-job
+spec:
+  ttlSecondsAfterFinished: 60  # Delete automatically 1 minute after completion
+  template:
+    spec:
+      nodeSelector:
+        cloud.google.com/machine-family: c3
+      containers:
+        - name: circuits-runner
+          image: wshino/circuits-runner:test5
+          imagePullPolicy: Always  # Always pull the latest image
+          env:
+            - name: REPO_URL
+              value: "${REPO_URL}"
+            - name: COMMIT_HASH
+              value: "${COMMIT_HASH}"
+          resources:
+            requests:
+              cpu: "16"
+              memory: "64Gi"
+            limits:
+              cpu: "16"
+              memory: "64Gi"
+      restartPolicy: Never
