@@ -24,16 +24,20 @@ include "@zk-email/zk-regex-circom/circuits/common/email_domain_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/subject_all_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/timestamp_regex.circom";
 
-// Verify email from user (sender) and extract a command in the email body, timestmap, recipient email (commitment), etc.
-// * n - the number of bits in each chunk of the RSA public key (modulust)
-// * k - the number of chunks in the RSA public key (n * k > 2048)
-// * max_header_bytes - max number of bytes in the email header
-// * max_body_bytes - max number of bytes in the email body
-// * max_command_bytes - max number of bytes in the command
-// * recipient_enabled - whether the email address commitment of the recipient = email address in the subject is exposed
-// * is_qp_encoded - whether the email body is qp encoded
-// * timestamp_enabled - whether the timestamp is enabled
-template EmailAuth(n, k, max_header_bytes, max_body_bytes, max_command_bytes, recipient_enabled, is_qp_encoded, timestamp_enabled) {
+// This template verifies email from user (sender) and extracts a command in the email body, 
+// timestamp, recipient email (commitment), etc.
+template EmailAuth(
+    n, // The number of bits in each chunk of the RSA public key (modulus)
+    k, // The number of chunks in the RSA public key (n * k > 2048)
+    max_header_bytes, // The maximum number of bytes in the email header
+    max_body_bytes, // The maximum number of bytes in the email body
+    max_command_bytes, // The maximum number of bytes in the command
+    recipient_enabled, // Whether the email address commitment of the recipient equals the email address in the subject and is exposed
+    is_qp_encoded, // Whether the email body is qp encoded
+    timestamp_enabled, // Whether the timestamp is enabled
+    reveal_public_key, // Whether the public key is revealed (1 to reveal, 0 to hide)
+    reveal_from_addr // Whether the from address is revealed (1 to reveal, 0 to hide)
+) {
     signal input padded_header[max_header_bytes]; // email data (only header part)
     signal input padded_header_len; // length of in email data including the padding
     signal input public_key[k]; // RSA public key (modulus), k parts of n bits each.
@@ -85,6 +89,12 @@ template EmailAuth(n, k, max_header_bytes, max_body_bytes, max_command_bytes, re
         email_verifier.decodedEmailBodyIn <== padded_cleaned_body;
     }
     public_key_hash <== email_verifier.pubkeyHash;
+    
+    // Reveal the public key if reveal_public_key is 1
+    if (reveal_public_key == 1) {
+        signal output public_key_raw[k];
+        public_key_raw <== public_key;
+    }
 
     // FROM HEADER REGEX
     signal from_regex_out, from_regex_reveal[max_header_bytes];
@@ -187,6 +197,12 @@ template EmailAuth(n, k, max_header_bytes, max_body_bytes, max_command_bytes, re
     var num_email_addr_ints = compute_ints_size(email_max_bytes);
     signal from_addr_ints[num_email_addr_ints] <== Bytes2Ints(email_max_bytes)(from_email_addr);
     account_salt <== AccountSalt(num_email_addr_ints)(from_addr_ints, account_code);
+
+    // Reveal the from address if reveal_from_addr is 1
+    if (reveal_from_addr == 1) {
+        signal output from_email_addr_raw[num_email_addr_ints];
+        from_email_addr_raw <== from_addr_ints;
+    }
 
     // Forced Subject
     signal forced_subject_regex_out <== ForcedSubjectRegex(max_header_bytes)(padded_header);
