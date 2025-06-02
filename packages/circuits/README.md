@@ -91,34 +91,34 @@ This is basically the same as the `email_auth.circom` described above except for
 ### Build a Circuit
 
 ```bash
-npm run build [circuit_name] [output_dir]
+npm run build <circuit_name> [output_dir]
 ```
 
 Examples:
 
 ```bash
-npm run build                           # builds email_auth circuit to build/
-npm run build email_auth_reveal         # builds email_auth_reveal circuit to build/
-npm run build email_auth_reveal reveal  # builds email_auth_reveal circuit to build/reveal/
+npm run build -- email_auth                    # builds email_auth circuit to build/
+npm run build -- email_auth_reveal             # builds email_auth_reveal circuit to build/
+npm run build -- email_auth_reveal reveal      # builds email_auth_reveal circuit to build/reveal/
 ```
 
 ### Dev Setup a Circuit
 
 ```bash
-npm run dev-setup [circuit_name] [output_dir]
+npm run dev-setup -- <circuit_name> [output_dir]
 ```
 
 Examples:
 
 ```bash
-npm run dev-setup                           # dev setup for email_auth circuit to build/
-npm run dev-setup email_auth_reveal         # dev setup for email_auth_reveal circuit to build/
-npm run dev-setup email_auth_reveal reveal  # dev setup for email_auth_reveal circuit to build/reveal/
+npm run dev-setup email_auth                    # dev setup for email_auth circuit to build/
+npm run dev-setup email_auth_reveal             # dev setup for email_auth_reveal circuit to build/
+npm run dev-setup email_auth_reveal reveal      # dev setup for email_auth_reveal circuit to build/reveal/
 ```
 
 ## Notes
 
 - Circuit files should be placed in the `src/` directory with `.circom` extension
-- Default circuit is `email_auth` if no circuit name is provided
+- Circuit name is required - you must specify which circuit to build/setup
 - Default output directory is `.` (directly in build/) if not specified
 - Output directories are created under `build/` folder
