@@ -15,7 +15,5 @@ struct EmailProof {
 interface IVerifier {
     function commandBytes() external view returns (uint256);
 
-    function verifyEmailProof(
-        EmailProof memory proof
-    ) external view returns (bool);
+    function verifyEmailProof(bytes memory proof) external view returns (bool);
 }

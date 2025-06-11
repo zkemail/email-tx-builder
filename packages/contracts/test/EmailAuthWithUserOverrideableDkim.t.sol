@@ -60,12 +60,13 @@ contract EmailAuthWithUserOverrideableDkimTest is StructHelper {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
-        );
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
 
         vm.startPrank(deployer);
@@ -89,31 +90,29 @@ contract EmailAuthWithUserOverrideableDkimTest is StructHelper {
         vm.startPrank(deployer);
         vm.expectEmit(true, true, true, true);
         emit EmailAuth.EmailAuthed(
-            emailAuthMsg.proof.emailNullifier,
-            emailAuthMsg.proof.accountSalt,
-            emailAuthMsg.proof.isCodeExist,
+            emailProof.emailNullifier,
+            emailProof.accountSalt,
+            emailProof.isCodeExist,
             emailAuthMsg.templateId
         );
         emailAuth.authEmail(emailAuthMsg);
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            true
-        );
-        assertEq(emailAuth.lastTimestamp(), emailAuthMsg.proof.timestamp);
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), true);
+        assertEq(emailAuth.lastTimestamp(), emailProof.timestamp);
     }
 
     function testAuthEmailAfterEnabled() public {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
-        );
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
 
         vm.startPrank(deployer);
@@ -130,31 +129,29 @@ contract EmailAuthWithUserOverrideableDkimTest is StructHelper {
         vm.startPrank(deployer);
         vm.expectEmit(true, true, true, true);
         emit EmailAuth.EmailAuthed(
-            emailAuthMsg.proof.emailNullifier,
-            emailAuthMsg.proof.accountSalt,
-            emailAuthMsg.proof.isCodeExist,
+            emailProof.emailNullifier,
+            emailProof.accountSalt,
+            emailProof.isCodeExist,
             emailAuthMsg.templateId
         );
         emailAuth.authEmail(emailAuthMsg);
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            true
-        );
-        assertEq(emailAuth.lastTimestamp(), emailAuthMsg.proof.timestamp);
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), true);
+        assertEq(emailAuth.lastTimestamp(), emailProof.timestamp);
     }
 
     function test_RevertWhen_AuthEmailBeforeEnabledWithoutUserApprove() public {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
-        );
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
 
         vm.startPrank(deployer);
@@ -168,10 +165,7 @@ contract EmailAuthWithUserOverrideableDkimTest is StructHelper {
         emailAuth.authEmail(emailAuthMsg);
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
-        );
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
     }
 }

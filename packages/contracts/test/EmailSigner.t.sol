@@ -32,7 +32,12 @@ contract EmailSignerTest is SignerStructHelper {
 
     function testExpectRevertVerifyEmailInvalidDkimPublicKeyHash() public {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg(msgHash);
-        emailAuthMsg.proof.domainName = "invalid.com";
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
+        emailProof.domainName = "invalid.com";
+        emailAuthMsg.proof = abi.encode(emailProof);
 
         vm.expectRevert(EmailSigner.InvalidDKIMPublicKeyHash.selector);
         emailSigner.verifyEmail(emailAuthMsg);
@@ -40,7 +45,12 @@ contract EmailSignerTest is SignerStructHelper {
 
     function testExpectRevertVerifyEmailInvalidAccountSalt() public {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg(msgHash);
-        emailAuthMsg.proof.accountSalt = bytes32(uint256(1234));
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
+        emailProof.accountSalt = bytes32(uint256(1234));
+        emailAuthMsg.proof = abi.encode(emailProof);
 
         vm.expectRevert(EmailSigner.InvalidAccountSalt.selector);
         emailSigner.verifyEmail(emailAuthMsg);
@@ -73,7 +83,12 @@ contract EmailSignerTest is SignerStructHelper {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg(msgHash);
 
         // Set masked command length to 606, which should be 605 or less defined in the verifier.
-        emailAuthMsg.proof.maskedCommand = string(new bytes(606));
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
+        emailProof.maskedCommand = string(new bytes(606));
+        emailAuthMsg.proof = abi.encode(emailProof);
 
         vm.expectRevert(EmailSigner.InvalidMaskedCommandLength.selector);
         emailSigner.verifyEmail(emailAuthMsg);
@@ -152,7 +167,12 @@ contract EmailSignerTest is SignerStructHelper {
     function testExpectRevertIsValidSignatureInvalidEmailAuth() public {
         // Create test data with invalid EmailAuthMsg
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg(msgHash);
-        emailAuthMsg.proof.accountSalt = bytes32(uint256(1234)); // Invalid account salt
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
+        emailProof.accountSalt = bytes32(uint256(1234)); // Invalid account salt
+        emailAuthMsg.proof = abi.encode(emailProof);
 
         // Encode the EmailAuthMsg as the signature
         bytes memory signature = abi.encode(emailAuthMsg);

@@ -29,12 +29,12 @@ contract StructHelper is DeploymentHelper {
             templateId: templateId,
             commandParams: commandParams,
             skippedCommandPrefix: 0,
-            proof: emailProof
+            proof: abi.encode(emailProof)
         });
 
         vm.mockCall(
             address(verifier),
-            abi.encodeCall(Verifier.verifyEmailProof, (emailProof)),
+            abi.encodeCall(Verifier.verifyEmailProof, (abi.encode(emailProof))),
             abi.encode(true)
         );
     }

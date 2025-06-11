@@ -34,14 +34,16 @@ contract Verifier is OwnableUpgradeable, UUPSUpgradeable, IVerifier {
         return COMMAND_BYTES;
     }
 
-    function verifyEmailProof(
-        EmailProof memory proof
-    ) public view returns (bool) {
+    function verifyEmailProof(bytes memory proof) public view returns (bool) {
+        EmailProof memory emailProof = abi.decode(proof, (EmailProof));
         (
             uint256[2] memory pA,
             uint256[2][2] memory pB,
             uint256[2] memory pC
-        ) = abi.decode(proof.proof, (uint256[2], uint256[2][2], uint256[2]));
+        ) = abi.decode(
+                emailProof.proof,
+                (uint256[2], uint256[2][2], uint256[2])
+            );
         require(pA[0] < q && pA[1] < q, "invalid format of pA");
         require(
             pB[0][0] < q && pB[0][1] < q && pB[1][0] < q && pB[1][1] < q,
@@ -50,24 +52,28 @@ contract Verifier is OwnableUpgradeable, UUPSUpgradeable, IVerifier {
         require(pC[0] < q && pC[1] < q, "invalid format of pC");
         uint256[DOMAIN_FIELDS + COMMAND_FIELDS + 5] memory pubSignals;
         uint256[] memory stringFields;
-        stringFields = _packBytes2Fields(bytes(proof.domainName), DOMAIN_BYTES);
+        stringFields = _packBytes2Fields(
+            bytes(emailProof.domainName),
+            DOMAIN_BYTES
+        );
         for (uint256 i = 0; i < DOMAIN_FIELDS; i++) {
             pubSignals[i] = stringFields[i];
         }
-        pubSignals[DOMAIN_FIELDS] = uint256(proof.publicKeyHash);
-        pubSignals[DOMAIN_FIELDS + 1] = uint256(proof.emailNullifier);
-        pubSignals[DOMAIN_FIELDS + 2] = uint256(proof.timestamp);
+        pubSignals[DOMAIN_FIELDS] = uint256(emailProof.publicKeyHash);
+        pubSignals[DOMAIN_FIELDS + 1] = uint256(emailProof.emailNullifier);
+        pubSignals[DOMAIN_FIELDS + 2] = uint256(emailProof.timestamp);
         stringFields = _packBytes2Fields(
-            bytes(proof.maskedCommand),
+            bytes(emailProof.maskedCommand),
             COMMAND_BYTES
         );
         for (uint256 i = 0; i < COMMAND_FIELDS; i++) {
             pubSignals[DOMAIN_FIELDS + 3 + i] = stringFields[i];
         }
         pubSignals[DOMAIN_FIELDS + 3 + COMMAND_FIELDS] = uint256(
-            proof.accountSalt
+            emailProof.accountSalt
         );
-        pubSignals[DOMAIN_FIELDS + 3 + COMMAND_FIELDS + 1] = proof.isCodeExist
+        pubSignals[DOMAIN_FIELDS + 3 + COMMAND_FIELDS + 1] = emailProof
+            .isCodeExist
             ? 1
             : 0;
 

@@ -11,19 +11,21 @@ contract SignerStructHelper is SignerDeploymentHelper {
         bytes[] memory commandParams = new bytes[](1);
         commandParams[0] = abi.encode(hash);
 
-        EmailProof memory emailProof = EmailProof({
-            domainName: "gmail.com",
-            publicKeyHash: publicKeyHash,
-            timestamp: 1694989812,
-            maskedCommand: string.concat(
-                "signHash ",
-                Strings.toString(uint256(hash))
-            ),
-            emailNullifier: emailNullifier,
-            accountSalt: accountSalt,
-            isCodeExist: true,
-            proof: mockProof
-        });
+        bytes memory emailProof = abi.encode(
+            EmailProof({
+                domainName: "gmail.com",
+                publicKeyHash: publicKeyHash,
+                timestamp: 1694989812,
+                maskedCommand: string.concat(
+                    "signHash ",
+                    Strings.toString(uint256(hash))
+                ),
+                emailNullifier: emailNullifier,
+                accountSalt: accountSalt,
+                isCodeExist: true,
+                proof: mockProof
+            })
+        );
 
         emailAuthMsg = EmailAuthMsg({
             templateId: templateId,

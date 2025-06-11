@@ -88,6 +88,10 @@ contract EmailSigner is IERC1271, Initializable {
     /// to prevent replay attacks, similar to how nonces are used with ECDSA signatures.
     /// @param emailAuthMsg The email auth message containing all necessary information for authentication.
     function verifyEmail(EmailAuthMsg memory emailAuthMsg) public view {
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         if (templateId != emailAuthMsg.templateId) revert InvalidTemplateId();
         string[] memory signHashTemplate = new string[](2);
         signHashTemplate[0] = "signHash";
@@ -95,16 +99,15 @@ contract EmailSigner is IERC1271, Initializable {
 
         if (
             !IDKIMRegistry(dkimRegistryAddr).isDKIMPublicKeyHashValid(
-                emailAuthMsg.proof.domainName,
-                emailAuthMsg.proof.publicKeyHash
+                emailProof.domainName,
+                emailProof.publicKeyHash
             )
         ) revert InvalidDKIMPublicKeyHash();
 
-        if (accountSalt != emailAuthMsg.proof.accountSalt)
-            revert InvalidAccountSalt();
+        if (accountSalt != emailProof.accountSalt) revert InvalidAccountSalt();
 
         if (
-            bytes(emailAuthMsg.proof.maskedCommand).length >
+            bytes(emailProof.maskedCommand).length >
             IVerifier(verifierAddr).commandBytes()
         ) revert InvalidMaskedCommandLength();
 
@@ -115,7 +118,7 @@ contract EmailSigner is IERC1271, Initializable {
 
         // Construct an expectedCommand from template and the values of emailAuthMsg.commandParams.
         string memory trimmedMaskedCommand = CommandUtils.removePrefix(
-            emailAuthMsg.proof.maskedCommand,
+            emailProof.maskedCommand,
             emailAuthMsg.skippedCommandPrefix
         );
         string memory expectedCommand = "";

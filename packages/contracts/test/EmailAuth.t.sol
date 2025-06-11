@@ -226,39 +226,38 @@ contract EmailAuthTest is StructHelper {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
-        );
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
 
         vm.startPrank(deployer);
         vm.expectEmit(true, true, true, true);
         emit EmailAuth.EmailAuthed(
-            emailAuthMsg.proof.emailNullifier,
-            emailAuthMsg.proof.accountSalt,
-            emailAuthMsg.proof.isCodeExist,
+            emailProof.emailNullifier,
+            emailProof.accountSalt,
+            emailProof.isCodeExist,
             emailAuthMsg.templateId
         );
         emailAuth.authEmail(emailAuthMsg);
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            true
-        );
-        assertEq(emailAuth.lastTimestamp(), emailAuthMsg.proof.timestamp);
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), true);
+        assertEq(emailAuth.lastTimestamp(), emailProof.timestamp);
     }
 
     function testExpectRevertAuthEmailCallerIsNotTheModule() public {
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
-
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
         );
+
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
 
         vm.expectRevert("only controller");
@@ -268,12 +267,13 @@ contract EmailAuthTest is StructHelper {
     function testExpectRevertAuthEmailTemplateIdNotExists() public {
         vm.startPrank(deployer);
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
-        );
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
 
         vm.startPrank(deployer);
@@ -286,16 +286,18 @@ contract EmailAuthTest is StructHelper {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
-        );
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
 
         vm.startPrank(deployer);
-        emailAuthMsg.proof.domainName = "invalid.com";
+        emailProof.domainName = "invalid.com";
+        emailAuthMsg.proof = abi.encode(emailProof);
         vm.expectRevert(bytes("invalid dkim public key hash"));
         emailAuth.authEmail(emailAuthMsg);
         vm.stopPrank();
@@ -305,12 +307,13 @@ contract EmailAuthTest is StructHelper {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
-        );
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
 
         vm.startPrank(deployer);
@@ -324,16 +327,18 @@ contract EmailAuthTest is StructHelper {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
-        );
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
 
         vm.startPrank(deployer);
-        emailAuthMsg.proof.accountSalt = bytes32(uint256(1234));
+        emailProof.accountSalt = bytes32(uint256(1234));
+        emailAuthMsg.proof = abi.encode(emailProof);
         vm.expectRevert(bytes("invalid account salt"));
         emailAuth.authEmail(emailAuthMsg);
         vm.stopPrank();
@@ -343,18 +348,20 @@ contract EmailAuthTest is StructHelper {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         emailAuth.authEmail(emailAuthMsg);
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            true
-        );
-        assertEq(emailAuth.lastTimestamp(), emailAuthMsg.proof.timestamp);
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), true);
+        assertEq(emailAuth.lastTimestamp(), emailProof.timestamp);
 
         vm.startPrank(deployer);
-        emailAuthMsg.proof.emailNullifier = 0x0;
-        emailAuthMsg.proof.timestamp = 1694989812;
+        emailProof.emailNullifier = 0x0;
+        emailProof.timestamp = 1694989812;
+        emailAuthMsg.proof = abi.encode(emailProof);
         vm.expectRevert(bytes("invalid timestamp"));
         emailAuth.authEmail(emailAuthMsg);
 
@@ -365,12 +372,13 @@ contract EmailAuthTest is StructHelper {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
-        );
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
 
         vm.startPrank(deployer);
@@ -384,12 +392,13 @@ contract EmailAuthTest is StructHelper {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
-        );
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
 
         vm.startPrank(deployer);
@@ -410,16 +419,18 @@ contract EmailAuthTest is StructHelper {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
-        );
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
 
         // Set masked command length to 606, which should be 605 or less defined in the verifier.
-        emailAuthMsg.proof.maskedCommand = string(new bytes(606));
+        emailProof.maskedCommand = string(new bytes(606));
+        emailAuthMsg.proof = abi.encode(emailProof);
 
         vm.startPrank(deployer);
         vm.expectRevert(bytes("invalid masked command length"));
@@ -433,26 +444,28 @@ contract EmailAuthTest is StructHelper {
         vm.stopPrank();
 
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
-        emailAuthMsg.proof.maskedCommand = string.concat(
-            unicode"Japanese Prefix ねこ ",
-            emailAuthMsg.proof.maskedCommand
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
         );
+        emailProof.maskedCommand = string.concat(
+            unicode"Japanese Prefix ねこ ",
+            emailProof.maskedCommand
+        );
+        emailAuthMsg.proof = abi.encode(emailProof);
         // The japanese word "ねこ" has six bytes.
         // "ねこ" means cats.
         emailAuthMsg.skippedCommandPrefix = 17 + 6;
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
-        );
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
 
         vm.startPrank(deployer);
         vm.expectEmit(true, true, true, true);
         emit EmailAuth.EmailAuthed(
-            emailAuthMsg.proof.emailNullifier,
-            emailAuthMsg.proof.accountSalt,
-            emailAuthMsg.proof.isCodeExist,
+            emailProof.emailNullifier,
+            emailProof.accountSalt,
+            emailProof.isCodeExist,
             emailAuthMsg.templateId
         );
         vm.mockCall(
@@ -463,11 +476,8 @@ contract EmailAuthTest is StructHelper {
         emailAuth.authEmail(emailAuthMsg);
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            true
-        );
-        assertEq(emailAuth.lastTimestamp(), emailAuthMsg.proof.timestamp);
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), true);
+        assertEq(emailAuth.lastTimestamp(), emailProof.timestamp);
     }
 
     function testExpectRevertAuthEmailInvalidSizeOfTheSkippedCommandPrefix()
@@ -476,12 +486,13 @@ contract EmailAuthTest is StructHelper {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         vm.stopPrank();
 
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
-        );
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
 
         // Set skipped command prefix length to 605, it should be less than 605.

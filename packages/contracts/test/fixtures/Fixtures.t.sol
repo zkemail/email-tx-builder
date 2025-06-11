@@ -18,6 +18,7 @@ import {ECDSAOwnedDKIMRegistry} from "../../src/utils/ECDSAOwnedDKIMRegistry.sol
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {EmailSigner} from "../../src/EmailSigner.sol";
 import {EmailAuthMsg} from "../../src/interfaces/IEmailTypes.sol";
+import {EmailProof} from "../../src/interfaces/IVerifier.sol";
 import {EmailAuthMsgFixtures} from "./EmailAuthMsgFixtures.sol";
 import {Groth16Verifier} from "./Groth16Verifier.sol";
 
@@ -118,11 +119,15 @@ contract FixturesTest is Test {
     function _deployEmailSignerProxyBasedOnEmailAuthMsg(
         EmailAuthMsg memory emailAuthMsg
     ) internal returns (address emailSignerProxyAddr) {
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         // Configure DKIM registry for the fixture if needed
         if (
             !dkimRegistry.isDKIMPublicKeyHashValid(
-                emailAuthMsg.proof.domainName,
-                emailAuthMsg.proof.publicKeyHash
+                emailProof.domainName,
+                emailProof.publicKeyHash
             )
         ) {
             _setupDKIMRegistry(emailAuthMsg);
@@ -135,7 +140,7 @@ contract FixturesTest is Test {
                     signerImpl,
                     abi.encodeWithSelector(
                         EmailSigner.initialize.selector,
-                        emailAuthMsg.proof.accountSalt,
+                        emailProof.accountSalt,
                         address(dkimRegistry),
                         verifier,
                         emailAuthMsg.templateId
@@ -147,10 +152,14 @@ contract FixturesTest is Test {
     /// @notice Configures DKIM registry for a fixture
     /// @param emailAuthMsg The fixture containing DKIM data to register
     function _setupDKIMRegistry(EmailAuthMsg memory emailAuthMsg) internal {
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         string memory signedMsg = dkimRegistry.computeSignedMsg(
             dkimRegistry.SET_PREFIX(),
-            emailAuthMsg.proof.domainName,
-            emailAuthMsg.proof.publicKeyHash
+            emailProof.domainName,
+            emailProof.publicKeyHash
         );
 
         bytes32 digest = MessageHashUtils.toEthSignedMessageHash(
@@ -161,8 +170,8 @@ contract FixturesTest is Test {
 
         dkimRegistry.setDKIMPublicKeyHash(
             "DEFAULT", // Registry identifier (not validated in current implementation)
-            emailAuthMsg.proof.domainName,
-            emailAuthMsg.proof.publicKeyHash,
+            emailProof.domainName,
+            emailProof.publicKeyHash,
             signature
         );
     }

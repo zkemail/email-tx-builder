@@ -187,32 +187,32 @@ contract EmailAuth is OwnableUpgradeable, UUPSUpgradeable {
     /// @dev This function can only be called by the controller contract.
     /// @param emailAuthMsg The email auth message containing all necessary information for authentication and authorization.
     function authEmail(EmailAuthMsg memory emailAuthMsg) public onlyController {
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
+        );
         string[] memory template = commandTemplates[emailAuthMsg.templateId];
         require(template.length > 0, "template id not exists");
         require(
             dkim.isDKIMPublicKeyHashValid(
-                emailAuthMsg.proof.domainName,
-                emailAuthMsg.proof.publicKeyHash
+                emailProof.domainName,
+                emailProof.publicKeyHash
             ) == true,
             "invalid dkim public key hash"
         );
         require(
-            usedNullifiers[emailAuthMsg.proof.emailNullifier] == false,
+            usedNullifiers[emailProof.emailNullifier] == false,
             "email nullifier already used"
         );
-        require(
-            accountSalt == emailAuthMsg.proof.accountSalt,
-            "invalid account salt"
-        );
+        require(accountSalt == emailProof.accountSalt, "invalid account salt");
         require(
             timestampCheckEnabled == false ||
-                emailAuthMsg.proof.timestamp == 0 ||
-                emailAuthMsg.proof.timestamp > lastTimestamp,
+                emailProof.timestamp == 0 ||
+                emailProof.timestamp > lastTimestamp,
             "invalid timestamp"
         );
         require(
-            bytes(emailAuthMsg.proof.maskedCommand).length <=
-                verifier.commandBytes(),
+            bytes(emailProof.maskedCommand).length <= verifier.commandBytes(),
             "invalid masked command length"
         );
         require(
@@ -222,7 +222,7 @@ contract EmailAuth is OwnableUpgradeable, UUPSUpgradeable {
 
         // Construct an expectedCommand from template and the values of emailAuthMsg.commandParams.
         string memory trimmedMaskedCommand = removePrefix(
-            emailAuthMsg.proof.maskedCommand,
+            emailProof.maskedCommand,
             emailAuthMsg.skippedCommandPrefix
         );
         string memory expectedCommand = "";
@@ -245,14 +245,14 @@ contract EmailAuth is OwnableUpgradeable, UUPSUpgradeable {
             "invalid email proof"
         );
 
-        usedNullifiers[emailAuthMsg.proof.emailNullifier] = true;
-        if (timestampCheckEnabled && emailAuthMsg.proof.timestamp != 0) {
-            lastTimestamp = emailAuthMsg.proof.timestamp;
+        usedNullifiers[emailProof.emailNullifier] = true;
+        if (timestampCheckEnabled && emailProof.timestamp != 0) {
+            lastTimestamp = emailProof.timestamp;
         }
         emit EmailAuthed(
-            emailAuthMsg.proof.emailNullifier,
-            emailAuthMsg.proof.accountSalt,
-            emailAuthMsg.proof.isCodeExist,
+            emailProof.emailNullifier,
+            emailProof.accountSalt,
+            emailProof.isCodeExist,
             emailAuthMsg.templateId
         );
     }

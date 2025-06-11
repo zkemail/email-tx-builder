@@ -57,26 +57,24 @@ contract DKIMRegistryUpgradeTest is StructHelper {
         vm.startPrank(deployer);
         _testInsertCommandTemplate();
         EmailAuthMsg memory emailAuthMsg = buildEmailAuthMsg();
-        vm.stopPrank();
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            false
+        EmailProof memory emailProof = abi.decode(
+            emailAuthMsg.proof,
+            (EmailProof)
         );
+        vm.stopPrank();
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), false);
         assertEq(emailAuth.lastTimestamp(), 0);
         vm.startPrank(deployer);
         vm.expectEmit(true, true, true, true);
         emit EmailAuth.EmailAuthed(
-            emailAuthMsg.proof.emailNullifier,
-            emailAuthMsg.proof.accountSalt,
-            emailAuthMsg.proof.isCodeExist,
+            emailProof.emailNullifier,
+            emailProof.accountSalt,
+            emailProof.isCodeExist,
             emailAuthMsg.templateId
         );
         emailAuth.authEmail(emailAuthMsg);
         vm.stopPrank();
-        assertEq(
-            emailAuth.usedNullifiers(emailAuthMsg.proof.emailNullifier),
-            true
-        );
-        assertEq(emailAuth.lastTimestamp(), emailAuthMsg.proof.timestamp);
+        assertEq(emailAuth.usedNullifiers(emailProof.emailNullifier), true);
+        assertEq(emailAuth.lastTimestamp(), emailProof.timestamp);
     }
 }
