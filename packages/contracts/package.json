@@ -15,7 +15,7 @@
     "@openzeppelin/contracts-upgradeable": "^5.0.0",
     "@zk-email/contracts": "^6.3.2",
     "solady": "^0.0.123",
-    "solidity-stringutils": "github:LayerZero-Labs/solidity-stringutils"
+    "solidity-stringutils": "https://github.com/zkemail/layer-zero-string-utils.git"
   },
   "devDependencies": {
     "ds-test": "https://github.com/dapphub/ds-test",
