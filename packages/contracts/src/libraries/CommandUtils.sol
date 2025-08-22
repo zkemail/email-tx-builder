@@ -2,11 +2,14 @@
 pragma solidity ^0.8.9;
 
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {Bytes} from "@openzeppelin/contracts/utils/Bytes.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {DecimalUtils} from "./DecimalUtils.sol";
 
 library CommandUtils {
+    using Bytes for bytes;
+
     bytes16 private constant LOWER_HEX_DIGITS = "0123456789abcdef";
     bytes16 private constant UPPER_HEX_DIGITS = "0123456789ABCDEF";
     string internal constant STRING_MATCHER = "{string}";
@@ -15,10 +18,7 @@ library CommandUtils {
     string internal constant DECIMALS_MATCHER = "{decimals}";
     string internal constant ETH_ADDR_MATCHER = "{ethAddr}";
 
-    function addressToHexString(
-        address addr,
-        uint stringCase
-    ) internal pure returns (string memory) {
+    function addressToHexString(address addr, uint256 stringCase) internal pure returns (string memory) {
         if (stringCase == 0) {
             return addressToChecksumHexString(addr);
         } else if (stringCase == 1) {
@@ -30,9 +30,7 @@ library CommandUtils {
         }
     }
 
-    function addressToChecksumHexString(
-        address addr
-    ) internal pure returns (string memory) {
+    function addressToChecksumHexString(address addr) internal pure returns (string memory) {
         string memory lowerCaseAddrWithOx = Strings.toHexString(addr);
 
         bytes memory lowerCaseAddr = new bytes(40); // Remove 0x added by the OZ lib
@@ -41,9 +39,7 @@ library CommandUtils {
         }
 
         // Hash of lowercase addr
-        uint256 lowerCaseHash = uint256(
-            keccak256(abi.encodePacked(lowerCaseAddr))
-        );
+        uint256 lowerCaseHash = uint256(keccak256(abi.encodePacked(lowerCaseAddr)));
 
         // Result hex = 42 chars with 0x prefix
         bytes memory result = new bytes(42);
@@ -73,11 +69,9 @@ library CommandUtils {
         return string(result);
     }
 
-    function lowerToUpperCase(
-        string memory hexStr
-    ) internal pure returns (string memory) {
+    function lowerToUpperCase(string memory hexStr) internal pure returns (string memory) {
         bytes memory bytesStr = bytes(hexStr);
-        for (uint i = 0; i < bytesStr.length; i++) {
+        for (uint256 i = 0; i < bytesStr.length; i++) {
             if (bytesStr[i] >= 0x61 && bytesStr[i] <= 0x66) {
                 bytesStr[i] = bytes1(uint8(bytesStr[i]) - 32);
             }
@@ -87,9 +81,7 @@ library CommandUtils {
 
     /// @notice Convert bytes to hex string without 0x prefix
     /// @param data bytes to convert
-    function bytesToHexString(
-        bytes memory data
-    ) internal pure returns (string memory) {
+    function bytesToHexString(bytes memory data) internal pure returns (string memory) {
         bytes memory hexChars = "0123456789abcdef";
         bytes memory hexString = new bytes(2 * data.length);
 
@@ -106,11 +98,11 @@ library CommandUtils {
     /// @param commandParams Params to be used in the command
     /// @param template Template to be used for the command
     /// @param stringCase Case of the ethereum address string to be used for the command - 0: checksum, 1: lowercase, 2: uppercase
-    function computeExpectedCommand(
-        bytes[] memory commandParams,
-        string[] memory template,
-        uint stringCase
-    ) internal pure returns (string memory expectedCommand) {
+    function computeExpectedCommand(bytes[] memory commandParams, string[] memory template, uint256 stringCase)
+        internal
+        pure
+        returns (string memory expectedCommand)
+    {
         // Construct an expectedCommand from template and the values of commandParams.
         uint8 nextParamIndex = 0;
         string memory stringParam;
@@ -118,34 +110,19 @@ library CommandUtils {
         for (uint8 i = 0; i < template.length; i++) {
             isParamExist = true;
             if (Strings.equal(template[i], STRING_MATCHER)) {
-                string memory param = abi.decode(
-                    commandParams[nextParamIndex],
-                    (string)
-                );
+                string memory param = abi.decode(commandParams[nextParamIndex], (string));
                 stringParam = param;
             } else if (Strings.equal(template[i], UINT_MATCHER)) {
-                uint256 param = abi.decode(
-                    commandParams[nextParamIndex],
-                    (uint256)
-                );
+                uint256 param = abi.decode(commandParams[nextParamIndex], (uint256));
                 stringParam = Strings.toString(param);
             } else if (Strings.equal(template[i], INT_MATCHER)) {
-                int256 param = abi.decode(
-                    commandParams[nextParamIndex],
-                    (int256)
-                );
+                int256 param = abi.decode(commandParams[nextParamIndex], (int256));
                 stringParam = Strings.toStringSigned(param);
             } else if (Strings.equal(template[i], DECIMALS_MATCHER)) {
-                uint256 param = abi.decode(
-                    commandParams[nextParamIndex],
-                    (uint256)
-                );
+                uint256 param = abi.decode(commandParams[nextParamIndex], (uint256));
                 stringParam = DecimalUtils.uintToDecimalString(param);
             } else if (Strings.equal(template[i], ETH_ADDR_MATCHER)) {
-                address param = abi.decode(
-                    commandParams[nextParamIndex],
-                    (address)
-                );
+                address param = abi.decode(commandParams[nextParamIndex], (address));
                 stringParam = addressToHexString(param, stringCase);
             } else {
                 isParamExist = false;
@@ -153,13 +130,9 @@ library CommandUtils {
             }
 
             if (i > 0) {
-                expectedCommand = string(
-                    abi.encodePacked(expectedCommand, " ")
-                );
+                expectedCommand = string(abi.encodePacked(expectedCommand, " "));
             }
-            expectedCommand = string(
-                abi.encodePacked(expectedCommand, stringParam)
-            );
+            expectedCommand = string(abi.encodePacked(expectedCommand, stringParam));
             if (isParamExist) {
                 nextParamIndex++;
             }
@@ -171,22 +144,103 @@ library CommandUtils {
     /// @param str The original string.
     /// @param numBytes The number of bytes to remove from the start of the string.
     /// @return The string with the prefix removed.
-    function removePrefix(
-        string memory str,
-        uint numBytes
-    ) internal pure returns (string memory) {
-        require(
-            numBytes <= bytes(str).length,
-            "Invalid skipped command prefix size"
-        );
+    function removePrefix(string memory str, uint256 numBytes) internal pure returns (string memory) {
+        require(numBytes <= bytes(str).length, "Invalid skipped command prefix size");
 
         bytes memory strBytes = bytes(str);
         bytes memory result = new bytes(strBytes.length - numBytes);
 
-        for (uint i = numBytes; i < strBytes.length; i++) {
+        for (uint256 i = numBytes; i < strBytes.length; i++) {
             result[i - numBytes] = strBytes[i];
         }
 
         return string(result);
+    }
+
+    /// @notice Extracts a parameter from a command string based on the template and parameter index.
+    /// @param template The command template as an array of strings.
+    /// @param command The command string to extract from.
+    /// @param paramIndex The zero-based index of the parameter to extract.
+    /// @return The extracted parameter as a string, or an empty string if not found.
+    function extractCommandParamByIndex(string[] memory template, string memory command, uint256 paramIndex)
+        internal
+        pure
+        returns (string memory)
+    {
+        uint256 wordIndex = _getParamWordIndex(template, paramIndex);
+        if (wordIndex == type(uint256).max) {
+            return "";
+        }
+
+        return _splitString(command, " ")[wordIndex];
+    }
+
+    /**
+     * @notice Checks if the given template string is a matcher (parameter placeholder).
+     * @param templateString The template string to check.
+     * @return True if the string is a matcher, false otherwise.
+     */
+    function _isMatcher(string memory templateString) private pure returns (bool) {
+        return Strings.equal(templateString, CommandUtils.STRING_MATCHER)
+            || Strings.equal(templateString, CommandUtils.UINT_MATCHER)
+            || Strings.equal(templateString, CommandUtils.INT_MATCHER)
+            || Strings.equal(templateString, CommandUtils.DECIMALS_MATCHER)
+            || Strings.equal(templateString, CommandUtils.ETH_ADDR_MATCHER);
+    }
+
+    /**
+     * @notice Finds the index in the template corresponding to the Nth matcher (zero-based).
+     * @param template The command template as an array of strings.
+     * @param paramIndex The zero-based index of the parameter to find.
+     * @return paramTemplateIndex The zero-based index in the template array, or uint256 max if not found.
+     */
+    function _getParamWordIndex(string[] memory template, uint256 paramIndex)
+        private
+        pure
+        returns (uint256 paramTemplateIndex)
+    {
+        paramTemplateIndex = 0;
+        for (uint256 i = 0; i < template.length; i++) {
+            if (_isMatcher(template[i])) {
+                if (paramTemplateIndex == paramIndex) {
+                    return i;
+                }
+                paramTemplateIndex++;
+            }
+        }
+
+        // return uint max if param not found
+        return type(uint256).max;
+    }
+
+    /**
+     * @notice Splits a string by a delimiter into an array of strings
+     * @param str The string to split
+     * @param delimiter The delimiter to split by
+     * @return The array of split strings
+     */
+    function _splitString(string memory str, bytes1 delimiter) private pure returns (string[] memory) {
+        bytes memory strBytes = bytes(str);
+        uint256 count = 1;
+        for (uint256 i = 0; i < strBytes.length; i++) {
+            if (strBytes[i] == delimiter) {
+                count++;
+            }
+        }
+
+        string[] memory parts = new string[](count);
+        uint256 lastIndex = 0;
+        uint256 partIndex = 0;
+        for (uint256 i = 0; i < strBytes.length; i++) {
+            if (strBytes[i] == delimiter) {
+                bytes memory partBytes = strBytes.slice(lastIndex, i);
+                parts[partIndex] = string(partBytes);
+                lastIndex = i + 1;
+                partIndex++;
+            }
+        }
+        bytes memory lastPartBytes = strBytes.slice(lastIndex, strBytes.length);
+        parts[partIndex] = string(lastPartBytes);
+        return parts;
     }
 }
