@@ -6,9 +6,11 @@ import {Bytes} from "@openzeppelin/contracts/utils/Bytes.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {DecimalUtils} from "./DecimalUtils.sol";
+import {StringUtils} from "./StringUtils.sol";
 
 library CommandUtils {
     using Bytes for bytes;
+    using StringUtils for string;
 
     bytes16 private constant LOWER_HEX_DIGITS = "0123456789abcdef";
     bytes16 private constant UPPER_HEX_DIGITS = "0123456789ABCDEF";
@@ -172,7 +174,7 @@ library CommandUtils {
             return "";
         }
 
-        return _splitString(command, " ")[wordIndex];
+        return command.splitString(" ")[wordIndex];
     }
 
     /**
@@ -211,36 +213,5 @@ library CommandUtils {
 
         // return uint max if param not found
         return type(uint256).max;
-    }
-
-    /**
-     * @notice Splits a string by a delimiter into an array of strings
-     * @param str The string to split
-     * @param delimiter The delimiter to split by
-     * @return The array of split strings
-     */
-    function _splitString(string memory str, bytes1 delimiter) private pure returns (string[] memory) {
-        bytes memory strBytes = bytes(str);
-        uint256 count = 1;
-        for (uint256 i = 0; i < strBytes.length; i++) {
-            if (strBytes[i] == delimiter) {
-                count++;
-            }
-        }
-
-        string[] memory parts = new string[](count);
-        uint256 lastIndex = 0;
-        uint256 partIndex = 0;
-        for (uint256 i = 0; i < strBytes.length; i++) {
-            if (strBytes[i] == delimiter) {
-                bytes memory partBytes = strBytes.slice(lastIndex, i);
-                parts[partIndex] = string(partBytes);
-                lastIndex = i + 1;
-                partIndex++;
-            }
-        }
-        bytes memory lastPartBytes = strBytes.slice(lastIndex, strBytes.length);
-        parts[partIndex] = string(lastPartBytes);
-        return parts;
     }
 }
