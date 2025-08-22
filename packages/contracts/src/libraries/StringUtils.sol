@@ -2,6 +2,7 @@
 pragma solidity ^0.8.25;
 
 import {strings} from "solidity-stringutils/src/strings.sol";
+import {Bytes} from "@openzeppelin/contracts/utils/Bytes.sol";
 import {CommandUtils} from "./CommandUtils.sol";
 
 /**
@@ -11,7 +12,7 @@ import {CommandUtils} from "./CommandUtils.sol";
  */
 library StringUtils {
     using strings for *;
-    using CommandUtils for string;
+    using Bytes for bytes;
 
     /**
      * @dev Converts a hexadecimal string to bytes.
@@ -25,7 +26,7 @@ library StringUtils {
             hexStr.toSlice().startsWith("0x".toSlice()),
             "invalid hex prefix"
         );
-        string memory hexStrNoPrefix = hexStr.removePrefix(2);
+        string memory hexStrNoPrefix = CommandUtils.removePrefix(hexStr, 2);
         bytes memory hexBytes = bytes(hexStrNoPrefix);
         require(
             hexBytes.length != 0 && hexBytes.length % 2 == 0,
@@ -71,5 +72,36 @@ library StringUtils {
         } else {
             revert("invalid hex char");
         }
+    }
+
+    /**
+     * @notice Splits a string by a delimiter into an array of strings
+     * @param str The string to split
+     * @param delimiter The delimiter to split by
+     * @return The array of split strings
+     */
+    function splitString(string memory str, bytes1 delimiter) internal pure returns (string[] memory) {
+        bytes memory strBytes = bytes(str);
+        uint256 count = 1;
+        for (uint256 i = 0; i < strBytes.length; i++) {
+            if (strBytes[i] == delimiter) {
+                count++;
+            }
+        }
+
+        string[] memory parts = new string[](count);
+        uint256 lastIndex = 0;
+        uint256 partIndex = 0;
+        for (uint256 i = 0; i < strBytes.length; i++) {
+            if (strBytes[i] == delimiter) {
+                bytes memory partBytes = strBytes.slice(lastIndex, i);
+                parts[partIndex] = string(partBytes);
+                lastIndex = i + 1;
+                partIndex++;
+            }
+        }
+        bytes memory lastPartBytes = strBytes.slice(lastIndex, strBytes.length);
+        parts[partIndex] = string(lastPartBytes);
+        return parts;
     }
 }
