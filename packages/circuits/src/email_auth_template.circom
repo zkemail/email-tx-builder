@@ -30,7 +30,7 @@ include "@zk-email/zk-regex-circom/circuits/common/timestamp_regex.circom";
 // * max_header_bytes - max number of bytes in the email header
 // * max_body_bytes - max number of bytes in the email body
 // * max_command_bytes - max number of bytes in the command
-// * recipient_enabled - whether the email address commitment of the recipient = email address in the subject is exposed
+// * recipient_enabled - mask email address in command reveal
 // * is_qp_encoded - whether the email body is qp encoded
 template EmailAuth(n, k, max_header_bytes, max_body_bytes, max_command_bytes, recipient_enabled, is_qp_encoded) {
     signal input padded_header[max_header_bytes]; // email data (only header part)
