@@ -1,30 +1,30 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: relayer-config-email-auth
-  namespace: ar-base-sepolia
+  name: relayer-config-account-recovery
+  namespace: ar-base
   labels:
     app: relayer
 data:
-  EMAIL_ACCOUNT_RECOVERY_VERSION_ID: ""
-  CHAIN_RPC_PROVIDER: ""
-  CHAIN_RPC_EXPLORER: ""
-  CHAIN_ID: ""
-  WEB_SERVER_ADDRESS: ""
-  REGEX_JSON_DIR_PATH: ""
-  EMAIL_TEMPLATES_PATH: ""
-  CANISTER_ID: ""
-  IC_REPLICA_URL: ""
-  JSON_LOGGER: ""
-  PEM_PATH: ""
+  EMAIL_ACCOUNT_RECOVERY_VERSION_ID: "1"
+  CHAIN_RPC_PROVIDER: "https://base-mainnet.g.alchemy.com/v2/alvfYVoqtfz_sWLhV9o9AN0Z9HQyyb3O"
+  CHAIN_RPC_EXPLORER: "https://basescan.org/"
+  CHAIN_ID: "8453"
+  WEB_SERVER_ADDRESS: "0.0.0.0:4500"
+  REGEX_JSON_DIR_PATH: "./src/regex_json"
+  EMAIL_TEMPLATES_PATH: "./eml_templates"
+  CANISTER_ID: "fxmww-qiaaa-aaaaj-azu7a-cai"
+  IC_REPLICA_URL: "https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=fxmww-qiaaa-aaaaj-azu7a-cai"
+  JSON_LOGGER: "true"
+  PEM_PATH: "./.ic.pem"
   SMTP_SERVER: ""
 
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: relayer-secret-email-auth
-  namespace: ar-base-sepolia
+  name: relayer-secret-account-recovery
+  namespace: ar-base
   labels:
     app: relayer
 type: Opaque

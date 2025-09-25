@@ -1,13 +1,17 @@
 # Circuit Architecture
+
 ## Circom Circuits
+
 ### Main Circuits
 
 We provide one main circuit as follows.
 
 #### `email_auth.circom`
+
 A circuit to verify that a message in the subject is authorized by a user of an account salt, derived from an email address in the From field and a random field value called account code.
 
 It takes as input the following data:
+
 1. a padded email header `padded_header`.
 2. the bytes of the padded email header `padded_header_len`.
 3. an RSA public key `public_key`.
@@ -16,36 +20,66 @@ It takes as input the following data:
 6. a starting position of the From field in the email header `from_addr_idx`.
 7. a starting position of the Subject field in the email header `subject_idx`.
 8. a starting position of the email domain in the email address of the From field `domain_idx`.
-10. a starting position of the timestamp in the email header `timestamp_idx`.
-11. a starting position of the invitation code in the email header `code_idx`.
+9. a starting position of the timestamp in the email header `timestamp_idx`.
+10. a starting position of the invitation code in the email header `code_idx`.
 
 Its instances are as follows:
+
 1. an email domain `domain_name`.
 2. a Poseidon hash of the RSA public key `public_key_hash`.
 3. a nullifier of the email `email_nullifier`.
 4. a timestamp in the email header `timestamp`.
-5. a masked subject where characters either in the email address or in the invitation code are replaced with zero  `masked_subject_str`.
+5. a masked subject where characters either in the email address or in the invitation code are replaced with zero `masked_subject_str`.
 6. an account salt `account_salt`.
 7. a flag whether the email header contains the invitation code `is_code_exist`.
 
 ## How to Use
+
 ### Build circuits
+
 `yarn && yarn build`
 
 ### Run tests
+
 At `packages/circuits`, make a `build` directory, download the zip file from the following link, and place its unzipped directory under `build`.
 https://drive.google.com/file/d/1TChinAnHr9eV8H_OV9SVReF8Rvu6h1XH/view?usp=sharing
 
-Then, move `email_auth.zkey` in the unzipped directory `params` to `build`. 
+Then, move `email_auth.zkey` in the unzipped directory `params` to `build`.
 
 Then run the following command.
 `yarn test`
 
 ### Generate proving keys and verifier contracts for main circuits
+
 `yarn dev-setup`
 
+### BLS12-381 Local Dev Setup (PLONK) with local Powers of Tau
+
+This repository now includes a local ceremony flow for BLS12-381 using PLONK, with power 23 and detailed logs.
+
+Steps:
+
+- Build the circuit artifacts (`.r1cs`): `yarn build`
+- Run the local BLS setup: `yarn dev-setup-bls`
+
+What it does:
+
+- Starts a new Powers of Tau ceremony on `bls12-381` with power 23
+- Adds a single contribution, verifies, applies a random beacon, prepares phase2, and verifies final
+- Runs PLONK setup for `build/email_auth.r1cs`
+- Exports verification key to `build/email_auth_plonk.vkey.json`
+- Exports Solidity verifier to `build/PlonkVerifier.sol`
+
+Environment and flags:
+
+- To change power: `yarn dev-setup-bls --power 22`
+- To adjust beacon iterations: `--beacon-iterations 12`
+- To silence logs: remove `--verbose` or add `--silent`
+
 ## Specification
+
 The `email_auth.circom` makes constraints and computes the public output as follows.
+
 1. Assert that `signature` is valid for `padded_header` and `public_key`.
 2. Let `public_key_hash` be `PoseidonHash(public_key)`.
 3. Let `email_nullifier` be `PoseidonHash(PoseidonHash(signature))`.
@@ -57,17 +91,18 @@ The `email_auth.circom` makes constraints and computes the public output as foll
 9. If `is_time_exist` is 1, let `timestamp` be an integer parsing `timestamp_str` as a digit string. Otherwise, let `timestamp` be zero.
 10. Let `is_code_exist` be 1 if `padded_header` satisfies the regex of the invitation code.
 11. Let `code_str` be `padded_header[code_idx:code_idx+64]`.
-12. Let `embedded_code`  be an integer parsing `code_str` as a hex string.
+12. Let `embedded_code` be an integer parsing `code_str` as a hex string.
 13. If `is_code_exist` is 1, assert that `embedded_code` is equal to `account_code`.
 14. Let `account_salt` be `PoseidonHash(from_addr|0..0, account_code, 0)`.
 15. Let `masked_subject` be a string that removes the invitation code with the prefix `code_str` and one email address from `subject`, if they appear in `subject`.
 
 Note that the email address in the subject is assumbed not to overlap with the invitation code.
 
-
 #### `email_auth_with_body_parsing_with_qp_encoding.circom`
+
 A circuit to verify that a message in the email body, called command, is authorized by a user of an account salt, derived from an email address in the From field and a random field value called account code.
 This is basically the same as the `email_auth.circom` described above except for the following features:
+
 - Instead of `subject_idx`, it additionally takes as a private input a padded email body `padded_cleaned_body` and an index of the command in the email body `command_idx`.
 - It extracts a substring `command` between a prefix `(<div id=3D\"[^\"]*zkemail[^\"]*\"[^>]*>)"` and a suffix `</div>` from `padded_cleaned_body`.
 - It outputs `masked_command` instead of `masked_subject`, which removes the invitation code with the prefix and one email address from `command`.
