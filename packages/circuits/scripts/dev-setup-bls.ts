@@ -210,7 +210,6 @@ async function runGroth16Setup(
   const zkeyStep2 = path.join(outputDir, `${circuitName}.zkey.step2`);
   const zkeyPath = path.join(outputDir, `${circuitName}.zkey`);
   const vkeyPath = path.join(outputDir, `${circuitName}.vkey`);
-  const solidityVerifierPath = path.join(outputDir, "Groth16Verifier.sol");
 
   log(`▶ Generating Groth16 zkey for ${circuitName}`);
   if (!fs.existsSync(zkeyStep1)) {
@@ -251,7 +250,6 @@ async function runGroth16Setup(
         "beacon",
         zkeyStep2,
         zkeyPath,
-        `Final Beacon`,
         args.beacon,
         String(args.beaconIterations),
       ],
@@ -273,14 +271,7 @@ async function runGroth16Setup(
     { verboseTag: "groth16:vkey" }
   );
 
-  log("▶ Exporting Solidity verifier (Groth16)");
-  await run(
-    snarkjsBin,
-    ["zkey", "export", "solidityverifier", zkeyPath, solidityVerifierPath],
-    { verboseTag: "groth16:verifier" }
-  );
-
-  log(`✓ Groth16 setup completed: ${zkeyPath}`);
+  log(`✓ Groth16 setup completed (zkey + vkey): ${zkeyPath}`);
 }
 
 async function main() {
