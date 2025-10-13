@@ -34,6 +34,7 @@ contract EmailAccountRecoveryZKSyncTest_withdraw is StructHelper {
         assertEq(deployer.balance, 1 ether);
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertWithdrawOnlyOwner() public {
         skipIfNotZkSync();
 
@@ -52,6 +53,7 @@ contract EmailAccountRecoveryZKSyncTest_withdraw is StructHelper {
         vm.stopPrank();
     }
 
+    /// forge-config: default.allow_internal_expect_revert = true
     function testExpectRevertWithdrawInsufficientBalance() public {
         skipIfNotZkSync();
 

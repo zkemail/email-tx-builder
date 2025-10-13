@@ -1,7 +1,8 @@
 const circom_tester = require("circom_tester");
 const wasm_tester = circom_tester.wasm;
 import * as path from "path";
-const relayerUtils = require("@zk-email/relayer-utils");
+// const relayerUtils = require("@zk-email/relayer-utils");
+import * as relayerUtils from "@zk-email/relayer-utils";
 import { genEmailCircuitInput } from "../helpers/email_auth";
 import { readFileSync } from "fs";
 import { genRecipientInput } from "../helpers/recipient";
@@ -14,7 +15,7 @@ const option = {
 
 jest.setTimeout(1440000);
 describe("Email Auth with Recipient", () => {
-    let circuit;
+    let circuit: any;
     beforeAll(async () => {
         circuit = await wasm_tester(
             path.join(
@@ -34,7 +35,7 @@ describe("Email Auth with Recipient", () => {
         const emailRaw = readFileSync(emailFilePath, "utf8");
         const parsedEmail = await relayerUtils.parseEmail(emailRaw);
         console.log(parsedEmail);
-        const accountCode = await relayerUtils.genAccountCode();
+        const accountCode = await relayerUtils.generateAccountCode();
 
         const {
             subject_idx,
@@ -52,24 +53,25 @@ describe("Email Auth with Recipient", () => {
             ...emailAuthInput,
             command_email_addr_idx: recipientInput.command_email_addr_idx,
         };
+        console.log(circuitInputs);
         const witness = await circuit.calculateWitness(circuitInputs);
         await circuit.checkConstraints(witness);
 
         const domainName = "gmail.com";
         const paddedDomain = relayerUtils.padString(domainName, 255);
-        const domainFields = relayerUtils.bytes2Fields(paddedDomain);
+        const domainFields = await relayerUtils.bytesToFields(paddedDomain);
         for (let idx = 0; idx < domainFields.length; ++idx) {
             expect(BigInt(domainFields[idx])).toEqual(witness[1 + idx]);
         }
 
-        const expectedPubKeyHash = relayerUtils.publicKeyHash(
+        const expectedPubKeyHash = await relayerUtils.publicKeyHash(
             parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
         );
 
-        const expectedEmailNullifier = relayerUtils.emailNullifier(
+        const expectedEmailNullifier = await relayerUtils.emailNullifier(
             parsedEmail.signature
         );
         expect(BigInt(expectedEmailNullifier)).toEqual(
@@ -82,7 +84,7 @@ describe("Email Auth with Recipient", () => {
         const maskedCommand = "Send 0.1 ETH to ";
         const paddedMaskedCommand = relayerUtils.padString(maskedCommand, 605);
         const maskedCommandFields =
-            relayerUtils.bytes2Fields(paddedMaskedCommand);
+            await relayerUtils.bytesToFields(paddedMaskedCommand);
         for (let idx = 0; idx < maskedCommandFields.length; ++idx) {
             expect(BigInt(maskedCommandFields[idx])).toEqual(
                 witness[1 + domainFields.length + 3 + idx]
@@ -90,7 +92,7 @@ describe("Email Auth with Recipient", () => {
         }
 
         const fromAddr = "emaiwallet.alice@gmail.com";
-        const accountSalt = relayerUtils.accountSalt(fromAddr, accountCode);
+        const accountSalt = await relayerUtils.generateAccountSalt(fromAddr, accountCode);
         expect(BigInt(accountSalt)).toEqual(
             witness[1 + domainFields.length + 3 + maskedCommandFields.length]
         );
@@ -102,7 +104,7 @@ describe("Email Auth with Recipient", () => {
         );
 
         const recipientEmailAddr = "alice@gmail.com";
-        const emailAddrCommit = relayerUtils.emailAddrCommitWithSignature(
+        const emailAddrCommit = await relayerUtils.emailAddrCommitWithSignature(
             recipientEmailAddr,
             parsedEmail.signature
         );
@@ -127,7 +129,7 @@ describe("Email Auth with Recipient", () => {
         const emailRaw = readFileSync(emailFilePath, "utf8");
         const parsedEmail = await relayerUtils.parseEmail(emailRaw);
         console.log(parsedEmail);
-        const accountCode = await relayerUtils.genAccountCode();
+        const accountCode = await relayerUtils.generateAccountCode();
 
         const {
             subject_idx,
@@ -150,19 +152,19 @@ describe("Email Auth with Recipient", () => {
 
         const domainName = "gmail.com";
         const paddedDomain = relayerUtils.padString(domainName, 255);
-        const domainFields = relayerUtils.bytes2Fields(paddedDomain);
+        const domainFields = await relayerUtils.bytesToFields(paddedDomain);
         for (let idx = 0; idx < domainFields.length; ++idx) {
             expect(BigInt(domainFields[idx])).toEqual(witness[1 + idx]);
         }
 
-        const expectedPubKeyHash = relayerUtils.publicKeyHash(
+        const expectedPubKeyHash = await relayerUtils.publicKeyHash(
             parsedEmail.publicKey
         );
         expect(BigInt(expectedPubKeyHash)).toEqual(
             witness[1 + domainFields.length]
         );
 
-        const expectedEmailNullifier = relayerUtils.emailNullifier(
+        const expectedEmailNullifier = await relayerUtils.emailNullifier(
             parsedEmail.signature
         );
         expect(BigInt(expectedEmailNullifier)).toEqual(
@@ -175,7 +177,7 @@ describe("Email Auth with Recipient", () => {
         const maskedCommand = "Swap 1 ETH to DAI";
         const paddedMaskedCommand = relayerUtils.padString(maskedCommand, 605);
         const maskedCommandFields =
-            relayerUtils.bytes2Fields(paddedMaskedCommand);
+            await relayerUtils.bytesToFields(paddedMaskedCommand);
         for (let idx = 0; idx < maskedCommandFields.length; ++idx) {
             expect(BigInt(maskedCommandFields[idx])).toEqual(
                 witness[1 + domainFields.length + 3 + idx]
@@ -183,7 +185,7 @@ describe("Email Auth with Recipient", () => {
         }
 
         const fromAddr = "emaiwallet.alice@gmail.com";
-        const accountSalt = relayerUtils.accountSalt(fromAddr, accountCode);
+        const accountSalt = await relayerUtils.generateAccountSalt(fromAddr, accountCode);
         expect(BigInt(accountSalt)).toEqual(
             witness[1 + domainFields.length + 3 + maskedCommandFields.length]
         );

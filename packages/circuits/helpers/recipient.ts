@@ -1,7 +1,7 @@
 import fs from "fs";
 import { promisify } from "util";
 import path from "path";
-const relayerUtils = require("@zk-email/relayer-utils");
+import * as relayerUtils from "@zk-email/relayer-utils";
 
 export async function genRecipientInputLegacy(emailFilePath: string): Promise<{
   subject_email_addr_idx: number;
@@ -23,14 +23,14 @@ export async function genRecipientInputLegacy(emailFilePath: string): Promise<{
     console.log("No email address in subject");
     subjectEmailAddrIdx = 0;
   }
-  const rand = relayerUtils.extractRandFromSignature(parsedEmail.signature);
+  const rand = await relayerUtils.extractRandFromSignature(parsedEmail.signature);
   return {
     subject_email_addr_idx: subjectEmailAddrIdx,
     rand: rand,
   };
 }
 
-export async function genRecipientInput(command: string, signature: string): Promise<{
+export async function genRecipientInput(command: string, signature: Uint8Array): Promise<{
   command_email_addr_idx: number;
   rand: string;
 }> {
@@ -40,7 +40,7 @@ export async function genRecipientInput(command: string, signature: string): Pro
   } catch (e) {
     console.log("No email address in command");
   }
-  const rand = relayerUtils.extractRandFromSignature(signature);
+  const rand: string = await relayerUtils.extractRandFromSignature(signature);
   return {
     command_email_addr_idx: commandEmailAddrIdx,
     rand: rand,

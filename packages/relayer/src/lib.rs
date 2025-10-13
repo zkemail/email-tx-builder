@@ -27,14 +27,12 @@ use ethers::prelude::*;
 use lazy_static::lazy_static;
 use relayer_utils::{converters::*, cryptos::*, parse_email::ParsedEmail};
 use slog::{error, info, trace};
-use std::env;
 use std::path::PathBuf;
 use std::sync::{Arc, OnceLock};
 use tokio::time::Duration;
 
 pub static REGEX_JSON_DIR_PATH: OnceLock<PathBuf> = OnceLock::new();
 pub static WEB_SERVER_ADDRESS: OnceLock<String> = OnceLock::new();
-pub static PROVER_ADDRESS: OnceLock<String> = OnceLock::new();
 pub static PRIVATE_KEY: OnceLock<String> = OnceLock::new();
 pub static CHAIN_ID: OnceLock<u32> = OnceLock::new();
 pub static EMAIL_ACCOUNT_RECOVERY_VERSION_ID: OnceLock<u8> = OnceLock::new();
@@ -44,6 +42,18 @@ pub static EMAIL_TEMPLATES: OnceLock<String> = OnceLock::new();
 pub static RELAYER_EMAIL_ADDRESS: OnceLock<String> = OnceLock::new();
 pub static SMTP_SERVER: OnceLock<String> = OnceLock::new();
 pub static ERROR_EMAIL_ADDR: OnceLock<String> = OnceLock::new();
+pub static DATABASE_PATH: OnceLock<String> = OnceLock::new();
+
+pub static DKIM_CANISTER_ID: OnceLock<String> = OnceLock::new();
+pub static WALLET_CANISTER_ID: OnceLock<String> = OnceLock::new();
+pub static PEM_PATH: OnceLock<String> = OnceLock::new();
+pub static IC_REPLICA_URL: OnceLock<String> = OnceLock::new();
+
+pub static PROVER_URL: OnceLock<String> = OnceLock::new();
+pub static PROVER_API_KEY: OnceLock<String> = OnceLock::new();
+pub static PROVER_BLUEPRINT_ID: OnceLock<String> = OnceLock::new();
+pub static PROVER_ZKEY_DOWNLOAD_URL: OnceLock<String> = OnceLock::new();
+pub static PROVER_CIRCUIT_CPP_DOWNLOAD_URL: OnceLock<String> = OnceLock::new();
 
 static DB_CELL: OnceCell<Arc<Database>> = OnceCell::const_new();
 
@@ -103,11 +113,11 @@ lazy_static! {
 pub async fn run(config: RelayerConfig) -> Result<()> {
     info!(LOG, "Starting relayer");
 
-    // Initialize global configuration
+    // Initialize realyer configuration
     REGEX_JSON_DIR_PATH.set(config.regex_json_dir_path).unwrap();
     WEB_SERVER_ADDRESS.set(config.web_server_address).unwrap();
-    PROVER_ADDRESS.set(config.prover_address).unwrap();
     PRIVATE_KEY.set(config.private_key).unwrap();
+    DATABASE_PATH.set(config.db_path).unwrap();
     CHAIN_ID.set(config.chain_id).unwrap();
     CHAIN_RPC_PROVIDER.set(config.chain_rpc_provider).unwrap();
     CHAIN_RPC_EXPLORER.set(config.chain_rpc_explorer).unwrap();
@@ -120,6 +130,20 @@ pub async fn run(config: RelayerConfig) -> Result<()> {
         .unwrap();
     SMTP_SERVER.set(config.smtp_server).unwrap();
     ERROR_EMAIL_ADDR.set(config.error_email_addr).unwrap();
+    DKIM_CANISTER_ID.set(config.dkim_canister_id).unwrap();
+    WALLET_CANISTER_ID.set(config.wallet_canister_id).unwrap();
+    PEM_PATH.set(config.pem_path).unwrap();
+    IC_REPLICA_URL.set(config.ic_replica_url).unwrap();
+
+    PROVER_URL.set(config.prover_url).unwrap();
+    PROVER_API_KEY.set(config.prover_api_key).unwrap();
+    PROVER_BLUEPRINT_ID.set(config.prover_blueprint_id).unwrap();
+    PROVER_ZKEY_DOWNLOAD_URL
+        .set(config.prover_zkey_download_url)
+        .unwrap();
+    PROVER_CIRCUIT_CPP_DOWNLOAD_URL
+        .set(config.prover_circuit_cpp_download_url)
+        .unwrap();
 
     // Spawn the API server task
     let api_server_task = tokio::task::spawn(async move {

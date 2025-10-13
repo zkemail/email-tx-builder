@@ -15,7 +15,11 @@ pub struct RelayerConfig {
     pub db_path: String,
     pub web_server_address: String,
     pub regex_json_dir_path: PathBuf,
-    pub prover_address: String,
+    pub prover_url: String,
+    pub prover_api_key: String,
+    pub prover_blueprint_id: String,
+    pub prover_zkey_download_url: String,
+    pub prover_circuit_cpp_download_url: String,
     pub chain_rpc_provider: String,
     pub chain_rpc_explorer: String,
     pub chain_id: u32,
@@ -23,6 +27,10 @@ pub struct RelayerConfig {
     pub email_account_recovery_version_id: u8,
     pub email_templates: String,
     pub error_email_addr: String,
+    pub dkim_canister_id: String,
+    pub wallet_canister_id: String,
+    pub pem_path: String,
+    pub ic_replica_url: String,
 }
 
 impl RelayerConfig {
@@ -45,7 +53,11 @@ impl RelayerConfig {
             db_path: env::var(DATABASE_PATH_KEY).unwrap(),
             web_server_address: env::var(WEB_SERVER_ADDRESS_KEY).unwrap(),
             regex_json_dir_path: env::var(REGEX_JSON_DIR_PATH_KEY).unwrap().into(),
-            prover_address: env::var(PROVER_ADDRESS_KEY).unwrap(),
+            prover_url: env::var(PROVER_URL_KEY).unwrap(),
+            prover_api_key: env::var(PROVER_API_KEY_KEY).unwrap(),
+            prover_blueprint_id: env::var(PROVER_BLUEPRINT_ID_KEY).unwrap(),
+            prover_zkey_download_url: env::var(PROVER_ZKEY_DOWNLOAD_URL_KEY).unwrap(),
+            prover_circuit_cpp_download_url: env::var(PROVER_CIRCUIT_CPP_DOWNLOAD_URL_KEY).unwrap(),
             chain_rpc_provider: env::var(CHAIN_RPC_PROVIDER_KEY).unwrap(),
             chain_rpc_explorer: env::var(CHAIN_RPC_EXPLORER_KEY).unwrap(),
             chain_id: env::var(CHAIN_ID_KEY).unwrap().parse().unwrap(),
@@ -56,6 +68,10 @@ impl RelayerConfig {
                 .unwrap(),
             email_templates: env::var(EMAIL_TEMPLATES_PATH_KEY).unwrap(),
             error_email_addr: env::var(ERROR_EMAIL_ADDR_KEY).unwrap(),
+            dkim_canister_id: env::var(DKIM_CANISTER_ID_KEY).unwrap(),
+            wallet_canister_id: env::var(WALLET_CANISTER_ID_KEY).unwrap(),
+            pem_path: env::var(PEM_PATH_KEY).unwrap(),
+            ic_replica_url: env::var(IC_REPLICA_URL_KEY).unwrap(),
         }
     }
 }

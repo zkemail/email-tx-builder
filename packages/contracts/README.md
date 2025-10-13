@@ -24,8 +24,9 @@ $ yarn test
 
 Run integration tests
 
-Before running integration tests, you need to make a `packages/contracts/test/build_integration` directory, download the zip file from the following link, and place its unzipped directory under that directory.
-https://drive.google.com/file/d/1XDPFIL5YK8JzLGoTjmHLXO9zMDjSQcJH/view?usp=sharing
+Before running integration tests, you need to make a `packages/contracts/test/build_integration` directory, download wasm and zkey files from the following link, and place its unzipped directory under that directory.
+- https://storage.googleapis.com/circom-ether-email-auth/v1.1.0/email_auth.zkey 
+- https://storage.googleapis.com/circom-ether-email-auth/v1.0.2/email_auth.wasm
 
 Then, move `email_auth_with_body_parsing_with_qp_encoding.zkey` and `email_auth_with_body_parsing_with_qp_encoding.wasm` in the unzipped directory `params` to `build_integration`. 
 
@@ -229,8 +230,6 @@ yarn build
 # Install foundry-zksync, please follow this URL
 https://foundry-book.zksync.io/getting-started/installation
 
-# Install era-test-node
-https://github.com/matter-labs/era-test-node
 ```
 
 Next, you should uncomment the following lines in `foundry.toml`.
@@ -245,50 +244,6 @@ Partial comment-out files can be found the following. Please uncomment them.
 - src/utils/ZKSyncCreate2Factory.sol
 - test/helpers/DeploymentHelper.sol
 
-Run the era-test-node forking zksync sepolia
-
-```
-era_test_node fork https://sepolia.era.zksync.dev
-```
-
-At the first forge build, you need to detect the missing libraries.
-
-```
-forge build --zksync --zk-detect-missing-libraries
-```
-
-As you saw before, you need to deploy missing libraries.
-You can deploy them by the following command for example.
-
-```
-$ forge build --zksync --zk-detect-missing-libraries
-Missing libraries detected: src/libraries/CommandUtils.sol:CommandUtils, src/libraries/DecimalUtils.sol:DecimalUtils, src/libraries/StringUtils.sol:StringUtils
-```
-
-Run the following command in order to deploy each missing libraries:
-
-```
-export PRIVATE_KEY={YOUR_PRIVATE_KEY}
-export RPC_URL=http://127.0.0.1:8011
-export CHAIN_ID=260
-
-forge create src/libraries/DecimalUtils.sol:DecimalUtils --private-key $PRIVATE_KEY --rpc-url $RPC_URL --chain $CHAIN_ID --zksync
-forge create src/libraries/CommandUtils.sol:CommandUtils --private-key $PRIVATE_KEY --rpc-url $RPC_URL --chain $CHAIN_ID --zksync --libraries src/libraries/DecimalUtils.sol:DecimalUtils:{DECIMAL_UTILS_ADDRESS_YOU_DEPLOYED}
-forge create src/libraries/StringUtils.sol:StringUtils --private-key $PRIVATE_KEY --rpc-url $RPC_URL --chain $CHAIN_ID --zksync
-```
-
-After that, you can see the following lines in the foundry.toml. Please replace `{PROJECT_DIR}` and `{DEPLOYED_ADDRESS}`.
-Also, this lines are needed only for foundry-zksync, if you use normal foundry commands, please comment out. 
-
-
-```
-libraries = [
-    "{PROJECT_DIR}/packages/contracts/src/libraries/DecimalUtils.sol:DecimalUtils:{DEPLOYED_ADDRESS}", 
-    "{PROJECT_DIR}/packages/contracts/src/libraries/CommandUtils.sol:CommandUtils:{DEPLOYED_ADDRESS}"
-    "{PROJECT_DIR}/packages/contracts/src/libraries/StringUtils.sol:StringUtils:{DEPLOYED_ADDRESS}"
-]
-```
-
 About Create2, `L2ContractHelper.computeCreate2Address` should be used.
 `type(ERC1967Proxy).creationCode` doesn't work correctly in ZKsync.
 We need to use the bytecode hash intead of `type(ERC1967Proxy).creationCode`.
@@ -297,7 +252,7 @@ Perhaps that is a different value in each compiler version and library addresses
 Run the following commands, you'll get the bytecode hash.
 
 ```
-forge test --match-test "testComputeCreate2Address" --no-match-contract ".*Script.*" --system-mode=true --zksync --gas-limit 1000000000 --chain 300 -vvv --fork-url http://127.0.0.1:8011
+forge test --match-test "testComputeCreate2Address" --no-match-contract ".*Script.*" --system-mode=true --zksync --gas-limit 1000000000 --chain 300 -vvv
 ```
 
 And then, you should replace `{YOUR_BYTECODE_HASH}` in the .env
@@ -351,7 +306,7 @@ libraries = [
 Run this command again, you'll get the bytecode hash.
 
 ```
-forge test --match-test "testComputeCreate2Address" --no-match-contract ".*Script.*" --system-mode=true --zksync --gas-limit 1000000000 --chain 300 -vvv --fork-url http://127.0.0.1:8011
+forge test --match-test "testComputeCreate2Address" --no-match-contract ".*Script.*" --system-mode=true --zksync --gas-limit 1000000000 --chain 300 -vvv
 ```
 
 And then, you should replace `{YOUR_BYTECODE_HASH}` in the .env

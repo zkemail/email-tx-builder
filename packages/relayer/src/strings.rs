@@ -11,7 +11,20 @@ pub const CHAIN_ID_KEY: &str = "CHAIN_ID";
 pub const EMAIL_ACCOUNT_RECOVERY_VERSION_ID_KEY: &str = "EMAIL_ACCOUNT_RECOVERY_VERSION_ID";
 pub const EMAIL_TEMPLATES_PATH_KEY: &str = "EMAIL_TEMPLATES_PATH";
 pub const REGEX_JSON_DIR_PATH_KEY: &str = "REGEX_JSON_DIR_PATH";
+
+// Prover
+pub const PROVER_URL_KEY: &str = "PROVER_URL";
+pub const PROVER_API_KEY_KEY: &str = "PROVER_API_KEY";
+pub const PROVER_BLUEPRINT_ID_KEY: &str = "PROVER_BLUEPRINT_ID";
+pub const PROVER_ZKEY_DOWNLOAD_URL_KEY: &str = "PROVER_ZKEY_DOWNLOAD_URL";
+pub const PROVER_CIRCUIT_CPP_DOWNLOAD_URL_KEY: &str = "PROVER_CIRCUIT_CPP_DOWNLOAD_URL";
 pub const ERROR_EMAIL_ADDR_KEY: &str = "ERROR_EMAIL_ADDR";
+
+// DKIM ORACLE ARGS
+pub const DKIM_CANISTER_ID_KEY: &str = "DKIM_CANISTER_ID";
+pub const WALLET_CANISTER_ID_KEY: &str = "WALLET_CANISTER_ID";
+pub const PEM_PATH_KEY: &str = "PEM_PATH";
+pub const IC_REPLICA_URL_KEY: &str = "IC_REPLICA_URL";
 
 // Log strings
 pub const JSON_LOGGER_KEY: &str = "JSON_LOGGER";
@@ -31,9 +44,3 @@ pub const INT_REGEX: &str = r"-?\d+";
 pub const ETH_ADDR_REGEX: &str = r"0x[a-fA-F0-9]{40}";
 pub const DECIMALS_REGEX: &str = r"\d+\.\d+";
 pub const SHA_PRECOMPUTE_SELECTOR: &str = r#"(<(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)? (=\r\n)?i(=\r\n)?d(=\r\n)?=3D(=\r\n)?\"(=\r\n)?[^\"]*(=\r\n)?z(=\r\n)?k(=\r\n)?e(=\r\n)?m(=\r\n)?a(=\r\n)?i(=\r\n)?l(=\r\n)?[^\"]*(=\r\n)?\"(=\r\n)?[^>]*(=\r\n)?>(=\r\n)?)(=\r\n)?([^<>\/]+)(<(=\r\n)?\/(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)?>(=\r\n)?)"#;
-
-// DKIM ORACLE ARGS
-pub const DKIM_CANISTER_ID_KEY: &str = "DKIM_CANISTER_ID";
-pub const WALLET_CANISTER_ID_KEY: &str = "WALLET_CANISTER_ID";
-pub const PEM_PATH_KEY: &str = "PEM_PATH";
-pub const IC_REPLICA_URL_KEY: &str = "IC_REPLICA_URL";

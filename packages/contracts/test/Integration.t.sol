@@ -43,7 +43,7 @@ contract IntegrationTest is Test {
     uint256 setTimeDelay = 3 days;
 
     function setUp() public {
-        vm.createSelectFork("https://mainnet.base.org");
+        vm.createSelectFork("https://mainnet.base.org", 22739283);
 
         // vm.warp(startTimestamp);
 
@@ -101,11 +101,6 @@ contract IntegrationTest is Test {
         console.log("emailAuthImpl");
         console.logAddress(address(emailAuthImpl));
 
-        // Create zkSync Factory
-        ZKSyncCreate2Factory factoryImpl = new ZKSyncCreate2Factory();
-        console.log("factoryImpl");
-        console.logAddress(address(factoryImpl));
-
         // Create RecoveryController as EmailAccountRecovery implementation
         RecoveryController recoveryControllerImpl = new RecoveryController();
         ERC1967Proxy recoveryControllerProxy = new ERC1967Proxy(
@@ -156,7 +151,7 @@ contract IntegrationTest is Test {
         console.log("SimpleWallet is at ", address(simpleWallet));
         assertEq(
             address(simpleWallet),
-            0xa3A6f0FDd72Ae9936C44cE36151CB4DB3E9949d1
+            0x46080822b1906e932858BB9580A90610b2028e9b
         );
         address simpleWalletOwner = simpleWallet.owner();
 
@@ -191,7 +186,7 @@ contract IntegrationTest is Test {
         emailProof.publicKeyHash = bytes32(vm.parseUint(pubSignals[9]));
         emailProof.timestamp = vm.parseUint(pubSignals[11]);
         emailProof
-            .maskedCommand = "Accept guardian request for 0xa3A6f0FDd72Ae9936C44cE36151CB4DB3E9949d1";
+            .maskedCommand = "Accept guardian request for 0x46080822b1906e932858BB9580A90610b2028e9b";
         emailProof.emailNullifier = bytes32(vm.parseUint(pubSignals[10]));
         emailProof.accountSalt = bytes32(vm.parseUint(pubSignals[32]));
         accountSalt = emailProof.accountSalt;
@@ -270,7 +265,7 @@ contract IntegrationTest is Test {
         emailProof.publicKeyHash = bytes32(vm.parseUint(pubSignals[9]));
         emailProof.timestamp = vm.parseUint(pubSignals[11]);
         emailProof
-            .maskedCommand = "Set the new signer of 0xa3A6f0FDd72Ae9936C44cE36151CB4DB3E9949d1 to 0xa0Ee7A142d267C1f36714E4a8F75612F20a79720";
+            .maskedCommand = "Set the new signer of 0x46080822b1906e932858BB9580A90610b2028e9b to 0xa0Ee7A142d267C1f36714E4a8F75612F20a79720";
         emailProof.emailNullifier = bytes32(vm.parseUint(pubSignals[10]));
         emailProof.accountSalt = bytes32(vm.parseUint(pubSignals[32]));
         require(

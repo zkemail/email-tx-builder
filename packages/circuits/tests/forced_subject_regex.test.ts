@@ -1,12 +1,13 @@
 const circom_tester = require("circom_tester");
 const wasm_tester = circom_tester.wasm;
 import * as path from "path";
-const relayerUtils = require("@zk-email/relayer-utils");
+// const relayerUtils = require("@zk-email/relayer-utils");
+import * as relayerUtils from "@zk-email/relayer-utils";
 
 // const grumpkin = require("circom-grumpkin");
 jest.setTimeout(120000);
 describe("Forced Subject Regex", () => {
-    let circuit;
+    let circuit: any;
     beforeAll(async () => {
         const option = {
             include: path.join(__dirname, "../../../node_modules"),
