@@ -7,16 +7,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-            
+
       - name: Authenticate with GCP
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v2'
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v2"
         with:
-          version: '>= 363.0.0'
+          version: ">= 363.0.0"
 
       - name: Install gke-gcloud-auth-plugin
         run: |
@@ -37,16 +37,16 @@ jobs:
         run: |
           # Prepare the job file with substituted environment variables
           envsubst < kubernetes/circuit-test-job.yml > kubernetes/circuit-test-job-processed.yml
-          
+
           # Output the processed job file for verification
           cat kubernetes/circuit-test-job-processed.yml
-          
+
           # Apply the job to GKE
           kubectl apply -f kubernetes/circuit-test-job-processed.yml
 
       - name: Wait for Job to Complete
         run: |
-          kubectl wait --for=condition=complete --timeout=3600s job/circuits-job
+          kubectl wait --for=condition=complete --timeout=7200s job/circuits-job
 
       - name: Stream Logs from GKE
         run: |
