@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: circuits-job
+  name: circuits-test-job
 spec:
   ttlSecondsAfterFinished: 60 # Delete automatically 1 minute after completion
   template:
@@ -9,7 +9,7 @@ spec:
       nodeSelector:
         cloud.google.com/machine-family: c3
       containers:
-        - name: circuits-runner
+        - name: circuits-test-runner
           image: wshino/circuits-runner:test5
           imagePullPolicy: Always # Always pull the latest image
           env:
