@@ -9,7 +9,7 @@ import { genRecipientInput } from "../helpers/recipient";
 const option = {
   include: path.join(__dirname, "../../../node_modules"),
   output: path.join(__dirname, "../build"),
-  recompile: false,
+  recompile: true,
 };
 
 jest.setTimeout(1440000);
