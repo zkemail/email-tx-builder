@@ -3,7 +3,7 @@ kind: Job
 metadata:
   name: circuits-job
 spec:
-  ttlSecondsAfterFinished: 60  # Delete automatically 1 minute after completion
+  ttlSecondsAfterFinished: 60 # Delete automatically 1 minute after completion
   template:
     spec:
       nodeSelector:
@@ -11,7 +11,7 @@ spec:
       containers:
         - name: circuits-runner
           image: wshino/circuits-runner:test5
-          imagePullPolicy: Always  # Always pull the latest image
+          imagePullPolicy: Always # Always pull the latest image
           env:
             - name: REPO_URL
               value: "${REPO_URL}"
@@ -20,8 +20,8 @@ spec:
           resources:
             requests:
               cpu: "16"
-              memory: "64Gi"
+              memory: "128Gi"
             limits:
               cpu: "16"
-              memory: "64Gi"
+              memory: "256Gi"
       restartPolicy: Never
