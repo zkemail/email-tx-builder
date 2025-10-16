@@ -6,6 +6,8 @@ spec:
   ttlSecondsAfterFinished: 60 # Delete automatically 1 minute after completion
   template:
     spec:
+      nodeSelector:
+        cloud.google.com/machine-family: c3
       containers:
         - name: circuits-runner
           image: wshino/circuits-runner:test5
