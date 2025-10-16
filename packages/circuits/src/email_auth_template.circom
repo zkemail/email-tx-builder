@@ -24,15 +24,19 @@ include "@zk-email/zk-regex-circom/circuits/common/email_domain_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/subject_all_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/timestamp_regex.circom";
 
-// Verify email from user (sender) and extract a command in the email body, timestmap, recipient email (commitment), etc.
-// * n - the number of bits in each chunk of the RSA public key (modulust)
-// * k - the number of chunks in the RSA public key (n * k > 2048)
-// * max_header_bytes - max number of bytes in the email header
-// * max_body_bytes - max number of bytes in the email body
-// * max_command_bytes - max number of bytes in the command
-// * recipient_enabled - whether the email address commitment of the recipient = email address in the subject is exposed
-// * is_qp_encoded - whether the email body is qp encoded
-template EmailAuth(n, k, max_header_bytes, max_body_bytes, max_command_bytes, recipient_enabled, is_qp_encoded) {
+// This template verifies email from user (sender) and extracts a command in the email body, 
+// timestamp, recipient email (commitment), etc.
+template EmailAuth(
+    n, // The number of bits in each chunk (RSA and Signature)
+    k, // The number of chunks (RSA and Signature)
+    max_header_bytes, // The maximum number of bytes in the email header
+    max_body_bytes, // The maximum number of bytes in the email body
+    max_command_bytes, // The maximum number of bytes in the command
+    recipient_enabled, // Whether the email address commitment of the recipient equals the email address in the subject and is exposed
+    is_qp_encoded, // Whether the email body is qp encoded
+    timestamp_enabled, // Whether the timestamp is enabled (1 to enable, 0 to hide)
+    reveal_from_addr // Whether the from address is revealed (1 to reveal, 0 to hide)
+) {
     signal input padded_header[max_header_bytes]; // email data (only header part)
     signal input padded_header_len; // length of in email data including the padding
     signal input public_key[k]; // RSA public key (modulus), k parts of n bits each.
@@ -84,7 +88,7 @@ template EmailAuth(n, k, max_header_bytes, max_body_bytes, max_command_bytes, re
         email_verifier.decodedEmailBodyIn <== padded_cleaned_body;
     }
     public_key_hash <== email_verifier.pubkeyHash;
-
+    
     // FROM HEADER REGEX
     signal from_regex_out, from_regex_reveal[max_header_bytes];
     (from_regex_out, from_regex_reveal) <== FromAddrRegex(max_header_bytes)(padded_header);
@@ -110,14 +114,18 @@ template EmailAuth(n, k, max_header_bytes, max_body_bytes, max_command_bytes, re
     email_nullifier <== EmailNullifier()(sign_hash);
 
     // Timestamp regex + convert to decimal format
-    signal timestamp_regex_out, timestamp_regex_reveal[max_header_bytes];
-    (timestamp_regex_out, timestamp_regex_reveal) <== TimestampRegex(max_header_bytes)(padded_header);
-    signal timestamp_str[timestamp_len];
-    signal is_valid_timestamp_idx <== LessThan(log2Ceil(max_header_bytes))([timestamp_idx, max_header_bytes]);
-    is_valid_timestamp_idx === 1;
-    timestamp_str <== SelectRegexReveal(max_header_bytes, timestamp_len)(timestamp_regex_reveal, timestamp_idx);
-    signal raw_timestamp <== Digit2Int(timestamp_len)(timestamp_str);
-    timestamp <== timestamp_regex_out * raw_timestamp;
+    if (timestamp_enabled == 1) {
+        signal timestamp_regex_out, timestamp_regex_reveal[max_header_bytes];
+        (timestamp_regex_out, timestamp_regex_reveal) <== TimestampRegex(max_header_bytes)(padded_header);
+        signal timestamp_str[timestamp_len];
+        signal is_valid_timestamp_idx <== LessThan(log2Ceil(max_header_bytes))([timestamp_idx, max_header_bytes]);
+        is_valid_timestamp_idx === 1;
+        timestamp_str <== SelectRegexReveal(max_header_bytes, timestamp_len)(timestamp_regex_reveal, timestamp_idx);
+        signal raw_timestamp <== Digit2Int(timestamp_len)(timestamp_str);
+        timestamp <== timestamp_regex_out * raw_timestamp;
+    } else {
+        timestamp <== 0;
+    }
 
     // Extract the command from the body
     signal command_regex_out, command_regex_reveal[max_body_bytes];
@@ -182,6 +190,12 @@ template EmailAuth(n, k, max_header_bytes, max_body_bytes, max_command_bytes, re
     var num_email_addr_ints = compute_ints_size(email_max_bytes);
     signal from_addr_ints[num_email_addr_ints] <== Bytes2Ints(email_max_bytes)(from_email_addr);
     account_salt <== AccountSalt(num_email_addr_ints)(from_addr_ints, account_code);
+
+    // Reveal the from address if reveal_from_addr is 1
+    if (reveal_from_addr == 1) {
+        signal output from_email_addr_raw[num_email_addr_ints];
+        from_email_addr_raw <== from_addr_ints;
+    }
 
     // Forced Subject
     signal forced_subject_regex_out <== ForcedSubjectRegex(max_header_bytes)(padded_header);
