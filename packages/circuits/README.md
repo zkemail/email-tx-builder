@@ -72,6 +72,14 @@ yarn build:list
 # Generate for specific circuit(s)
 NODE_OPTIONS=--max_old_space_size=16384 npx ts-node scripts/dev-setup.ts --output ./build --circuit email_auth_with_sender
 
+# Optional: provide your own randomness and contributor name
+NODE_OPTIONS=--max_old_space_size=16384 npx ts-node scripts/dev-setup.ts \
+  --output ./build \
+  --circuit email_auth_with_sender \
+  --name "Alice" \
+  --entropy deadbeefcafebabe \
+  --beacon 0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f
+
 # Legacy mode still supported via --legacy (applies legacy ptau)
 NODE_OPTIONS=--max_old_space_size=16384 npx ts-node scripts/dev-setup.ts --output ./build --legacy --circuit email_auth_legacy
 ````

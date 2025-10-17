@@ -14,6 +14,7 @@ import https from "https";
 import fs from "fs";
 import path from "path";
 import { program } from "commander";
+import crypto from "crypto";
 
 program
   .requiredOption(
@@ -22,6 +23,9 @@ program
   )
   .option("--silent", "No console logs")
   .option("--legacy", "Use a legacy circuit")
+  .option("--entropy <hex>", "Entropy for contribution (hex or string)")
+  .option("--beacon <hex>", "Beacon for finalization (hex string)")
+  .option("--name <string>", "Contributor name for ceremony")
   .option(
     "-c, --circuit <names>",
     "comma-separated circuit base names to generate keys for (without .circom)"
@@ -37,8 +41,23 @@ function log(...message: any) {
 }
 
 let { ZKEY_ENTROPY, ZKEY_BEACON } = process.env;
+if (args.entropy) {
+  ZKEY_ENTROPY = String(args.entropy);
+}
 if (ZKEY_ENTROPY == null) {
   ZKEY_ENTROPY = "dev";
+}
+function deriveBeaconHex(input: string): string {
+  let raw = input.trim();
+  if (raw.startsWith("0x")) raw = raw.slice(2);
+  if (/^[0-9a-fA-F]+$/.test(raw)) {
+    return (raw.length % 2 === 0 ? raw : "0" + raw).toLowerCase();
+  }
+  return crypto.createHash("sha256").update(raw, "utf8").digest("hex");
+}
+
+if (args.beacon) {
+  ZKEY_BEACON = deriveBeaconHex(String(args.beacon));
 }
 if (ZKEY_BEACON == null) {
   ZKEY_BEACON =
@@ -120,7 +139,7 @@ async function generateKeys(
   await zKey.contribute(
     zKeyPath + ".step1",
     zKeyPath + ".step2",
-    "Contributer 1",
+    args.name ? String(args.name) : "Contributor 1",
     ZKEY_ENTROPY,
     console
   );
