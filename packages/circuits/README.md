@@ -23,17 +23,15 @@ The circuit has the following blueprint ID and download URLs for the proving key
 It takes as input the following data:
 
 1. a padded email header `padded_header`.
-   It takes as input the following data:
-1. a padded email header `padded_header`.
-1. the bytes of the padded email header `padded_header_len`.
-1. an RSA public key `public_key`.
-1. an RSA signature `signature`.
-1. the sender's account code `account_code`.
-1. a starting position of the From field in the email header `from_addr_idx`.
-1. a starting position of the Subject field in the email header `subject_idx`.
-1. a starting position of the email domain in the email address of the From field `domain_idx`.
-1. a starting position of the timestamp in the email header `timestamp_idx`.
-1. a starting position of the invitation code in the email header `code_idx`.
+2. the bytes of the padded email header `padded_header_len`.
+3. an RSA public key `public_key`.
+4. an RSA signature `signature`.
+5. the sender's account code `account_code`.
+6. a starting position of the From field in the email header `from_addr_idx`.
+7. a starting position of the Subject field in the email header `subject_idx`.
+8. a starting position of the email domain in the email address of the From field `domain_idx`.
+9. a starting position of the timestamp in the email header `timestamp_idx`.
+10. a starting position of the invitation code in the email header `code_idx`.
 
 Its instances are as follows:
 
@@ -51,7 +49,7 @@ Its instances are as follows:
 
 Run any of the following from `packages/circuits`:
 
-```bash
+````bash
 # Build all top-level circuits in src/*.circom (excluding *\_template.circom)
 yarn build:all
 
@@ -76,7 +74,7 @@ NODE_OPTIONS=--max_old_space_size=16384 npx ts-node scripts/dev-setup.ts --outpu
 
 # Legacy mode still supported via --legacy (applies legacy ptau)
 NODE_OPTIONS=--max_old_space_size=16384 npx ts-node scripts/dev-setup.ts --output ./build --legacy --circuit email_auth_legacy
-```
+````
 
 ### Run tests
 
