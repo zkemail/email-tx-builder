@@ -28,7 +28,8 @@ export class SafeNotificationService {
     private async initializeSafeApiKits() {
         for (const chainId in SUPPORTED_CHAINS) {
             this.safeApiKits[chainId] = new SafeApiKit({
-                chainId: BigInt(chainId)
+                chainId: BigInt(chainId),
+                apiKey: process.env.SAFE_API_KEY
             });
         }
     }
