@@ -15,9 +15,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.4.0",
-    "@safe-global/api-kit": "^2.5.11",
-    "@safe-global/safe-core-sdk": "^3.3.5",
-    "@safe-global/safe-core-sdk-types": "^5.1.0",
+    "@safe-global/api-kit": "^4.0.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/nodemailer": "^6.4.17",
