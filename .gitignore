@@ -9,6 +9,7 @@ typechain-types
 
 # Circuits
 packages/circuits/build
+build/
 packages/circuits/inputs
 packages/circuits/*.ptau
 *.r1cs
