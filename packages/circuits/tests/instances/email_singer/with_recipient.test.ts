@@ -2,13 +2,23 @@ const circom_tester = require("circom_tester");
 const wasm_tester = circom_tester.wasm;
 import * as path from "path";
 const relayerUtils = require("@zk-email/relayer-utils");
-import { genEmailCircuitInput } from "../helpers/email_auth";
+import { genEmailCircuitInput } from "../../../helpers/email_auth";
 import { readFileSync } from "fs";
-import { genRecipientInput } from "../helpers/recipient";
+import { genRecipientInput } from "../../../helpers/recipient";
+
+const circuitsRoot = path.resolve(__dirname, "..", "..", ".."); // packages/circuits
+const repoRoot = path.resolve(circuitsRoot, "..", ".."); // repo root
+const circuitsPath = (...segments: string[]) =>
+  path.join(circuitsRoot, ...segments);
+const repoPath = (...segments: string[]) => path.join(repoRoot, ...segments);
+const emailFixture = (file: string) =>
+  circuitsPath("tests", "fixtures", "emails", file);
+const circuitFixture = (file: string) =>
+  circuitsPath("tests", "fixtures", "circuits", file);
 
 const option = {
-  include: path.join(__dirname, "../../../node_modules"),
-  output: path.join(__dirname, "../build"),
+  include: repoPath("node_modules"),
+  output: circuitsPath("build"),
   recompile: true,
 };
 
@@ -17,13 +27,13 @@ describe("Email Auth with Recipient", () => {
   let circuit;
   beforeAll(async () => {
     circuit = await wasm_tester(
-      path.join(__dirname, "./circuits/test_email_auth_with_recipient.circom"),
+      circuitFixture("email_signer_with_recipient.circom"),
       option
     );
   });
 
   it("Verify a sent email whose body has an email address with the recipient's email address commitment", async () => {
-    const emailFilePath = path.join(__dirname, "./emails/email_auth_test1.eml");
+    const emailFilePath = emailFixture("email_auth_test1.eml");
 
     const emailRaw = readFileSync(emailFilePath, "utf8");
     const parsedEmail = await relayerUtils.parseEmail(emailRaw);
@@ -34,8 +44,8 @@ describe("Email Auth with Recipient", () => {
       emailFilePath,
       accountCode,
       {
-        maxHeaderLength: 640,
-        maxBodyLength: 768,
+        maxHeaderLength: 1024,
+        maxBodyLength: 1024,
         ignoreBodyHashCheck: false,
         shaPrecomputeSelector:
           '(<(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)? (=\r\n)?i(=\r\n)?d(=\r\n)?=3D(=\r\n)?"(=\r\n)?[^"]*(=\r\n)?z(=\r\n)?k(=\r\n)?e(=\r\n)?m(=\r\n)?a(=\r\n)?i(=\r\n)?l(=\r\n)?[^"]*(=\r\n)?"(=\r\n)?[^>]*(=\r\n)?>(=\r\n)?)(=\r\n)?([^<>/]+)(<(=\r\n)?/(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)?>(=\r\n)?)',
@@ -114,7 +124,7 @@ describe("Email Auth with Recipient", () => {
   });
 
   it("Verify a sent email whose body has no email address with the recipient's email address commitment", async () => {
-    const emailFilePath = path.join(__dirname, "./emails/email_auth_test2.eml");
+    const emailFilePath = emailFixture("email_auth_test2.eml");
 
     const emailRaw = readFileSync(emailFilePath, "utf8");
     const parsedEmail = await relayerUtils.parseEmail(emailRaw);
@@ -125,8 +135,8 @@ describe("Email Auth with Recipient", () => {
       emailFilePath,
       accountCode,
       {
-        maxHeaderLength: 640,
-        maxBodyLength: 768,
+        maxHeaderLength: 1024,
+        maxBodyLength: 1024,
         ignoreBodyHashCheck: false,
         shaPrecomputeSelector:
           '(<(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)? (=\r\n)?i(=\r\n)?d(=\r\n)?=3D(=\r\n)?"(=\r\n)?[^"]*(=\r\n)?z(=\r\n)?k(=\r\n)?e(=\r\n)?m(=\r\n)?a(=\r\n)?i(=\r\n)?l(=\r\n)?[^"]*(=\r\n)?"(=\r\n)?[^>]*(=\r\n)?>(=\r\n)?)(=\r\n)?([^<>/]+)(<(=\r\n)?/(=\r\n)?d(=\r\n)?i(=\r\n)?v(=\r\n)?>(=\r\n)?)',
