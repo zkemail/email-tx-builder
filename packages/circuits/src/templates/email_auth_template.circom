@@ -6,23 +6,23 @@ include "circomlib/circuits/poseidon.circom";
 include "@zk-email/circuits/email-verifier.circom";
 include "@zk-email/circuits/utils/regex.circom";
 include "@zk-email/circuits/utils/functions.circom";
-include "./utils/constants.circom";
-include "./utils/account_salt.circom";
-include "./utils/hash_sign.circom";
-include "./utils/email_nullifier.circom";
-include "./utils/bytes2ints.circom";
-include "./utils/digit2int.circom";
-include "./utils/hex2int.circom";
-include "./utils/email_addr_commit.circom";
-include "./regexes/invitation_code_with_prefix_regex.circom";
-include "./regexes/invitation_code_regex.circom";
-include "./regexes/command_regex.circom";
-include "./regexes/forced_subject_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/from_addr_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/email_addr_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/email_domain_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/subject_all_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/timestamp_regex.circom";
+include "../utils/constants.circom";
+include "../utils/account_salt.circom";
+include "../utils/hash_sign.circom";
+include "../utils/email_nullifier.circom";
+include "../utils/bytes2ints.circom";
+include "../utils/digit2int.circom";
+include "../utils/hex2int.circom";
+include "../utils/email_addr_commit.circom";
+include "../regexes/invitation_code_with_prefix_regex.circom";
+include "../regexes/invitation_code_regex.circom";
+include "../regexes/command_regex.circom";
+include "../regexes/forced_subject_regex.circom";
 
 // This template verifies email from user (sender) and extracts a command in the email body, 
 // timestamp, recipient email (commitment), etc.
@@ -35,7 +35,8 @@ template EmailAuth(
     recipient_enabled, // Whether the email address commitment of the recipient equals the email address in the subject and is exposed
     is_qp_encoded, // Whether the email body is qp encoded
     timestamp_enabled, // Whether the timestamp is enabled (1 to enable, 0 to hide)
-    reveal_from_addr // Whether the from address is revealed (1 to reveal, 0 to hide)
+    reveal_from_addr, // Whether the from address is revealed (1 to reveal, 0 to hide)
+    reveal_to_addr // Whether the to address is revealed (1 to reveal, 0 to hide)
 ) {
     signal input padded_header[max_header_bytes]; // email data (only header part)
     signal input padded_header_len; // length of in email data including the padding
