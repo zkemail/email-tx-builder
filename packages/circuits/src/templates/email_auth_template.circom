@@ -7,6 +7,7 @@ include "@zk-email/circuits/email-verifier.circom";
 include "@zk-email/circuits/utils/regex.circom";
 include "@zk-email/circuits/utils/functions.circom";
 include "@zk-email/zk-regex-circom/circuits/common/from_addr_regex.circom";
+include "@zk-email/zk-regex-circom/circuits/common/to_addr_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/email_addr_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/email_domain_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/subject_all_regex.circom";
@@ -196,6 +197,21 @@ template EmailAuth(
     if (reveal_from_addr == 1) {
         signal output from_email_addr_raw[num_email_addr_ints];
         from_email_addr_raw <== from_addr_ints;
+    }
+
+    // Reveal the to address if reveal_to_addr is 1
+    if (reveal_to_addr == 1) {
+        signal input to_addr_idx; // index of to email in the header
+        signal output to_email_addr[num_email_addr_ints]; // extracted to email address
+
+        signal to_regex_out, to_regex_reveal[max_header_bytes];
+        (to_regex_out, to_regex_reveal) <== ToAddrRegex(max_header_bytes)(padded_header);
+        to_regex_out === 1;
+        signal is_valid_to_addr_idx <== LessThan(log2Ceil(max_header_bytes))([to_addr_idx, max_header_bytes]);
+        is_valid_to_addr_idx === 1;
+        signal to_email_addr_bytes[email_max_bytes];
+        to_email_addr_bytes <== SelectRegexReveal(max_header_bytes, email_max_bytes)(to_regex_reveal, to_addr_idx);
+        to_email_addr <== Bytes2Ints(email_max_bytes)(to_email_addr_bytes);
     }
 
     // Forced Subject

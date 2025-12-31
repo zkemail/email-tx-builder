@@ -10,6 +10,7 @@ export async function genEmailCircuitInput(
     maxHeaderLength?: number;
     maxBodyLength?: number;
     ignoreBodyHashCheck?: boolean;
+    revealToAddr?: boolean;
   }
 ): Promise<{
   padded_header: string[];
@@ -18,6 +19,7 @@ export async function genEmailCircuitInput(
   padded_header_len: string;
   account_code: string;
   from_addr_idx: number;
+  to_addr_idx: number;
   subject_idx: number;
   domain_idx: number;
   timestamp_idx: number;
