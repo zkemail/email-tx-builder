@@ -16,7 +16,7 @@ const emailFixture = (file: string) =>
 const option = {
   include: repoPath("node_modules"),
   output: circuitsPath("build"),
-  recompile: false,
+  recompile: true,
 };
 const shaPrecomputeSelector = '(<div id=3D\"[^\"]*zkemail[^\"]*\"[^>]*>)';
 

@@ -13,5 +13,5 @@ component main = EmailAuth(
     0,    // timestamp_enabled
     0,    // reveal_from_addr
     0,    // reveal_to_addr
-    0,    // reveal_subject 
+    0     // reveal_subject 
 );
