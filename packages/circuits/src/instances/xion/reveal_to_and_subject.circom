@@ -12,5 +12,6 @@ component main = EmailAuth(
     1,    // is_qp_encoded
     0,    // timestamp_enabled
     0,    // reveal_from_addr
-    1     // reveal_to_addr
+    1,    // reveal_to_addr
+    1     // reveal_subject 
 );

@@ -11,6 +11,7 @@ export async function genEmailCircuitInput(
     maxBodyLength?: number;
     ignoreBodyHashCheck?: boolean;
     revealToAddr?: boolean;
+    revealSubject?: boolean;
   }
 ): Promise<{
   padded_header: string[];
