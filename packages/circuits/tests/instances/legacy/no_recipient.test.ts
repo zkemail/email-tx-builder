@@ -46,6 +46,7 @@ describe("Email Auth Legacy", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     console.log(circuitInputsRelevant);
     const witness = await circuit.calculateWitness(circuitInputsRelevant);
@@ -109,6 +110,7 @@ describe("Email Auth Legacy", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     const witness = await circuit.calculateWitness(circuitInputsRelevant);
     await circuit.checkConstraints(witness);
@@ -171,6 +173,7 @@ describe("Email Auth Legacy", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     const witness = await circuit.calculateWitness(circuitInputsRelevant);
     await circuit.checkConstraints(witness);
@@ -233,6 +236,7 @@ describe("Email Auth Legacy", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     const witness = await circuit.calculateWitness(circuitInputsRelevant);
     await circuit.checkConstraints(witness);
@@ -296,6 +300,7 @@ describe("Email Auth Legacy", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     const witness = await circuit.calculateWitness(circuitInputsRelevant);
     await circuit.checkConstraints(witness);
@@ -358,6 +363,7 @@ describe("Email Auth Legacy", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     const witness = await circuit.calculateWitness(circuitInputsRelevant);
     await circuit.checkConstraints(witness);
@@ -419,6 +425,7 @@ describe("Email Auth Legacy", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     circuitInputsRelevant.from_addr_idx = 1024;
     async function failFn() {
@@ -443,6 +450,7 @@ describe("Email Auth Legacy", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     circuitInputsRelevant.domain_idx = 256;
     async function failFn() {
@@ -467,6 +475,7 @@ describe("Email Auth Legacy", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     circuitInputsRelevant.subject_idx = 1024;
     async function failFn() {
@@ -491,6 +500,7 @@ describe("Email Auth Legacy", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     circuitInputsRelevant.timestamp_idx = 1024;
     async function failFn() {
@@ -515,6 +525,7 @@ describe("Email Auth Legacy", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     circuitInputsRelevant.code_idx = 1024;
     async function failFn() {
@@ -539,6 +550,7 @@ describe("Email Auth Legacy", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     circuitInputsRelevant.code_idx = 1024 * 4;
     async function failFn() {
@@ -563,6 +575,7 @@ describe("Email Auth Legacy", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     circuitInputsRelevant.from_addr_idx = circuitInputsRelevant.subject_idx;
     async function failFn() {
@@ -587,6 +600,7 @@ describe("Email Auth Legacy", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     async function failFn() {
       const witness = await circuit.calculateWitness(circuitInputsRelevant);
