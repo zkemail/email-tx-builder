@@ -46,6 +46,7 @@ describe("Email Auth Legacy with Recipient", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     const recipientInput = await genRecipientInputLegacy(emailFilePath);
     const circuitInputs = {
@@ -124,6 +125,7 @@ describe("Email Auth Legacy with Recipient", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     const recipientInput = await genRecipientInputLegacy(emailFilePath);
     const circuitInputs = {
@@ -202,6 +204,7 @@ describe("Email Auth Legacy with Recipient", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     const recipientInput = await genRecipientInputLegacy(emailFilePath);
     const circuitInputs = {
@@ -281,6 +284,7 @@ describe("Email Auth Legacy with Recipient", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     const recipientInput = await genRecipientInputLegacy(emailFilePath);
     const circuitInputs = {
@@ -357,6 +361,7 @@ describe("Email Auth Legacy with Recipient", () => {
     } = await genEmailCircuitInput(emailFilePath, accountCode, {
       maxHeaderLength: 1024,
       ignoreBodyHashCheck: true,
+      revealSubject: true,
     });
     const recipientInput = await genRecipientInputLegacy(emailFilePath);
     const circuitInputs = {

@@ -7,6 +7,7 @@ include "@zk-email/circuits/email-verifier.circom";
 include "@zk-email/circuits/utils/regex.circom";
 include "@zk-email/circuits/utils/functions.circom";
 include "@zk-email/zk-regex-circom/circuits/common/from_addr_regex.circom";
+include "@zk-email/zk-regex-circom/circuits/common/to_addr_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/email_addr_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/email_domain_regex.circom";
 include "@zk-email/zk-regex-circom/circuits/common/subject_all_regex.circom";
@@ -36,7 +37,8 @@ template EmailAuth(
     is_qp_encoded, // Whether the email body is qp encoded
     timestamp_enabled, // Whether the timestamp is enabled (1 to enable, 0 to hide)
     reveal_from_addr, // Whether the from address is revealed (1 to reveal, 0 to hide)
-    reveal_to_addr // Whether the to address is revealed (1 to reveal, 0 to hide)
+    reveal_to_addr, // Whether the to address is revealed (1 to reveal, 0 to hide)
+    reveal_subject // Whether the subject is revealed (1 to reveal, 0 to hide)
 ) {
     signal input padded_header[max_header_bytes]; // email data (only header part)
     signal input padded_header_len; // length of in email data including the padding
@@ -198,9 +200,42 @@ template EmailAuth(
         from_email_addr_raw <== from_addr_ints;
     }
 
-    // Forced Subject
-    signal forced_subject_regex_out <== ForcedSubjectRegex(max_header_bytes)(padded_header);
-    forced_subject_regex_out === 1;
+    // Reveal the to address if reveal_to_addr is 1
+    if (reveal_to_addr == 1) {
+        signal input to_addr_idx; // index of to email in the header
+        signal output to_email_addr[num_email_addr_ints]; // extracted to email address
+
+        signal to_regex_out, to_regex_reveal[max_header_bytes];
+        (to_regex_out, to_regex_reveal) <== ToAddrRegex(max_header_bytes)(padded_header);
+        to_regex_out === 1;
+        signal is_valid_to_addr_idx <== LessThan(log2Ceil(max_header_bytes))([to_addr_idx, max_header_bytes]);
+        is_valid_to_addr_idx === 1;
+        signal to_email_addr_bytes[email_max_bytes];
+        to_email_addr_bytes <== SelectRegexReveal(max_header_bytes, email_max_bytes)(to_regex_reveal, to_addr_idx);
+        to_email_addr <== Bytes2Ints(email_max_bytes)(to_email_addr_bytes);
+    }
+
+    // Reveal the subject if reveal_subject is 1
+    if (reveal_subject == 1) {
+        var max_subject_bytes = max_subject_bytes_const();
+        var num_subject_bytes_ints = compute_ints_size(max_subject_bytes);
+        signal input subject_idx; // index of the subject in the header
+        signal output subject_all[num_subject_bytes_ints];
+
+        signal subject_regex_out, subject_regex_reveal[max_header_bytes];
+        (subject_regex_out, subject_regex_reveal) <== SubjectAllRegex(max_header_bytes)(padded_header);
+        subject_regex_out === 1;
+        signal is_valid_subject_idx <== LessThan(log2Ceil(max_header_bytes))([subject_idx, max_header_bytes]);
+        is_valid_subject_idx === 1;
+        signal subject_all_bytes[max_subject_bytes];
+        subject_all_bytes <== SelectRegexReveal(max_header_bytes, max_subject_bytes)(subject_regex_reveal, subject_idx);
+        subject_all <== Bytes2Ints(max_subject_bytes)(subject_all_bytes);
+        
+    } else {
+        // Forced Subject
+        signal forced_subject_regex_out <== ForcedSubjectRegex(max_header_bytes)(padded_header);
+        forced_subject_regex_out === 1;
+    }
 
     if(recipient_enabled==1) {
         signal input command_email_addr_idx;

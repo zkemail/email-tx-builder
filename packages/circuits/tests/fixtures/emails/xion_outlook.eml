@@ -1,0 +1,361 @@
+Delivered-To: kushal@burnt.com
+Received: by 2002:a17:907:96a3:b0:b80:33:8561 with SMTP id hd35csp498707ejc;
+        Sun, 28 Dec 2025 23:25:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFAZRwg2Mie/VCwSymMMy5djB7YNU6HH0jknVGVa4HFogwN66AWkhCEx9/YQvq2P92rVa9O
+X-Received: by 2002:a05:690c:9c0a:b0:785:cecb:4b19 with SMTP id 00721157ae682-78fb3ef9409mr214385637b3.5.1766993126679;
+        Sun, 28 Dec 2025 23:25:26 -0800 (PST)
+ARC-Seal: i=2; a=rsa-sha256; t=1766993126; cv=pass;
+        d=google.com; s=arc-20240605;
+        b=KyFg5blWhqzhJlM9D00LAT32yyQhfFsibaz3FRcJ1RHFyPEjht/l3ZG69W9qEP2Ib3
+         riiC558SvoG0UeOH2k+t3A/KZy2o+oyTAsXO46LJ6IbV717w6Iej6xP2FwJZ4rWigF1s
+         iT4SP/LKrJwIH1SWnY0674+aTBoIMchkkERfpT/3an+UMR5w0tT2FvFu0B2ar8kRGEh0
+         oqR2bmpoRxv8vuzjEKU6xYRrb0tk5Qwv/DHiAfTMjvSWVZ1ZzysYMZDnmi7q154hddpB
+         fqPIR6Bp1TA2MccnURlVfj8fnmNGh9MOywKmP7CuoXWk9XuTqr/K2B5iLalwOFmD0cS1
+         ykcA==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=mime-version:msip_labels:content-language:accept-language
+         :in-reply-to:references:message-id:date:thread-index:thread-topic
+         :subject:to:from:dkim-signature;
+        bh=Q+TMrwY9IZ5zb2AQjK77qlxTqlNSqq4O3Lrw/Fydow8=;
+        fh=48mv6LuF3/ZQQTpkPqvhUhE34MxAtOc217oDIYRtLfw=;
+        b=AuWSQrdwIjQjN+rfuWutu0ZUSgn+f3tFkJhTfLKCWH7U/zdAJPhxnjxz+QKVAWCyBf
+         /X6AfK2XOJIW+HIZ6muS7R4O8JholIJs/O7RxtOEwR8gvqxBaiW3gW9PvPHdijGYsWIB
+         w8yqEvSmbSpZkGj7VX4VuZjnbqainltHgPbmbRWZctjIoFlX2K4WwWW1qTz1/Pgi854s
+         ZpkPCFZ+RZMjgA4YAqdCuTMu8M+SiJ4g6OqgUxrGEz27d5sSOYaaWYwcEjO6LcjOPSDL
+         w3fseglft9I2aJJg2NuGPByyCjpMoUj4n1jowxn3hUPG9g9zZ+8rVL1pg1vWLLQ+pB02
+         hWPQ==;
+        dara=google.com
+ARC-Authentication-Results: i=2; mx.google.com;
+       dkim=pass header.i=@outlook.com header.s=selector1 header.b=qoIIATaz;
+       arc=pass (i=1);
+       spf=pass (google.com: domain of kushal.007dum@outlook.com designates 2a01:111:f403:d405::3 as permitted sender) smtp.mailfrom=kushal.007dum@outlook.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=outlook.com
+Return-Path: <kushal.007dum@outlook.com>
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazolkn190130003.outbound.protection.outlook.com. [2a01:111:f403:d405::3])
+        by mx.google.com with ESMTPS id 00721157ae682-78fb439a37asi536398887b3.41.2025.12.28.23.25.26
+        for <kushal@burnt.com>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Dec 2025 23:25:26 -0800 (PST)
+Received-SPF: pass (google.com: domain of kushal.007dum@outlook.com designates 2a01:111:f403:d405::3 as permitted sender) client-ip=2a01:111:f403:d405::3;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@outlook.com header.s=selector1 header.b=qoIIATaz;
+       arc=pass (i=1);
+       spf=pass (google.com: domain of kushal.007dum@outlook.com designates 2a01:111:f403:d405::3 as permitted sender) smtp.mailfrom=kushal.007dum@outlook.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KKflxNX45gto7v9q2CmpXqCqv7iJ3PjkMDhGbO9KxeaZEjhj4Bv3vAwq32Zg9zvRWt3zR91Xv3oD6YS9vKiwIxAugt4aGREskhoxIkknFsxyNndbZA88XdFzPgoL4QK3+VuSu5YUcRmd4msNH7UOeIU2cLeTDB3X35X4orwCfKetSbFlMZBZMNuuk4tGSQniAb63Y+H9oVQurAD3CAFt8vREH+5LcSfs9Fp2QCRO7/s58JLX2Y4LiJc3OHoB/YwYbcUpj4UOpWyuVtkj7plKxbZPvuRuOHS180Hnr/cpEiOSwiUGo4etdfWH7ok5WnPiKQLIaLp6u2tgKKZB+TfP2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q+TMrwY9IZ5zb2AQjK77qlxTqlNSqq4O3Lrw/Fydow8=;
+ b=ax6qysqZVWTQkla9ydX19msjTcpaeq+dle8z84lGQYwrgZzaKbuJhKu3uyY+LUeu3e8mm2XnQyBR3ZOq9QLyriUR8WL3RIeHQ55eHStmj9dwPORFunPR2QemgtNS/f4TtE6J6QMjoPH5Op3ll0o/galpbiZCn87Lu9JbqYKixkGGDJbYhKZFXQSFNvP56zYPC0HAEtGSSf+u6nYQcqWvf+6Hko5rSas3FNozx3ryY2+0ziK+o9MVySRN0OAuu7/Gbgn70d7r78LEfcwFffW39w4le9nXnZAYUCZ+IbDPHl4UgMX2m3w4VolQpAidz6WM83HCG5f+kCoK7aqcr+D7Sg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q+TMrwY9IZ5zb2AQjK77qlxTqlNSqq4O3Lrw/Fydow8=;
+ b=qoIIATazG+jLs6MD32aL3v2oJbijIdHDwMgLgtKvNMVEKrEKHhcEOIw2kxlRkYAb8W1kCtwTwHyzbxHFjbGkeHYjBCUMwhnxBY+Cap9mwaKhlEiMdrD1gClFxQrVGZeJxt6khu8Pdnpr3wGAbNdzHgyb5BdLY5AIrdkXdNcEK/KHOqnpvHKFXAbgpz3C9WYi0syK8K33BZ2wSx0+UylZ1hhIJYTZ2BZSQLYGhRGxo+N0uPl2BmtFpU7cgWc9CjfSISVie/OarRPzTZcXWTx2vBKzmXDwPV4DTE/klzWxRmhNCCdPe9gnMG3JvODoExQdwl0bdGips2VS/3areiI5zA==
+Received: from TYZPR01MB3950.apcprd01.prod.exchangelabs.com
+ (2603:1096:400:38::10) by SEYPR01MB5481.apcprd01.prod.exchangelabs.com
+ (2603:1096:101:13d::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9456.14; Mon, 29 Dec
+ 2025 07:25:23 +0000
+Received: from TYZPR01MB3950.apcprd01.prod.exchangelabs.com
+ ([fe80::1e8:edd0:de07:cca5]) by TYZPR01MB3950.apcprd01.prod.exchangelabs.com
+ ([fe80::1e8:edd0:de07:cca5%4]) with mapi id 15.20.9456.013; Mon, 29 Dec 2025
+ 07:25:23 +0000
+From: Kushal Shah <kushal.007dum@outlook.com>
+To: "kushal@burnt.com" <kushal@burnt.com>
+Subject: Re: [Reply Needed] Command Confirmation Required
+ [91s_ixk_t46tng0fedtvdg]
+Thread-Topic: [Reply Needed] Command Confirmation Required
+ [91s_ixk_t46tng0fedtvdg]
+Thread-Index: AQHceJREgdrD+5s/6EK0oaQZYkrOqrU4N2rO
+Date: Mon, 29 Dec 2025 07:25:23 +0000
+Message-ID:
+ <TYZPR01MB39504AE5D60905AC5A8CC6AAB1BFA@TYZPR01MB3950.apcprd01.prod.exchangelabs.com>
+References: <91s_ixk_t46tng0fedtvdg@zk.burnt.com>
+In-Reply-To: <91s_ixk_t46tng0fedtvdg@zk.burnt.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR01MB3950:EE_|SEYPR01MB5481:EE_
+x-ms-office365-filtering-correlation-id: 55e0cf90-c1fa-4799-3927-08de46ab6e08
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|19110799012|10112599003|51005399006|8062599012|12121999013|8060799015|41001999006|31061999003|15080799012|461199028|15030799006|1602099012|13041999003|3412199025|4302099013|10035399007|440099028|40105399003|102099032|3430499032|26104999006;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?dJKudO8jGHr683shEOBLueLxdxkEthALwe0QXYdfipdPcoFy4o3Nxgo2FuJ3?=
+ =?us-ascii?Q?FcckcXv4EPEhKnr9YmBtPb15xfZR6mGiMy+pvhXIx3gr+HtjyEsWsy6v6bU+?=
+ =?us-ascii?Q?qPpWXtisnP+oFcbaVxlXda8nH0qg9uUfOao3c6ja6LH7P2se0J00qzuXpALG?=
+ =?us-ascii?Q?csWKVcpxomlBdTgCgP3d5P0jCyA2L4zT2LPcVYoB2jVygak9JPrEkf+xHjmH?=
+ =?us-ascii?Q?HD92U8iY0M0lpxnoCjvej7I/7AJRrjMzkd1J47vFqIRpQ7b89BBuBNa9eHqP?=
+ =?us-ascii?Q?wAbHnW9GPAoZfEA0ka6f06eOQlVA6VZ1v/LhYlcuejGsgzEndncQWmnNk3Lj?=
+ =?us-ascii?Q?IFO0rjYBKvTWv7dqcdQ5ndiWMPFNWNrAFSMk7vZiR7YtekJQ2mSJPV/2HbPb?=
+ =?us-ascii?Q?Q8kqp9id+Q0xz8PuFP+OyXjViIQ5MER6G9qgRdH0ESgNPXYScyq66oAFAwHO?=
+ =?us-ascii?Q?dmmT5jf3enHZzrV92WVIWxa5mTO9EQvIncrp7iiRRLDU5BApeEBhmHqgDS7E?=
+ =?us-ascii?Q?dH4IetR+POf+mSPdPgCu19iH2jjR6f7x3UJQ+MIwVuzT1rtsm4t4lZnJk/w3?=
+ =?us-ascii?Q?+/PIN61lC4vM7/pjUC6EKCKw618VzqPtvWIiedZWVg81YfPKZMY9OPBui1ta?=
+ =?us-ascii?Q?ma4ZMEPZCtx5Ja80rLM2LjrGdbAw5nq0JS+lZvy3gmoASVqB1Ck7T1fs8Q4t?=
+ =?us-ascii?Q?1S93upPe2ACIFLCu74PFTC1r2JRraCdmgAGBTXdQKjZoXeF9D1qApw+Vv5tO?=
+ =?us-ascii?Q?h6mOyHI+ykeM/jEZGOiv0lXpCBnb+xifdXwJcrdr3MigzC7kbCSoyBlkkV2a?=
+ =?us-ascii?Q?xe1OlLWR2+9ojoTid/AEgpfVRN+917/casCFhqi6pQpcZlOMUa2R9maLSMwu?=
+ =?us-ascii?Q?ZR4IaECleo59RBHTSqzBjLpERDVfzmyI96Kh3tCv569mFXCSP+pb/UVJHzBF?=
+ =?us-ascii?Q?fbD9xsuLS/Q5Ma+2NAYBFgLXM2kFTyV9VZx02OD32N0Hk29NOzR54eO6uUZW?=
+ =?us-ascii?Q?YF9k5DUrMxkeg5cOayl4NzvDAFt56F3oTizCI4eO4KTp0AvolB/sURcBUk+n?=
+ =?us-ascii?Q?tV6gOKHXlmg6Oz83xlN/nsZLIrylq+WFDPExdJR4eXILgXOt85BSwdM0+iY8?=
+ =?us-ascii?Q?l2Vz2SYH6ZTsrLdZL6kZGGEwXecbcJC8SKL03+tegw8gKJrheW09Mbo+cVmJ?=
+ =?us-ascii?Q?BifqrSlu2ynAen90PPNR57kQyfHhosVyy9ShZTmY+SOiPfMscDpCHA1J/GVq?=
+ =?us-ascii?Q?G5/ax+0dYDsIEJeSKrAm8T1Or5jdtRw1hx9Vd3n/Qhs3wewK8mNLXaE6QYvA?=
+ =?us-ascii?Q?4GCFAv7rLPNAhhEoajHHvflrKa/Z5hmehU+HSNC5S5zmbV/FGvyAQ5bOLE7B?=
+ =?us-ascii?Q?8fJ376tCzRHYyQlUxHs3fFLCuPsnNpUPmYgdCsw0JHpEzE1NbUnFuMAd6+/W?=
+ =?us-ascii?Q?2BIS9wikd8ZHK4C/4oQz5BIK1agnXiRZ?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?Ivo80v3hBSlZMvndEz9xfb3/2WIUxtF1HFtpM/VFT9hHTLsR5sL6xEfAzqbd?=
+ =?us-ascii?Q?Wy14tGZWcLQcukaHlh7UJz5UZKWoRuH5GIhPQO3NGUngQdMEBiA1cgABJRPC?=
+ =?us-ascii?Q?JJGzIhhobhd3+tsF86y/NkmUu0XKcdaT+EqZHXCYD6XgBr3lXR/LxN1pXUKu?=
+ =?us-ascii?Q?2/XXPqQvuRNnnY9w2SeqWvHdsjI/iQ+vksrbCH46EwSzoFZ8f4zuSoxVNMFA?=
+ =?us-ascii?Q?F1vpzN6/u438/UHs/ZacTfOitO/KMDNONt1KTKkWXpTUGfVx61dZ9hhRm1iz?=
+ =?us-ascii?Q?zWwowBKckZn/mQ5ioHcptf5lyfYl0OP/afg0DDdH1UIvzQKA/BXyZ1ewkSh7?=
+ =?us-ascii?Q?cPurlI0TPTcS7BxHrA71wWD7WybEGEgp5bnks+ADxdxwdzDnObe6+MlyMJn5?=
+ =?us-ascii?Q?4DQfeLi5pdCnHqosyG/84BKjMY6j2CqTaIpvT6NTe9nYf0ECvFzx94yUsEot?=
+ =?us-ascii?Q?qypEiBuEKxZH+vdI2oPgirKG6Vh3PB3BpdSBe8SeN3aYqn7dIsC75Fr3wyg9?=
+ =?us-ascii?Q?atXSI6MstkOcpR+E8kRQj/v2LgsFa9dlWvWusQjQ3Ok+So7agHcOAMOysCsl?=
+ =?us-ascii?Q?/Z034xjeZ7YPV7Tm2q8sv7OuXTS/FEQFiaY1yz/K90NmwFupHfHQ57hgwHFI?=
+ =?us-ascii?Q?AquGvBrKNrlY/NM9hr5Q9sTI4Sdtmqhehp0DxvgMMViXB9RyehwJvbELXeKt?=
+ =?us-ascii?Q?77EPtW4qnpG24vJFSmUvHOMQFq7ydBtBm35GOG4Ykze32gbJRsAHoFsmMFIT?=
+ =?us-ascii?Q?ZJYK0uKXynNtdq2NbjLy5I2dnhzdKp1djvoQiPn7gT6ud6i6NoB0gQ1geDue?=
+ =?us-ascii?Q?VoYGZLWu76/S0rJRWqPPR0sienPUG10tgFKD1o1Bi68IfHggVTgbRTWK7d0x?=
+ =?us-ascii?Q?hyJGg8R5kJYL10e6XrZeJ1ona4LPujWnH5IYMvvslioY/PKWztByrhIL9HoA?=
+ =?us-ascii?Q?n98SlujhCCfTaCYkKVWwz/5+L+KLSc/sW0ftftGU3mrRlHEc2/a5nxLzFRiw?=
+ =?us-ascii?Q?USrhlSo+dx7CBulkZUZgDIyNkU1yA2zLx2fP50znkQbjLaMCK2BfTcp6th6s?=
+ =?us-ascii?Q?BS/LZd9FN64zwsGANFM0Rm31qU7Npuyjcd0YNQvwQFP9QsbkuEd29EzUZkUD?=
+ =?us-ascii?Q?Gp2X4QEQEJUM77K3D8Ph8ZpPyijHylXiZIT8Fjp9tpVsOPx0Vjc5IXZsT455?=
+ =?us-ascii?Q?pXye4nAF7slIReGsP58YTjP1EHXpa0zlbN9AU36KkJiI+PKl3GICEeBk8G11?=
+ =?us-ascii?Q?mBeSxOBNw09D88N3qDbpSFMWE5mL9Gm7Jb0hfxg5cdcIfv3fUR/M8TD+2ymq?=
+ =?us-ascii?Q?MN9c3iLYsZVdCvgrpu0iTjUT1qIpGh6PwlD9Q2H4DR7t++8vx/hZFGYmvUvO?=
+ =?us-ascii?Q?FWFK2IGz8y+RIezszmDx3+T5k52PYVAyuRwOseIkgx2z9Yu7crgkTRBow4i5?=
+ =?us-ascii?Q?NYutA4LxFC1B0pwuN9E3ihq8Svr4TqxN?=
+Content-Type: multipart/alternative;
+	boundary="_000_TYZPR01MB39504AE5D60905AC5A8CC6AAB1BFATYZPR01MB3950apcp_"
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR01MB3950.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55e0cf90-c1fa-4799-3927-08de46ab6e08
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Dec 2025 07:25:23.2450
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR01MB5481
+
+--_000_TYZPR01MB39504AE5D60905AC5A8CC6AAB1BFATYZPR01MB3950apcp_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+confirm
+________________________________
+From: kushal@burnt.com <kushal@burnt.com>
+Sent: 29 December 2025 07:25
+To: kushal.007dum@outlook.com <kushal.007dum@outlook.com>
+Subject: [Reply Needed] Command Confirmation Required [91s_ixk_t46tng0fedtv=
+dg]
+
+Command Confirmation Required
+
+Please reply "confirm" to this email to authorize the command below.
+
+Command
+1. You are sending 100000 uxion from xion14n79ehpfwhdh4szudagd4nmx7clj57ly5=
+u0lzxs6mgf5qy55ky9smszs48 to xion1qaf2xflx5j3agtlvqk5vhjpeuhl6g45hxshwqj.
+Transaction Hash
+0f24d4c2e49ad730b39d23098e07e14a20c4763e1404578c5fc7b195a42d295a
+Important Notes
+
+  *   You can verify this hash by visiting https://parser.zk.xion.burnt.com=
+ and entering the command details.
+  *   If you don't reply within 24 hours, the command will be rejected.
+
+Command to be Signed
+CqIBCp8BChwvY29zbW9zLmJhbmsudjFiZXRhMS5Nc2dTZW5kEn8KP3hpb24xNG43OWVocGZ3aGR=
+oNHN6dWRhZ2Q0bm14N2NsajU3bHk1dTBsenhzNm1nZjVxeTU1a3k5c21zenM0OBIreGlvbjFxYW=
+YyeGZseDVqM2FndGx2cWs1dmhqcGV1aGw2ZzQ1aHhzaHdxahoPCgV1eGlvbhIGMTAwMDAwEmYKT=
+QpDCh0vYWJzdHJhY3RhY2NvdW50LnYxLk5pbFB1YktleRIiCiCs_FzcKXXbesBcb1Daz2b2Pyp7=
+5Kcf8Roa2hNAEpSxCxIECgIIARgBEhUKDgoFdXhpb24SBTYwMDAwEICHpw4aBnhpb24tMSAM Co=
+de 0a19e429c12bd391a80c7307954ca7789164d790ba23f8466c39fd209aaa0444
+Proof Reference: 91s_ixk_t46tng0fedtvdg
+
+--_000_TYZPR01MB39504AE5D60905AC5A8CC6AAB1BFATYZPR01MB3950apcp_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
+>
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);" clas=
+s=3D"elementToProof">
+confirm</div>
+<div id=3D"appendonsend"></div>
+<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
+yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> kushal@burnt.com &lt;=
+kushal@burnt.com&gt;<br>
+<b>Sent:</b> 29 December 2025 07:25<br>
+<b>To:</b> kushal.007dum@outlook.com &lt;kushal.007dum@outlook.com&gt;<br>
+<b>Subject:</b> [Reply Needed] Command Confirmation Required [91s_ixk_t46tn=
+g0fedtvdg]</font>
+<div>&nbsp;</div>
+</div>
+<style>
+<!--
+div
+	{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica=
+ Neue',Arial,sans-serif;
+	line-height:1.6;
+	color:#333;
+	max-width:700px;
+	margin:0 auto;
+	padding:20px;
+	background-color:#f8f9fa}
+.x_container
+	{background-color:#ffffff;
+	border-radius:8px;
+	box-shadow:0 2px 8px rgba(0,0,0,0.1);
+	padding:30px}
+h1
+	{color:#1a1a1a;
+	font-size:26px;
+	margin-top:0;
+	margin-bottom:20px;
+	font-weight:600}
+.x_instructions
+	{background-color:#e7f3ff;
+	border-left:4px solid #007bff;
+	padding:15px 20px;
+	margin:20px 0;
+	border-radius:4px}
+.x_instructions p
+	{margin:0;
+	color:#004085;
+	font-weight:500;
+	font-size:16px}
+.x_command-details
+	{background-color:#f8f9fa;
+	border:1px solid #dee2e6;
+	border-radius:6px;
+	padding:25px;
+	margin:20px 0}
+.x_detail-section
+	{margin-bottom:20px}
+.x_detail-label
+	{font-size:14px;
+	font-weight:600;
+	color:#666;
+	text-transform:uppercase;
+	letter-spacing:0.5px;
+	margin-bottom:8px}
+.x_detail-content
+	{font-size:17px;
+	color:#212529;
+	line-height:1.6}
+.x_hash-value
+	{font-family:'Courier New',Courier,monospace;
+	font-size:15px;
+	background-color:#ffffff;
+	border:1px solid #e0e0e0;
+	border-radius:4px;
+	padding:12px;
+	word-break:break-all;
+	color:#0066cc;
+	line-height:1.6}
+.x_notes-list
+	{margin:15px 0;
+	padding-left:30px;
+	list-style-type:disc;
+	list-style-position:outside}
+.x_notes-list li
+	{font-size:16px;
+	color:#555;
+	line-height:1.8;
+	margin-bottom:10px;
+	padding-left:5px}
+.x_command-header
+	{font-size:14px;
+	font-weight:600;
+	color:#666;
+	text-transform:uppercase;
+	letter-spacing:0.5px;
+	margin-top:30px;
+	margin-bottom:10px}
+.x_command
+	{background-color:#f5f5f5;
+	border-left:4px solid #28a745;
+	padding:15px 20px;
+	margin:0 0 20px 0;
+	font-family:'Courier New',Courier,monospace;
+	font-size:16px;
+	border-radius:4px}
+.x_footer
+	{color:#999;
+	font-size:13px;
+	border-top:1px solid #eee;
+	margin-top:30px;
+	padding-top:15px;
+	text-align:center}
+-->
+</style>
+<div>
+<div class=3D"x_container">
+<h1>Command Confirmation Required</h1>
+<div class=3D"x_instructions">
+<p>Please reply &quot;confirm&quot; to this email to authorize the command =
+below.</p>
+</div>
+<div class=3D"x_command-details">
+<div class=3D"x_detail-section">
+<div class=3D"x_detail-label">Command</div>
+<div class=3D"x_detail-content">1. You are sending 100000 uxion from xion14=
+n79ehpfwhdh4szudagd4nmx7clj57ly5u0lzxs6mgf5qy55ky9smszs48 to xion1qaf2xflx5=
+j3agtlvqk5vhjpeuhl6g45hxshwqj.</div>
+</div>
+<div class=3D"x_detail-section">
+<div class=3D"x_detail-label">Transaction Hash</div>
+<div class=3D"x_hash-value">0f24d4c2e49ad730b39d23098e07e14a20c4763e1404578=
+c5fc7b195a42d295a</div>
+</div>
+<div class=3D"x_detail-section">
+<div class=3D"x_detail-label">Important Notes</div>
+<ul class=3D"x_notes-list">
+<li>You can verify this hash by visiting https://parser.zk.xion.burnt.com a=
+nd entering the command details.</li><li>If you don't reply within 24 hours=
+, the command will be rejected.</li></ul>
+</div>
+</div>
+<div class=3D"x_command-header">Command to be Signed</div>
+<div id=3D"x_zkemail" class=3D"x_command">CqIBCp8BChwvY29zbW9zLmJhbmsudjFiZ=
+XRhMS5Nc2dTZW5kEn8KP3hpb24xNG43OWVocGZ3aGRoNHN6dWRhZ2Q0bm14N2NsajU3bHk1dTBs=
+enhzNm1nZjVxeTU1a3k5c21zenM0OBIreGlvbjFxYWYyeGZseDVqM2FndGx2cWs1dmhqcGV1aGw=
+2ZzQ1aHhzaHdxahoPCgV1eGlvbhIGMTAwMDAwEmYKTQpDCh0vYWJzdHJhY3RhY2NvdW50LnYxLk=
+5pbFB1YktleRIiCiCs_FzcKXXbesBcb1Daz2b2Pyp75Kcf8Roa2hNAEpSxCxIECgIIARgBEhUKD=
+goFdXhpb24SBTYwMDAwEICHpw4aBnhpb24tMSAM
+ Code 0a19e429c12bd391a80c7307954ca7789164d790ba23f8466c39fd209aaa0444</div=
+>
+<div class=3D"x_footer">Proof Reference: 91s_ixk_t46tng0fedtvdg </div>
+</div>
+</div>
+</body>
+</html>
+
+--_000_TYZPR01MB39504AE5D60905AC5A8CC6AAB1BFATYZPR01MB3950apcp_--

@@ -1,0 +1,144 @@
+Delivered-To: kushal@burnt.com
+Received: by 2002:a17:907:96a3:b0:b80:33:8561 with SMTP id hd35csp844541ejc;
+        Mon, 29 Dec 2025 11:00:44 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHHZi/2GvHXnX4nWp6t+1Yo+BudJRmL2cJIetCSNGFyXdNtCIye/Ngtx/Me9DLewoFb/YZ9
+X-Received: by 2002:a05:7300:ea08:b0:2b0:6a03:e69f with SMTP id 5a478bee46e88-2b06a0468c2mr17766531eec.11.1767034844434;
+        Mon, 29 Dec 2025 11:00:44 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1767034844; cv=none;
+        d=google.com; s=arc-20240605;
+        b=QAx5IAYqhIhxp+ViBArKLfQ0Wxpm5IYyGMs2PCx9gA07v0U+vJ2GOCrJ4yftHCP4fN
+         2q+6STG38/QBfxiZtIN8malMNdPA1jlRi9zeA7wQcJPTvbAguC/WI4kPCN+ddIaVBWpu
+         iOy3gDyqLwvLuMQBO3TbS7JJSTE3/97/abyUpi2qlURlSB89Grz0iyZtoWGggiU62Pzj
+         eYFluyftqGLLy8uztJuTf4o9doy8ZhQRFJodpmLbXTMfVOK3odXSsQQFupVF6vCyyPer
+         6Ci/5spAYE067joPA73vltykBhmDGhNQCJA9wdZNRv4QH/Ve+Tf9/Ue938FqSOoOzZLH
+         Cjzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=references:in-reply-to:mime-version:message-id:date:subject:from:to
+         :dkim-signature;
+        bh=wbMjMq9v4CbeWGssHzYDAf8s89/jXpq0qf5jDFryYMY=;
+        fh=rFpGvYOg3V7CqG1GRtCYVcXEFn1JVdOmNZwM50dvSHk=;
+        b=hfmND33sQZMWrqSZBz58VfMv8ha0Cb6Ua+8Q+OPyTn7L5KVpiPWKnkKTnYEyGrVI5j
+         EbkvndtHD88HcUNeNO16QRzohoDDM3yWpuB7dbgWRzviSViXRfZ76VyBYIR7lQUr2Bih
+         uG062gHFf9QOq6T8+qWvFxr2kW/1hxvhDv51R3wa9jhnYcdfIHYrzFEMp//+/CGyLebq
+         wZzHeHqghDnPeL1RohibCR+EZXtSbawfFhpG34+XCrmDr0mFkomLkD//f/C6fgYNcOwM
+         r/xzYGJMk0+JCrVtjq56aZTR6+oai1Dafn7AqjUsJHWA46MwlRSSMV5WWZSTsimYRvVO
+         sN2w==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@icloud.com header.s=1a1hai header.b=ZEcg7RET;
+       spf=pass (google.com: domain of kushshah777888@icloud.com designates 57.103.74.123 as permitted sender) smtp.mailfrom=kushshah777888@icloud.com;
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=icloud.com
+Return-Path: <kushshah777888@icloud.com>
+Received: from outbound.ms.icloud.com (p-west3-cluster2-host2-snip4-10.eps.apple.com. [57.103.74.123])
+        by mx.google.com with ESMTPS id 5a478bee46e88-2b06000fdefsi90039129eec.52.2025.12.29.11.00.44
+        for <kushal@burnt.com>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Dec 2025 11:00:44 -0800 (PST)
+Received-SPF: pass (google.com: domain of kushshah777888@icloud.com designates 57.103.74.123 as permitted sender) client-ip=57.103.74.123;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@icloud.com header.s=1a1hai header.b=ZEcg7RET;
+       spf=pass (google.com: domain of kushshah777888@icloud.com designates 57.103.74.123 as permitted sender) smtp.mailfrom=kushshah777888@icloud.com;
+       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=icloud.com
+Received: from outbound.ms.icloud.com (unknown [127.0.0.2])
+	by p00-icloudmta-asmtp-us-west-3a-100-percent-9 (Postfix) with ESMTPS id 2AEB6180098F
+	for <kushal@burnt.com>; Mon, 29 Dec 2025 19:00:43 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=wbMjMq9v4CbeWGssHzYDAf8s89/jXpq0qf5jDFryYMY=; h=To:From:Subject:Date:Message-id:Content-Type:MIME-Version:x-icloud-hme; b=ZEcg7RETQh7/OXezXj+cfszV0vKix9VIRJmmOebd5cyvuYtYZzPdDHUahTkgrDe7BP+npg9pt+lGdRUrYvwYe3iCQFLOnv6GTZvUjjXhEpxwvSK1jvmfWrFCY1htv0v2qo59Hh22P/cRuATzI1aENnMlGxFVEwcq+KrSJc76BC/KB+wOWPlsqWHcnKoCZGnsvUJlCsUC804MO+CP7N8A7LZQWIci68Mh7PBARAZ4yGFPZfzqiXpoS/9Hpr5EuSlgL+jnS16W9qH/3g5zwXJ96GoHt1jHFz6nJ8sFASkRba4B4KMWkbNEnU88tW7mlpwdpQPsEOyNbena5Kk9JsdjWQ==
+Received: from p00-mailws2-64d5b574f4-msg87 (unknown [10.52.196.11])
+	by p00-icloudmta-asmtp-us-west-3a-100-percent-9 (Postfix) with ESMTPSA id B08E1180010F
+	for <kushal@burnt.com>; Mon, 29 Dec 2025 19:00:42 +0000 (UTC)
+To: kushal@burnt.com
+From: Kushal Shah <kushshah777888@icloud.com>
+Subject: =?utf-8?B?UmU6wqBbUmVwbHkgTmVlZGVkXSBDb21tYW5kIENvbmZpcm1hdGlvbiBSZXF1?=
+ =?utf-8?B?aXJlZCBbZ3BmdGprNHB0b3FqcnQ0Ynlzc3Rsd10=?=
+Date: Mon, 29 Dec 2025 19:00:42 +0000 (GMT)
+X-Mailer: iCloud MailClient2546Build28 MailServer2502B13.7c5914c7dad3
+Message-id: <37a7c29a-4e79-450b-aa0c-f5cc17688a68@me.com>
+Content-Type: multipart/alternative; boundary=Apple-Webmail-42--1607bd86-04d4-4de2-85b5-b72c3489076f
+MIME-Version: 1.0
+In-Reply-To: <gpftjk4ptoqjrt4bysstlw@zk.burnt.com>
+References: <gpftjk4ptoqjrt4bysstlw@zk.burnt.com>
+X-Proofpoint-ORIG-GUID: buzLz2iRbZ8ukNOBhQK2-pzVngFL87Kw
+X-Authority-Info: v=2.4 cv=CtOys34D c=1 sm=1 tr=0 ts=6952cfdb cx=c_apl:c_pps
+ a=Ng/DTdlv9dYXrlarcUhKoA==:117 a=wP3pNCr1ah4A:10 a=5KLPUuaC_9wA:10
+ a=x7bEGLp0ZPQA:10 a=g3zbAIop4WAA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RDS1juabAAAA:8 a=n3GCvpHGX_cJX939W-IA:9 a=QEXdDO2ut3YA:10
+ a=Pwg1gfGbOA7OZF1b:21 a=_W_S_7VecoQA:10 a=lqcHg5cX4UMA:10
+ a=U-B3rRs39smMGsD13qCW:22
+X-Proofpoint-GUID: buzLz2iRbZ8ukNOBhQK2-pzVngFL87Kw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjI5MDE3NCBTYWx0ZWRfX0q/zxe4HX6Xp
+ F4ePCOVKCYsYMb+keqrkq1F4rgYaOeCtdxzg4EVuffwbKDQkhgQ6vHqGRhbhvpTycUd8XHFxSvG
+ xgDNKjR8mFKfPhZ9OcN0h7tQxyXu4C0V6fTCp9Pz/bMig78U5Ohw4L36OAv1XjGkrZxcDxcUc5/
+ xsKGw+FfGM8Zcyu/VOMzxu6xt7bl96a7KNRcKCLpfsO+hk+QuGlBwgnIxO2U/mnm1tBcMJsRM7j
+ sqAhNpY2iiezKQfQ/EvbG+BNuo2qix6OBBxA9sHhdSmGbujVcbkXr/CJANefK0/sdNrdAERjcGT
+ NiWBvtFNydyFSh5zqvy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-12-29_06,2025-12-29_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
+ bulkscore=0 suspectscore=0 adultscore=0 malwarescore=0 phishscore=0
+ mlxscore=0 mlxlogscore=383 clxscore=1015 classifier=spam authscore=0 adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512290174
+X-JNJ: AAAAAAABwzdIvtj39kKRb8DEZiHZvzHVWEhjMmEQ7nFYJxCx49GUYy+wl+K3ovBlkd99DRU5Qtr8N+0naB5M2IVW1f1MEDbRYipbCHMflzBexCNtq1myoBjZQ5mlMCDY8c9D45B99ctR4eHxV4JmchMVXB8P09gqqsxt19Wtjiup0tigDEIcxBeeqaWf7TwaaXkRStNnv8qVIkB8g5OLODJkPdBZC8XVNf05dZUuQQ0t+HyeisROHxBB+36QB9k2vM0SI+FUwNcK4ebUohsAuxNUTzpn0iBdmpFp62/fuj0U0G3xtLseRpIiGZ1opi2TpLMDMB+aMUOGbg3IdDXheF1V+3LLzOSDyeiMS33EZ4fCBL1r7eVG/3zcWz4N9M49H0ZWOVU7vI0xGhTh3ykwNoJFUO0XujRhaHSwKuKGUhnUfvrHbJLzh4n7XWd2c3YZI+lbdGuKJhl7ebQkK34iagqfGsozDw9KtQdOnqeW7B5KDJuom9z1jl+yYJgS1nWPof5sPRPsCSbP7OLdzERwrc6Y4mBzoHdRGFafS1f+oiJJQdkJ7x3cVEFmsI+fT944zyiHEdM9xt2dieLZMiRpG+0W9dRHiDt87p9UUielnADhDzBM0Xngs0Z3AVZNA1FsR7kohkdM1lWdZ4uO9EHc3gOrGHT8FhY9PnpyM7BdnGA=
+
+
+--Apple-Webmail-42--1607bd86-04d4-4de2-85b5-b72c3489076f
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+    charset=utf-8;
+    format=flowed
+
+confirm On 30 Dec 2025, at 0:30, kushal@burnt.com wrote: Command Confirmat=
+ion Required Please reply "confirm" to this email to authorize the command=
+ below. Command 1. You are sending 100000 uxion from xion14n79ehpfwhdh4szu=
+dagd4nmx7clj57ly5u0lzxs6mgf5qy55ky9smszs48 to xion1qaf2xflx5j3agtlvqk5vhjp=
+euhl6g45hxshwqj. Transaction Hash 0f24d4c2e49ad730b39d23098e07e14a20c4763e=
+1404578c5fc7b195a42d295a Important Notes You can verify this hash by visit=
+ing https://parser.zk.xion.burnt.com and entering the command details. If =
+you don't reply within 24 hours, the command will be rejected. Command to =
+be Signed CqIBCp8BChwvY29zbW9zLmJhbmsudjFiZXRhMS5Nc2dTZW5kEn8KP3hpb24xNG43=
+OWVocGZ3aGRoNHN6dWRhZ2Q0bm14N2NsajU3bHk1dTBsenhzNm1nZjVxeTU1a3k5c21zenM0OB=
+IreGlvbjFxYWYyeGZseDVqM2FndGx2cWs1dmhqcGV1aGw2ZzQ1aHhzaHdxahoPCgV1eGlvbhIG=
+MTAwMDAwEmYKTQpDCh0vYWJzdHJhY3RhY2NvdW50LnYxLk5pbFB1YktleRIiCiCs_FzcKXXbes=
+Bcb1Daz2b2Pyp75Kcf8Roa2hNAEpSxCxIECgIIARgBEhUKDgoFdXhpb24SBTYwMDAwEICHpw4a=
+Bnhpb24tMSAM Code 0b610ff2cfece20cbeb3418f3b8a1fd7bfc90a8538107ae39a460c02=
+cbc27468 Proof Reference: gpftjk4ptoqjrt4bysstlw
+--Apple-Webmail-42--1607bd86-04d4-4de2-85b5-b72c3489076f
+Content-Type: multipart/related;
+    type="text/html";
+    boundary=Apple-Webmail-86--1607bd86-04d4-4de2-85b5-b72c3489076f
+
+
+--Apple-Webmail-86--1607bd86-04d4-4de2-85b5-b72c3489076f
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html;
+    charset=utf-8;
+
+<html><body><div><div>confirm</div><div><br></div><blockquote type=3D"cite"><div>On 30=
+ Dec 2025, at 0:30, <a href=3D"mailto:kushal@burnt.com">kushal@burnt.com</=
+a> wrote:</div><div><br></div><div><br></div><div><div class=3D"container"=
+><h1>Command Confirmation Required</h1><div class=3D"instructions"><p>Plea=
+se reply "confirm" to this email to authorize the command below.</p></div>=
+<div class=3D"command-details"><div class=3D"detail-section"><div class=3D=
+"detail-label">Command</div><div class=3D"detail-content">1. You are sendi=
+ng 100000 uxion from xion14n79ehpfwhdh4szudagd4nmx7clj57ly5u0lzxs6mgf5qy55=
+ky9smszs48 to xion1qaf2xflx5j3agtlvqk5vhjpeuhl6g45hxshwqj.</div></div><div=
+ class=3D"detail-section"><div class=3D"detail-label">Transaction Hash</di=
+v><div class=3D"hash-value">0f24d4c2e49ad730b39d23098e07e14a20c4763e140457=
+8c5fc7b195a42d295a</div></div><div class=3D"detail-section"><div class=3D"=
+detail-label">Important Notes</div><ul class=3D"notes-list"><li>You can ve=
+rify this hash by visiting <a href=3D"https://parser.zk.xion.burnt.com" re=
+l=3D"noopener noreferrer">https://parser.zk.xion.burnt.com</a> and enterin=
+g the command details.</li><li>If you don't reply within 24 hours, the com=
+mand will be rejected.</li></ul></div></div><div class=3D"command-header">=
+Command to be Signed</div><div id=3D"zkemail">CqIBCp8BChwvY29zbW9zLmJhbmsu=
+djFiZXRhMS5Nc2dTZW5kEn8KP3hpb24xNG43OWVocGZ3aGRoNHN6dWRhZ2Q0bm14N2NsajU3bH=
+k1dTBsenhzNm1nZjVxeTU1a3k5c21zenM0OBIreGlvbjFxYWYyeGZseDVqM2FndGx2cWs1dmhq=
+cGV1aGw2ZzQ1aHhzaHdxahoPCgV1eGlvbhIGMTAwMDAwEmYKTQpDCh0vYWJzdHJhY3RhY2NvdW=
+50LnYxLk5pbFB1YktleRIiCiCs_FzcKXXbesBcb1Daz2b2Pyp75Kcf8Roa2hNAEpSxCxIECgII=
+ARgBEhUKDgoFdXhpb24SBTYwMDAwEICHpw4aBnhpb24tMSAM Code 0b610ff2cfece20cbeb3=
+418f3b8a1fd7bfc90a8538107ae39a460c02cbc27468</div><div class=3D"footer">Pr=
+oof Reference: gpftjk4ptoqjrt4bysstlw</div></div></div></blockquote></div></body></html>
+--Apple-Webmail-86--1607bd86-04d4-4de2-85b5-b72c3489076f--
+
+--Apple-Webmail-42--1607bd86-04d4-4de2-85b5-b72c3489076f--
+

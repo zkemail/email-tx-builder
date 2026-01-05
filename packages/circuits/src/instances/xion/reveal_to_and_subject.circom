@@ -10,8 +10,8 @@ component main = EmailAuth(
     605,  // max_command_bytes
     0,    // recipient_enabled
     1,    // is_qp_encoded
-    1,    // timestamp_enabled
+    0,    // timestamp_enabled
     0,    // reveal_from_addr
-    0,    // reveal_to_addr
-    0     // reveal_subject 
+    1,    // reveal_to_addr
+    1     // reveal_subject 
 );
